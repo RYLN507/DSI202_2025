@@ -19,9 +19,9 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
-    list_display        = ('user', 'text', 'is_default')
-    list_filter         = ('is_default',)
-    search_fields       = ('user__username', 'text')
+    list_display  = ('user', 'label', 'is_default')
+    list_filter   = ('is_default',)
+    search_fields = ('user__username', 'label', 'full_address')
 
 
 @admin.register(PaymentMethod)

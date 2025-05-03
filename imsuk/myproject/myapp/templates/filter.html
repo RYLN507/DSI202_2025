@@ -10,7 +10,7 @@
     <a href="javascript:history.back()" class="text-gray-600 hover:text-gray-800">✕ ปิด</a>
   </div>
 
-  <form method="get" action="" class="space-y-8">
+  <form method="get" action="{% url 'product_filter' %}" class="space-y-8">
 
     {# --- เฉพาะรายการที่สั่งซื้อได้ --- #}
     <div>
@@ -28,13 +28,13 @@
       <h2 class="font-semibold mb-2">หมวดหมู่</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {% for cat in categories %}
-        <label class="flex items-center space-x-4">
-          <span>{{ cat.display_name }}</span>
-          <input type="checkbox" name="category" value="{{ cat.name }}" class="toggle-checkbox hidden">
-          <div class="toggle-slot w-12 h-6 bg-gray-300 rounded-full shadow-inner relative">
-            <div class="toggle-button absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0"></div>
-          </div>
-        </label>
+          <label class="flex items-center space-x-4">
+            <span>{{ cat.display_name }}</span>
+            <input type="checkbox" name="category" value="{{ cat.name }}" class="toggle-checkbox hidden">
+            <div class="toggle-slot w-12 h-6 bg-gray-300 rounded-full shadow-inner relative">
+              <div class="toggle-button absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0"></div>
+            </div>
+          </label>
         {% endfor %}
       </div>
     </div>
@@ -77,11 +77,10 @@
   </form>
 </div>
 
-{# ===== CSS ปรับ Toggle และ Slider ===== #}
 <style>
 /* Toggle Switch */
 .toggle-checkbox:checked + .toggle-slot {
-  background-color: #bade80; /* สีเขียวพาสเทล */
+  background-color: #bade80;
 }
 .toggle-checkbox:checked + .toggle-slot .toggle-button {
   transform: translateX(100%);
@@ -105,13 +104,14 @@ input[type="range"]::-ms-thumb {
 }
 </style>
 
-{# ===== JS สำหรับแสดงตัวเลขเวลาลาก ===== #}
 <script>
 const priceRange = document.getElementById('priceRange');
 const priceValue = document.getElementById('priceValue');
 
-priceRange.addEventListener('input', function() {
-  priceValue.textContent = '฿' + this.value;
-});
+if (priceRange && priceValue) {
+  priceRange.addEventListener('input', function() {
+    priceValue.textContent = '฿' + this.value;
+  });
+}
 </script>
 {% endblock %}

@@ -6,6 +6,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', views.home, name='home'),
     path('filter/', views.filter_view, name='filter'),
+    path('filter/', views.product_filter, name='product_filter'),
+    path('filter-results/', views.product_filter, name='product_filter'),
 
     # Authentication
     path('register/', views.register_view, name='register'),
@@ -22,6 +24,7 @@ urlpatterns = [
     path('addresses/', views.address_list, name='address_list'),
     path('addresses/add/', views.address_view, name='address_add'),
     path('addresses/<int:address_id>/delete/', views.address_delete, name='address_delete'),
+    path('addresses/set-default/<int:address_id>/', views.address_set_default, name='address_set_default'),
 
     # Payment Methods & Help Center
     path('payment-methods/', views.payment_methods, name='payment_methods'),
@@ -55,6 +58,7 @@ urlpatterns = [
     path('payment-methods/add/', views.payment_method_add, name='payment_method_add'),
     path('payment-methods/<int:pk>/edit/', views.payment_method_edit, name='payment_method_edit'),
     path('payment-methods/<int:pk>/delete/', views.payment_method_delete, name='payment_method_delete'),
+    path('payment-methods/', views.payment_methods, name='payment_method_list'),
 
 
 

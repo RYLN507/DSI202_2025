@@ -16,7 +16,13 @@
 
           <div class="flex items-start justify-between">
             <div>
-              <p class="text-gray-800">{{ address.text }}</p>
+              {% if address.label %}
+                <p class="text-gray-800 font-medium">
+                  {{ address.label }}
+                </p>
+              {% else %}
+                <p class="text-gray-500 italic">— ไม่มีชื่อที่อยู่ —</p>
+              {% endif %}
               {% if address.is_default %}
                 <span class="text-green-600 text-sm font-semibold">(ที่อยู่เริ่มต้น)</span>
               {% endif %}
@@ -59,3 +65,4 @@
 
 </div>
 {% endblock %}
+

@@ -60,15 +60,13 @@ def filter_view(request):
         'allergy_list': allergy_list,
     })
 
-from django.shortcuts import redirect, get_object_or_404
-from .models import Address
+
 
 def address_delete(request, address_id):
     address = get_object_or_404(Address, id=address_id, user=request.user)
     if request.method == 'POST':
         address.delete()
     return redirect('address_list')
-
 
 
 
@@ -168,7 +166,10 @@ def logout_view(request):
 @login_required
 def profile(request):
     """โปรไฟล์ผู้ใช้"""
-    return render(request, 'profile.html')
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+    return render(request, 'profile.html', {
+        'default_address': default_address
+    })
 
 
 @login_required
@@ -435,9 +436,15 @@ def order_history(request):
 
 @login_required
 def payment_method_add(request):
-    if request.method == "POST":
-        # บันทึกบัตรใหม่
-        ...
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        details = request.POST.get('details')
+        PaymentMethod.objects.create(
+            user=request.user,
+            name=name,
+            details=details
+        )
+        return redirect('payment_method_list')  # หรือ path ที่แสดงรายการ
     return render(request, 'payment_method_add.html')
 
 from django.shortcuts import get_object_or_404
@@ -488,3 +495,51 @@ def payment_method_delete(request, pk):
         return redirect('payment_methods')
     
     return render(request, 'payment_method_delete_confirm.html', {'method': method})
+
+
+def address_set_default(request, address_id):
+    if request.method == 'POST':
+        address = get_object_or_404(Address, id=address_id, user=request.user)
+        
+        # ลบ default เดิมทั้งหมดก่อน
+        Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
+        
+        # ตั้ง default ใหม่
+        address.is_default = True
+        address.save()
+
+    return redirect('address_list')  # หรือชื่อ view ที่คุณแสดงรายการที่อยู่
+
+def product_filter(request):
+    """กรองสินค้า ตามหมวดหมู่ ราคา และตัวกรองแพ้อาหาร"""
+    category = request.GET.get('category')
+    price = request.GET.get('price')
+
+    products = Menu.objects.all()
+
+    # หมวดหมู่
+    if category and category != '0':
+        products = products.filter(restaurant__category__id=category)
+
+    # ช่วงราคา
+    if price:
+        if price == '0':
+            products = products.filter(price__lte=100)
+        elif price == '1':
+            products = products.filter(price__gt=100, price__lte=500)
+        elif price == '2':
+            products = products.filter(price__gt=500)
+
+    # แพ้อาหาร (ตัวอย่าง)
+    if request.GET.get('no_milk') == '1':
+        products = products.exclude(description__icontains='นม')
+    if request.GET.get('no_egg') == '1':
+        products = products.exclude(description__icontains='ไข่')
+    if request.GET.get('no_peanut') == '1':
+        products = products.exclude(description__icontains='ถั่ว')
+
+    context = {
+        'products': products,
+    }
+
+    return render(request, 'filtered_products.html', context)

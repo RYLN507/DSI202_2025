@@ -25,12 +25,17 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         instance.profile.save()
 
 class Address(models.Model):
-    user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
-    text       = models.CharField("ที่อยู่", max_length=255)
-    is_default = models.BooleanField("ตั้งเป็นค่ามาตรฐาน", default=False)
+    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
+    label = models.CharField("ชื่อที่อยู่", max_length=100, default='', blank=True)
+    full_address = models.TextField("ที่อยู่", default='')
+    subdistrict = models.CharField("ตำบล", max_length=100, blank=True)
+    district    = models.CharField("อำเภอ", max_length=100, blank=True)
+    province    = models.CharField("จังหวัด", max_length=100, blank=True)
+    zipcode     = models.CharField("รหัสไปรษณีย์", max_length=10, blank=True)
+    is_default  = models.BooleanField("ตั้งเป็นค่ามาตรฐาน", default=False)
 
     def __str__(self):
-        return f"{self.user.username} — {self.text[:30]}{'…' if len(self.text)>30 else ''}"
+        return f"{self.user.username} — {self.label or self.full_address[:30]}"
 
 class PaymentMethod(models.Model):
     user    = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_methods')
