@@ -1,0 +1,44 @@
+{# templates/flash_all.html #}
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}เมนูนาทีทองทั้งหมด | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">เมนูนาทีทองทั้งหมด</h1>
+    <a href="{% url 'home' %}" class="text-gray-600 hover:underline">← กลับหน้าหลัก</a>
+  </div>
+
+  {% if flash_menus %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for item in flash_menus %}
+        <div class="bg-white rounded-lg shadow p-4 flex flex-col">
+          {% if item.image %}
+            <img
+              src="{{ item.image.url }}"
+              alt="{{ item.title }}"
+              class="w-full h-40 object-cover rounded mb-4">
+          {% endif %}
+          <h2 class="font-semibold text-lg mb-1">{{ item.title }}</h2>
+          <p class="text-gray-500 text-sm mb-2">{{ item.start_time }} – {{ item.end_time }}</p>
+          <p class="text-gray-400 line-through mb-1">
+            {{ item.original_price|currency:"฿" }}
+          </p>
+          <p class="text-green-600 font-bold mb-4">
+            {{ item.discounted_price|currency:"฿" }}
+          </p>
+          <a href="{% url 'menu_detail' item.id %}"
+             class="mt-auto inline-block text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded">
+            ดูเมนู
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-gray-500">ไม่พบเมนูนาทีทอง</p>
+  {% endif %}
+</div>
+{% endblock %}

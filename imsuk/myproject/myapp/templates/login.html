@@ -1,0 +1,22 @@
+<!-- login.html -->
+{% extends 'base.html' %}
+{% block title %}เข้าสู่ระบบ | IMSUK{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-md">
+    <h2 class="text-2xl font-bold mb-4 text-center text-[#3F8240]">ลงชื่อเข้าใช้</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <label class="block text-sm font-medium">Email</label>
+        <input type="email" name="email" required class="w-full p-2 border rounded mb-4" />
+
+        <label class="block text-sm font-medium">รหัสผ่าน</label>
+        <input type="password" name="password" required class="w-full p-2 border rounded mb-4" />
+
+        <div class="text-right mb-4">
+            <a href="#" class="text-sm text-[#3F8240] underline">ลืมรหัสผ่าน?</a>
+        </div>
+
+        <button type="submit" class="w-full bg-[#BADE80] text-[#3F8240] font-bold py-2 rounded hover:bg-[#A3CF62]">เข้าสู่ระบบ</button>
+    </form>
+</div>
+{% endblock %}

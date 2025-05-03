@@ -1,0 +1,24 @@
+<!-- register.html -->
+{% extends 'base.html' %}
+{% block title %}สมัครสมาชิก | IMSUK{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-8 rounded-2xl shadow-md">
+    <h2 class="text-2xl font-bold mb-4 text-center text-[#3F8240]">ยินดีต้อนรับสู่ IMSUK</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="block text-sm font-medium">ชื่อ</label><input type="text" name="first_name" required class="w-full p-2 border rounded"/></div>
+            <div><label class="block text-sm font-medium">นามสกุล</label><input type="text" name="last_name" required class="w-full p-2 border rounded"/></div>
+        </div>
+        <label class="block mt-4 text-sm font-medium">เบอร์โทรศัพท์</label><input type="text" name="phone" required class="w-full p-2 border rounded"/>
+        <label class="block mt-4 text-sm font-medium">Email</label><input type="email" name="email" required class="w-full p-2 border rounded"/>
+        <label class="block mt-4 text-sm font-medium">รหัสผ่าน</label><input type="password" name="password" required class="w-full p-2 border rounded"/>
+        <label class="block mt-4 text-sm font-medium">ยืนยันรหัสผ่าน</label><input type="password" name="confirm_password" required class="w-full p-2 border rounded"/>
+        <label class="block mt-4 text-sm font-medium">ที่อยู่</label><textarea name="address" rows="2" class="w-full p-2 border rounded"></textarea>
+        <label class="block mt-4 text-sm font-medium">ส่วนผสมที่แพ้ (เช่น ถั่ว, นม, กลูเตน)</label><input type="text" name="allergy" class="w-full p-2 border rounded"/>
+        <div class="mt-4 flex items-center"><input type="checkbox" required class="mr-2"><span class="text-sm">ฉันยอมรับ <a href="#" class="text-[#3F8240] underline">นโยบายความเป็นส่วนตัว</a></span></div>
+        <button type="submit" class="mt-6 w-full bg-[#BADE80] text-[#3F8240] font-bold py-2 rounded hover:bg-[#A3CF62]">สมัครสมาชิก</button>
+    </form>
+    <p class="mt-4 text-center text-sm">มีบัญชีแล้ว? <a href="/login/" class="text-[#3F8240] underline">เข้าสู่ระบบ</a></p>
+</div>
+{% endblock %}

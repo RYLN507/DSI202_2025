@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}ประวัติการสั่งซื้อ | อิ่มสุข{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+
+  <h1 class="text-3xl font-bold text-green-700 mb-8 text-center">ประวัติการสั่งซื้อของฉัน</h1>
+
+  {% if orders %}
+    <div class="space-y-8">
+      {% for order in orders %}
+        <div class="bg-white rounded-lg shadow-lg p-6">
+
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-green-700">
+              ออร์เดอร์ #{{ order.id }}
+            </h2>
+            <span class="text-sm text-gray-500">
+              {{ order.placed_at|date:"d M Y, H:i" }}
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            {% for item in order.items.all %}
+              <div class="flex items-center space-x-4">
+                {% if item.menu.image %}
+                  <img src="{{ item.menu.image.url }}" alt="{{ item.menu.title }}" class="w-16 h-16 rounded object-cover">
+                {% else %}
+                  <div class="w-16 h-16 rounded bg-gray-200 flex items-center justify-center text-gray-500">
+                    No Image
+                  </div>
+                {% endif %}
+
+                <div class="flex-1">
+                  <p class="text-gray-800 font-semibold">{{ item.menu.title }}</p>
+                  <p class="text-gray-500 text-sm">จำนวน {{ item.quantity }} ชิ้น</p>
+                </div>
+
+                <div class="text-green-600 font-bold whitespace-nowrap">
+                  {{ item.price_at_time|currency:"฿" }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="border-t border-gray-200 mt-6 pt-4 text-right">
+            <p class="text-gray-600">ราคารวม</p>
+            <p class="text-2xl font-bold text-green-700">{{ order.total_price|currency:"฿" }}</p>
+            {% if order.is_paid %}
+              <span class="inline-block mt-2 text-green-600 text-sm font-semibold">ชำระเงินแล้ว</span>
+            {% else %}
+              <span class="inline-block mt-2 text-red-500 text-sm font-semibold">ยังไม่ได้ชำระ</span>
+            {% endif %}
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="text-center text-gray-500">
+      <p>คุณยังไม่มีประวัติการสั่งซื้อเลย</p>
+      <a href="{% url 'home' %}" class="mt-6 inline-block bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-full transition">
+        เริ่มต้นสั่งอาหารเลย
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

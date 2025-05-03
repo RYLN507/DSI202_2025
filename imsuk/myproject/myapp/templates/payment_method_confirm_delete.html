@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}ยืนยันการลบวิธีชำระเงิน | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 max-w-lg text-center">
+
+  <h1 class="text-2xl font-bold text-red-600 mb-6">ลบวิธีชำระเงิน</h1>
+
+  <p class="text-gray-600 mb-8">
+    คุณแน่ใจหรือไม่ว่าต้องการลบวิธีชำระเงินนี้?<br>
+    <strong>{{ method.name }} - {{ method.details }}</strong>
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="flex justify-center space-x-4">
+      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-full">
+        ลบ
+      </button>
+      <a href="{% url 'payment_methods' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-full">
+        ยกเลิก
+      </a>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

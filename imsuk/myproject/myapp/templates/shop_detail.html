@@ -1,0 +1,92 @@
+{# shop_detail.html #}
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ menu.title }} | {{ menu.restaurant.category.display_name }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  {# ลิงก์กลับไปยังหน้าหมวดเมนู #}
+  <p class="mb-4">
+    <a href="{% url 'shop_list' menu.restaurant.category.name %}"
+       class="text-gray-600 hover:underline">
+      ← กลับไปหมวด: {{ menu.restaurant.category.display_name }}
+    </a>
+  </p>
+
+  {# ชื่อเมนู #}
+  <h1 class="text-3xl font-bold text-green-700 mb-6">
+    {{ menu.title }}
+  </h1>
+
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    {# รูปเมนู (ถ้ามี) #}
+    {% if menu.image %}
+      <img src="{{ menu.image.url }}"
+           alt="{{ menu.title }}"
+           class="w-full h-64 object-cover">
+    {% else %}
+      <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
+        <span class="text-gray-500">No Image</span>
+      </div>
+    {% endif %}
+
+    <div class="p-6 space-y-4">
+      {# ขายแล้ว #}
+      <p class="text-gray-600">
+        ขายแล้ว: <strong>{{ menu.sold_count }}</strong> ชิ้น
+      </p>
+
+      {# เวลาเริ่ม–ปิดขาย #}
+      <p class="text-gray-600">
+        เวลาจัดจำหน่าย:
+        {{ menu.start_time|time:"H:i" }} – {{ menu.end_time|time:"H:i" }}
+      </p>
+
+      {# ราคาปกติ vs ราคาหลังลด #}
+      <div class="flex items-baseline space-x-4">
+        <span class="text-gray-400 line-through">
+          ฿{{ menu.price }}
+        </span>
+        <span class="text-2xl font-bold text-green-700">
+          ฿{{ menu.discount_price }}
+        </span>
+      </div>
+
+      {# คำอธิบายสั้น ๆ #}
+      {% if menu.description %}
+        <div>
+          <h2 class="text-xl font-semibold text-green-700">สิ่งที่คุณจะได้รับ</h2>
+          <p class="text-gray-700">{{ menu.description }}</p>
+        </div>
+      {% endif %}
+
+      {# รายละเอียด (หลายบรรทัด) #}
+      {% if menu.details %}
+        <div>
+          <h2 class="text-xl font-semibold text-green-700">รายละเอียดเมนู</h2>
+          <ul class="list-disc list-inside text-gray-700 space-y-1">
+            {% for line in menu.details.splitlines %}
+              {% if line %}
+                <li>{{ line }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {# ปุ่มเพิ่มลงตะกร้า #}
+      <form action="{% url 'add_to_cart' menu.id %}" method="post" class="mt-6">
+        {% csrf_token %}
+        <button type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold
+                       py-2 rounded-lg transition">
+          เพิ่มลงตะกร้า 🛒
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
