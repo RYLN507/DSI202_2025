@@ -5,44 +5,50 @@
 {% block title %}ผลการกรองสินค้า | IMSUK{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-10">
 
-  <h1 class="text-3xl font-bold text-green-700 mb-6">ผลลัพธ์จากการใช้ตัวกรอง</h1>
+  <p class="text-center text-sm text-gray-500 mb-4">พบทั้งหมด {{ products|length }} รายการ</p>
+  <h1 class="text-3xl font-bold text-green-700 mb-6 text-center">ผลลัพธ์จากการใช้ตัวกรอง</h1>
 
-  {% if filtered_menus %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {% for menu in filtered_menus %}
-        <a href="{% url 'menu_detail' menu.id %}" class="block bg-white rounded-lg shadow hover:shadow-lg overflow-hidden">
+  {% if products %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      {% for menu in products %}
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col">
           {% if menu.image %}
-            <img src="{{ menu.image.url }}" alt="{{ menu.title }}" class="w-full h-36 object-cover">
+            <img src="{{ menu.image.url }}" alt="{{ menu.title }}" class="w-full h-40 object-cover">
           {% else %}
-            <div class="w-full h-36 bg-gray-200 flex items-center justify-center text-gray-500">
+            <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
               ไม่มีรูปภาพ
             </div>
           {% endif %}
-          <div class="p-4">
-            <h3 class="font-bold text-green-700 text-lg">{{ menu.title }}</h3>
-            <p class="text-sm text-gray-600">{{ menu.description|default:"ไม่มีคำอธิบาย" }}</p>
-            <p class="text-sm text-gray-500 mt-1">{{ menu.start_time }} – {{ menu.end_time }}</p>
-            <div class="mt-2 space-x-2">
-              {% if menu.price > menu.discount_price %}
-                <span class="text-gray-400 line-through">{{ menu.price|currency:"฿" }}</span>
-              {% endif %}
-              <span class="text-green-600 font-bold">{{ menu.discount_price|currency:"฿" }}</span>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-green-700 mb-1">{{ menu.title }}</h2>
+              <p class="text-sm text-gray-600 mb-2">{{ menu.description|default:"ไม่มีคำอธิบาย" }}</p>
+              <p class="text-sm text-gray-500">{{ menu.start_time }} – {{ menu.end_time }}</p>
             </div>
+            <div class="mt-3">
+              {% if menu.price > menu.discount_price %}
+                <span class="text-gray-400 line-through text-sm">{{ menu.price|currency:"฿" }}</span>
+              {% endif %}
+              <span class="text-green-600 font-bold text-lg ml-2">{{ menu.discount_price|currency:"฿" }}</span>
+            </div>
+            <a href="{% url 'menu_detail' menu.id %}" class="mt-4 inline-block text-center bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-full text-sm transition">
+              ดูรายละเอียด
+            </a>
           </div>
-        </a>
+        </div>
       {% endfor %}
     </div>
   {% else %}
-    <p class="text-center text-gray-500 mt-10 text-lg">ไม่พบเมนูที่ตรงกับเงื่อนไขตัวกรองของคุณ</p>
+    <p class="text-center text-gray-500 mt-16 text-lg">ไม่พบเมนูที่ตรงกับเงื่อนไขตัวกรองของคุณ 😢</p>
   {% endif %}
 
-  <div class="text-center mt-10">
-    <a href="{% url 'filter' %}" class="inline-block bg-[#bade80] hover:bg-[#a8d266] text-white px-6 py-2 rounded-full font-semibold">
+  <div class="text-center mt-12">
+    <a href="{% url 'filter' %}" class="inline-block bg-[#bade80] hover:bg-[#a8d266] text-white px-6 py-2 rounded-full font-semibold transition">
       🔄 ปรับตัวกรองใหม่
     </a>
-    <a href="{% url 'home' %}" class="ml-4 text-green-700 hover:underline">
+    <a href="{% url 'home' %}" class="ml-4 text-green-700 hover:underline text-sm">
       กลับสู่หน้าแรก
     </a>
   </div>

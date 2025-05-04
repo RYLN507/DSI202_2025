@@ -33,6 +33,7 @@ class Address(models.Model):
     province    = models.CharField("จังหวัด", max_length=100, blank=True)
     zipcode     = models.CharField("รหัสไปรษณีย์", max_length=10, blank=True)
     is_default  = models.BooleanField("ตั้งเป็นค่ามาตรฐาน", default=False)
+    order = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username} — {self.label or self.full_address[:30]}"
@@ -206,7 +207,7 @@ class CartItem(models.Model):
 class Order(models.Model):
     """ คำสั่งซื้อ """
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    address     = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
+    address     = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, related_name='orders')
     total_price = models.DecimalField("ราคารวม", max_digits=10, decimal_places=2)
     placed_at   = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
     is_paid     = models.BooleanField("ชำระเงินแล้ว", default=False)
@@ -217,6 +218,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order#{self.id} ของ {self.user.username}"
+
 
 class OrderItem(models.Model):
     """ รายการย่อยในออร์เดอร์ """

@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.timezone import now
 from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.http import require_POST
+
 
 from .models import (
     Profile, Address, PaymentMethod,
@@ -175,9 +177,7 @@ def profile(request):
 @login_required
 def address_list(request):
     """รายการที่อยู่"""
-    addresses = Address.objects.filter(
-        user=request.user
-    )
+    addresses = Address.objects.filter(user=request.user).order_by('order')
     return render(request, 'address_list.html', {
         'addresses': addresses
     })
@@ -510,36 +510,141 @@ def address_set_default(request, address_id):
 
     return redirect('address_list')  # หรือชื่อ view ที่คุณแสดงรายการที่อยู่
 
+
 def product_filter(request):
-    """กรองสินค้า ตามหมวดหมู่ ราคา และตัวกรองแพ้อาหาร"""
-    category = request.GET.get('category')
+    # รับค่าจาก GET parameters
+    category_list = request.GET.getlist('category')  # รับได้หลายหมวดหมู่
     price = request.GET.get('price')
 
     products = Menu.objects.all()
 
-    # หมวดหมู่
-    if category and category != '0':
-        products = products.filter(restaurant__category__id=category)
+    # กรองหมวดหมู่ (หลายหมวด)
+    if category_list:
+        products = products.filter(restaurant__category__name__in=category_list)
 
-    # ช่วงราคา
-    if price:
-        if price == '0':
-            products = products.filter(price__lte=100)
-        elif price == '1':
-            products = products.filter(price__gt=100, price__lte=500)
-        elif price == '2':
-            products = products.filter(price__gt=500)
+    # กรองราคาสินค้า
+    if price == '0':
+        products = products.filter(discount_price__lte=100)
+    elif price == '1':
+        products = products.filter(discount_price__gt=100, discount_price__lte=500)
+    elif price == '2':
+        products = products.filter(discount_price__gt=500)
 
-    # แพ้อาหาร (ตัวอย่าง)
+    # ตัวกรองแพ้อาหาร
     if request.GET.get('no_milk') == '1':
         products = products.exclude(description__icontains='นม')
     if request.GET.get('no_egg') == '1':
         products = products.exclude(description__icontains='ไข่')
     if request.GET.get('no_peanut') == '1':
         products = products.exclude(description__icontains='ถั่ว')
+    if request.GET.get('no_gluten') == '1':
+        products = products.exclude(description__icontains='กลูเตน')
+    if request.GET.get('no_seafood') == '1':
+        products = products.exclude(description__icontains='ทะเล')
+    if request.GET.get('no_fish') == '1':
+        products = products.exclude(description__icontains='ปลา')
 
-    context = {
-        'products': products,
-    }
+    return render(request, 'filtered_products.html', {'products': products})
 
-    return render(request, 'filtered_products.html', context)
+
+@login_required
+def checkout_again(request, order_id):
+    # ดึงออเดอร์เดิม
+    old_order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    # สร้างออเดอร์ใหม่
+    new_order = Order.objects.create(user=request.user, is_paid=False)
+
+    # คัดลอก OrderItems จากออเดอร์เก่า
+    for item in old_order.items.all():
+        OrderItem.objects.create(
+            order=new_order,
+            menu=item.menu,
+            quantity=item.quantity,
+            price_at_time=item.menu.discount_price  # ราคาปัจจุบัน (ไม่ fix ราคาตอนนั้น)
+        )
+
+    # คำนวณราคารวมใหม่
+    new_order.calculate_total_price()
+    new_order.save()
+
+    # ส่งไปหน้า checkout
+    return redirect('checkout', order_id=new_order.id)
+
+
+
+def checkout_again(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'checkout_again.html', {'order': order})
+
+
+@require_POST
+def confirm_checkout_again(request, order_id):
+    old_order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    # คำนวณราคารวมจากรายการเดิม
+    total_price = sum(item.quantity * item.price_at_time for item in old_order.items.all())
+
+    # สร้างคำสั่งซื้อใหม่พร้อมราคารวม
+    new_order = Order.objects.create(
+        user=request.user,
+        placed_at=timezone.now(),
+        is_paid=True,
+        total_price=total_price  # ✅ เพิ่มตรงนี้
+    )
+
+    for item in old_order.items.all():
+        OrderItem.objects.create(
+            order=new_order,
+            menu=item.menu,
+            quantity=item.quantity,
+            price_at_time=item.price_at_time
+        )
+
+    messages.success(request, "สั่งซื้ออีกครั้งสำเร็จ! ระบบได้บันทึกคำสั่งซื้อของคุณแล้ว")
+    return redirect('order_history')
+
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import Address
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+
+@login_required
+def address_move_up(request, address_id):
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+
+    # หาที่อยู่ก่อนหน้า
+    above = Address.objects.filter(user=request.user, order__lt=address.order).order_by('-order').first()
+
+    if above:
+        with transaction.atomic():
+            address.order, above.order = above.order, address.order
+            address.save()
+            above.save()
+
+    return redirect('address_list')
+
+@login_required
+def address_move_down(request, address_id):
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+
+    # หาที่อยู่ถัดไป
+    below = Address.objects.filter(user=request.user, order__gt=address.order).order_by('order').first()
+
+    if below:
+        with transaction.atomic():
+            address.order, below.order = below.order, address.order
+            address.save()
+            below.save()
+
+    return redirect('address_list')
+
+@login_required
+def reset_address_order(request):
+    addresses = Address.objects.filter(user=request.user).order_by('id')
+    for idx, a in enumerate(addresses):
+        a.order = idx
+        a.save()
+    messages.success(request, "เรียงลำดับใหม่แล้วเรียบร้อย")
+    return redirect('address_list')

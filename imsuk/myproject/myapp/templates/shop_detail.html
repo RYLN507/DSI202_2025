@@ -1,5 +1,6 @@
-{# shop_detail.html #}
 {% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
 
 {% block title %}
   {{ menu.title }} | {{ menu.restaurant.category.display_name }}
@@ -7,86 +8,91 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-  {# ลิงก์กลับไปยังหน้าหมวดเมนู #}
-  <p class="mb-4">
+  {# ลิงก์กลับ #}
+  <p class="mb-6">
     <a href="{% url 'shop_list' menu.restaurant.category.name %}"
-       class="text-gray-600 hover:underline">
+       class="text-green-700 hover:underline text-sm">
       ← กลับไปหมวด: {{ menu.restaurant.category.display_name }}
     </a>
   </p>
 
   {# ชื่อเมนู #}
-  <h1 class="text-3xl font-bold text-green-700 mb-6">
+  <h1 class="text-4xl font-bold text-green-700 mb-6">
     {{ menu.title }}
   </h1>
 
-  <div class="bg-white rounded-lg shadow overflow-hidden">
-    {# รูปเมนู (ถ้ามี) #}
+  <div class="bg-white rounded-xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-0">
+    {# รูปเมนู #}
     {% if menu.image %}
-      <img src="{{ menu.image.url }}"
-           alt="{{ menu.title }}"
-           class="w-full h-64 object-cover">
+      <div>
+        <img src="{{ menu.image.url }}" alt="{{ menu.title }}"
+             class="w-full h-[400px] object-cover">
+      </div>
     {% else %}
-      <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
-        <span class="text-gray-500">No Image</span>
+      <div class="bg-gray-100 flex items-center justify-center h-[400px]">
+        <span class="text-gray-500">ไม่มีรูปภาพ</span>
       </div>
     {% endif %}
 
-    <div class="p-6 space-y-4">
-      {# ขายแล้ว #}
-      <p class="text-gray-600">
-        ขายแล้ว: <strong>{{ menu.sold_count }}</strong> ชิ้น
-      </p>
+    {# รายละเอียดด้านขวา #}
+    <div class="p-6 flex flex-col justify-between">
+      <div class="space-y-5">
+        <p class="text-sm text-gray-500">ขายแล้ว: <strong>{{ menu.sold_count }}</strong> ชิ้น</p>
+        <p class="text-sm text-gray-500">
+          เวลาจัดจำหน่าย: {{ menu.start_time|time:"H:i" }} – {{ menu.end_time|time:"H:i" }}
+        </p>
 
-      {# เวลาเริ่ม–ปิดขาย #}
-      <p class="text-gray-600">
-        เวลาจัดจำหน่าย:
-        {{ menu.start_time|time:"H:i" }} – {{ menu.end_time|time:"H:i" }}
-      </p>
+        <div class="flex items-baseline space-x-3">
+          {% if menu.price > menu.discount_price %}
+            <span class="text-gray-400 line-through text-lg">{{ menu.price|currency:"฿" }}</span>
+          {% endif %}
+          <span class="text-3xl font-bold text-green-700">{{ menu.discount_price|currency:"฿" }}</span>
+        </div>
 
-      {# ราคาปกติ vs ราคาหลังลด #}
-      <div class="flex items-baseline space-x-4">
-        <span class="text-gray-400 line-through">
-          ฿{{ menu.price }}
-        </span>
-        <span class="text-2xl font-bold text-green-700">
-          ฿{{ menu.discount_price }}
-        </span>
+        {% if menu.description %}
+          <div>
+            <h2 class="text-xl font-semibold text-green-700 mb-1">สิ่งที่คุณจะได้รับ</h2>
+            <p class="text-gray-700">{{ menu.description }}</p>
+          </div>
+        {% endif %}
+
+        {% if menu.details %}
+          <div>
+            <h2 class="text-xl font-semibold text-green-700 mb-1">รายละเอียดเมนู</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              {% for line in menu.details.splitlines %}
+                {% if line %}
+                  <li>{{ line }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
       </div>
 
-      {# คำอธิบายสั้น ๆ #}
-      {% if menu.description %}
-        <div>
-          <h2 class="text-xl font-semibold text-green-700">สิ่งที่คุณจะได้รับ</h2>
-          <p class="text-gray-700">{{ menu.description }}</p>
-        </div>
-      {% endif %}
+      <div class="pt-6 space-y-3">
+        <form action="{% url 'add_to_cart' menu.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit"
+                  class="w-full bg-[#bade80] hover:bg-[#a8d266] text-white font-semibold
+                         py-2 rounded-full transition">
+            🛒 เพิ่มลงตะกร้า
+          </button>
+        </form>
 
-      {# รายละเอียด (หลายบรรทัด) #}
-      {% if menu.details %}
-        <div>
-          <h2 class="text-xl font-semibold text-green-700">รายละเอียดเมนู</h2>
-          <ul class="list-disc list-inside text-gray-700 space-y-1">
-            {% for line in menu.details.splitlines %}
-              {% if line %}
-                <li>{{ line }}</li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-      {% endif %}
-
-      {# ปุ่มเพิ่มลงตะกร้า #}
-      <form action="{% url 'add_to_cart' menu.id %}" method="post" class="mt-6">
-        {% csrf_token %}
-        <button type="submit"
-                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold
-                       py-2 rounded-lg transition">
-          เพิ่มลงตะกร้า 🛒
-        </button>
-      </form>
+        <form action="{% url 'toggle_favorite_menu' menu.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit"
+                  class="w-full border border-[#bade80] text-[#3F8240] hover:bg-[#f4faea]
+                         font-semibold py-2 rounded-full transition">
+            ♡ เพิ่มรายการโปรด
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 {% endblock %}
+
+
 

@@ -59,8 +59,11 @@ urlpatterns = [
     path('payment-methods/<int:pk>/edit/', views.payment_method_edit, name='payment_method_edit'),
     path('payment-methods/<int:pk>/delete/', views.payment_method_delete, name='payment_method_delete'),
     path('payment-methods/', views.payment_methods, name='payment_method_list'),
+    path('checkout_again/<int:order_id>', views.checkout_again, name='checkout_again'),
+    path('confirm_checkout_again/<int:order_id>', views.confirm_checkout_again, name='confirm_checkout_again'),
+    path('addresses/<int:address_id>/up/', views.address_move_up, name='address_move_up'),
+    path('addresses/<int:address_id>/down/', views.address_move_down, name='address_move_down'),
 
 
 
-    
 ]
