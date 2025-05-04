@@ -2,6 +2,8 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import confirm_order
+from .models import Deal  # ✅ ใช้ Deal ไม่ใช่ DealMenu
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -32,6 +34,10 @@ urlpatterns = [
 
     # Flash Deals & Hot Menus
     path('flash/', views.flash_all, name='flash_all'),
+    path('flash-menu/<int:pk>/', views.flash_menu_detail, name='flash_menu_detail'),
+    path('deals/', views.deal_all, name='deal_all'),
+    path('deals/<int:deal_id>/', views.deal_menu_detail, name='deal_menu_detail'),
+
 
     # Shop & Menus
     path('shop/<str:category_name>/', views.shop_list, name='shop_list'),
@@ -43,7 +49,8 @@ urlpatterns = [
     path('cart/', views.cart_view, name='cart'),
     path('cart/update/<int:item_id>/', views.update_cart, name='update_cart'),
     path('checkout/', views.checkout, name='checkout'),
-    path('checkout/confirm/', views.confirm_order, name='confirm_order'),
+    path('checkout/confirm/', confirm_order, name='checkout_confirm'),
+
 
     # Order Success
     path('order/success/', views.order_success, name='order_success'),

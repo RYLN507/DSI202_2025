@@ -102,9 +102,10 @@ class DealAdmin(admin.ModelAdmin):
 
 @admin.register(FlashMenu)
 class FlashMenuAdmin(admin.ModelAdmin):
-    list_display        = ('title', 'original_price', 'discounted_price', 'start_time', 'end_time', 'is_active')
-    list_filter         = ('is_active',)
-    search_fields       = ('title',)
+    list_display  = ('title', 'menu', 'original_price', 'discounted_price', 'start_time', 'end_time', 'is_active')
+    list_filter   = ('is_active',)
+    search_fields = ('title', 'menu__title')
+    fields        = ('title', 'menu', 'image', 'original_price', 'discounted_price', 'start_time', 'end_time', 'is_active')
 
 
 @admin.register(CartItem)

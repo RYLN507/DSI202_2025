@@ -120,25 +120,31 @@
 
   {# Dinner Deals Section #}
   <section class="container mx-auto px-4 py-8">
-    <h2 class="text-2xl font-bold mb-4">ดีลอาหารมื้อเย็น</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">ดีลอาหารมื้อเย็น</h2>
+      <a href="{% url 'deal_all' %}" class="text-sm text-gray-600 hover:underline">ดูทั้งหมด</a>
+    </div>
+    <div class="flex space-x-4 overflow-x-auto pb-2">
       {% for deal in deals %}
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-          <img src="{{ deal.image.url }}" alt="{{ deal.title }}" class="w-full h-36 object-cover">
-          <div class="p-4">
-            <h3 class="font-semibold text-lg">{{ deal.title }}</h3>
-            <p class="text-gray-500 text-sm">{{ deal.start_time }} – {{ deal.end_time }}</p>
-            <div class="mt-2 space-x-2">
-              <span class="text-gray-400 line-through">{{ deal.original_price|currency:"฿" }}</span>
-              <span class="text-green-600 font-bold">{{ deal.discounted_price|currency:"฿" }}</span>
+        <div class="bg-white rounded-lg shadow-lg w-60 flex-shrink-0 overflow-hidden">
+          <a href="{% url 'deal_menu_detail' deal.id %}">
+            <img src="{{ deal.image.url }}" alt="{{ deal.title }}" class="w-full h-32 object-cover">
+            <div class="p-3">
+              <h3 class="font-semibold">{{ deal.title }}</h3>
+              <p class="text-gray-500 text-sm">{{ deal.start_time|time:"H:i" }} – {{ deal.end_time|time:"H:i" }}</p>
+              <div class="mt-2 space-x-2">
+                <span class="text-gray-400 line-through">{{ deal.original_price|currency:"฿" }}</span>
+                <span class="text-green-600 font-bold">{{ deal.discounted_price|currency:"฿" }}</span>
+              </div>
             </div>
-          </div>
+          </a>
         </div>
       {% empty %}
-        <p class="col-span-full text-center text-gray-500">ไม่มีดีลในขณะนี้</p>
+        <p class="text-center text-gray-500">ไม่มีดีลในขณะนี้</p>
       {% endfor %}
     </div>
   </section>
+  
 
   {# Flash Menus Section #}
   <section class="container mx-auto px-4 py-8">

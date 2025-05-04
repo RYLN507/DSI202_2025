@@ -26,17 +26,23 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 class Address(models.Model):
     user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses')
-    label = models.CharField("ชื่อที่อยู่", max_length=100, default='', blank=True)
+    label       = models.CharField("ชื่อที่อยู่", max_length=100, default='', blank=True)
     full_address = models.TextField("ที่อยู่", default='')
     subdistrict = models.CharField("ตำบล", max_length=100, blank=True)
     district    = models.CharField("อำเภอ", max_length=100, blank=True)
     province    = models.CharField("จังหวัด", max_length=100, blank=True)
     zipcode     = models.CharField("รหัสไปรษณีย์", max_length=10, blank=True)
     is_default  = models.BooleanField("ตั้งเป็นค่ามาตรฐาน", default=False)
-    order = models.PositiveIntegerField(default=0)
+    order       = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username} — {self.label or self.full_address[:30]}"
+
+    @property
+    def display_address(self):
+        """รวมที่อยู่ไว้ในบรรทัดเดียว"""
+        return f"{self.full_address}, {self.subdistrict}, {self.district}, {self.province} {self.zipcode}".strip(', ')
+
 
 class PaymentMethod(models.Model):
     user    = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_methods')
@@ -148,6 +154,7 @@ class Deal(models.Model):
     start_time       = models.TimeField("เริ่ม (HH:MM)", default=timezone.now)  # <-- ใช้ TimeField
     end_time         = models.TimeField("จบ (HH:MM)",   default=timezone.now)
     is_active        = models.BooleanField("เปิดใช้งาน", default=True)
+    menus = models.ManyToManyField("Menu", verbose_name="เมนูหลัก")  # ✅ ลิงก์ไปยัง Menu
 
     menus = models.ManyToManyField(Menu, blank=True)
 
@@ -173,9 +180,12 @@ class FavoriteDeal(models.Model):
     def __str__(self):
         return f"{self.user.username} ชื่นชอบ {self.deal.title}"
 
+from myapp.models import Menu  # 👈 เพิ่มถ้ายังไม่ได้ import Menu
+
 class FlashMenu(models.Model):
     """ เมนูนาทีทอง """
     title            = models.CharField("ชื่อเมนู", max_length=100)
+    menu             = models.ForeignKey(Menu, on_delete=models.CASCADE, verbose_name="เมนูหลัก", null=True)  # ← แก้ตรงนี้
     image            = models.ImageField("รูปเมนู", upload_to='flash_menus/')
     original_price   = models.DecimalField("ราคาต้นฉบับ", max_digits=8, decimal_places=2)
     discounted_price = models.DecimalField("ราคาหลังลด",   max_digits=8, decimal_places=2)
@@ -188,7 +198,8 @@ class FlashMenu(models.Model):
         verbose_name_plural = "เมนูนาทีทอง"
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.menu.title if self.menu else ''})"
+
 
 class CartItem(models.Model):
     """ ตะกร้าสินค้า """
@@ -206,14 +217,17 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     """ คำสั่งซื้อ """
-    user        = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    address     = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, related_name='orders')
-    total_price = models.DecimalField("ราคารวม", max_digits=10, decimal_places=2)
-    placed_at   = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
-    is_paid     = models.BooleanField("ชำระเงินแล้ว", default=False)
+    user         = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    address      = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, related_name='orders')
+    total_price  = models.DecimalField("ราคารวม", max_digits=10, decimal_places=2)
+    placed_at    = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
+    is_paid      = models.BooleanField("ชำระเงินแล้ว", default=False)
+
+    wants_spoon  = models.BooleanField("ต้องการช้อนส้อม", default=False)
+    wants_sauce  = models.BooleanField("ต้องการซอสหรือเครื่องปรุง", default=False)
 
     class Meta:
-        verbose_name        = "ออร์เดอร์"
+        verbose_name = "ออร์เดอร์"
         verbose_name_plural = "ออร์เดอร์"
 
     def __str__(self):

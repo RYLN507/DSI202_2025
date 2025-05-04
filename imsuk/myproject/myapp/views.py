@@ -141,6 +141,31 @@ def flash_all(request):
         'flash_menus': flash_menus,
     })
 
+from django.shortcuts import get_object_or_404, render
+from .models import FlashMenu
+
+def flash_menu_detail(request, pk):
+    flash_menu = get_object_or_404(FlashMenu, pk=pk)
+    return render(request, 'flash_detail.html', {'flash_menu': flash_menu})
+
+from django.shortcuts import render, get_object_or_404
+from .models import Deal  # หรือชื่อ model ที่ใช้จริง
+
+def deal_all(request):
+    """แสดงเมนูดีลอาหารมื้อเย็นทั้งหมด"""
+    deals = Deal.objects.filter(is_active=True)
+    return render(request, 'deal_all.html', {
+        'deals': deals
+    })
+
+def deal_menu_detail(request, deal_id):
+    """แสดงรายละเอียดเมนูดีลอาหารมื้อเย็น"""
+    deal = get_object_or_404(Deal, id=deal_id, is_active=True)
+    return render(request, 'deal_menu_detail.html', {
+        'deal': deal
+    })
+
+
 
 def login_view(request):
     """เข้าสู่ระบบ"""
@@ -341,17 +366,17 @@ def add_to_cart(request, menu_id):
         item.save()
     return redirect('cart')
 
-
 @login_required
 def cart_view(request):
-    """ดูตะกร้า"""
     items = CartItem.objects.filter(user=request.user)
     total = sum(i.menu.price * i.quantity for i in items)
-    shipping = 29
+    delivery_fee = 29
+    grand_total = total + delivery_fee
     return render(request, 'cart.html', {
-        'cart_items'    : items,
-        'total_price'   : total,
-        'shipping_cost' : shipping
+        'cart_items': items,
+        'total_price': total,
+        'delivery_fee': delivery_fee,
+        'grand_total': grand_total
     })
 
 
@@ -374,14 +399,20 @@ def update_cart(request, item_id):
 
 @login_required
 def checkout(request):
-    """เช็คเอาท์"""
-    items    = CartItem.objects.filter(user=request.user)
-    total    = sum(i.menu.price * i.quantity for i in items)
-    shipping = 29
+    cart_items = CartItem.objects.filter(user=request.user)
+    total_price = sum(item.menu.price * item.quantity for item in cart_items)
+    delivery_fee = 29
+    grand_total = total_price + delivery_fee
+
+    # ✅ ดึงที่อยู่เริ่มต้นของผู้ใช้
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+
     return render(request, 'checkout.html', {
-        'cart_items'    : items,
-        'total_price'   : total,
-        'shipping_cost' : shipping
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'delivery_fee': delivery_fee,
+        'grand_total': grand_total,
+        'default_address': default_address  # ✅ ต้องมีตรงนี้
     })
 
 
@@ -582,17 +613,29 @@ def checkout_again(request, order_id):
 def confirm_checkout_again(request, order_id):
     old_order = get_object_or_404(Order, id=order_id, user=request.user)
 
+    # รับค่าจากฟอร์ม
+    address_id = request.POST.get('address_id')
+    wants_spoon = 'wants_spoon' in request.POST
+    wants_sauce = 'wants_sauce' in request.POST
+
+    # ตรวจสอบ address ที่รับมา
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+
     # คำนวณราคารวมจากรายการเดิม
     total_price = sum(item.quantity * item.price_at_time for item in old_order.items.all())
 
-    # สร้างคำสั่งซื้อใหม่พร้อมราคารวม
+    # สร้างคำสั่งซื้อใหม่
     new_order = Order.objects.create(
         user=request.user,
+        address=address,
+        total_price=total_price,
         placed_at=timezone.now(),
         is_paid=True,
-        total_price=total_price  # ✅ เพิ่มตรงนี้
+        wants_spoon=wants_spoon,
+        wants_sauce=wants_sauce
     )
 
+    # คัดลอกรายการสินค้าเดิม
     for item in old_order.items.all():
         OrderItem.objects.create(
             order=new_order,
