@@ -1,0 +1,55 @@
+<!-- register.html -->
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Register" %} | IMSUK{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-8 rounded-2xl shadow-md">
+    <h2 class="text-2xl font-bold mb-4 text-center text-[#3F8240]">{% trans "Welcome to IMSUK" %}</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium">{% trans "First Name" %}</label>
+                <input type="text" name="first_name" required class="w-full p-2 border rounded"/>
+            </div>
+            <div>
+                <label class="block text-sm font-medium">{% trans "Last Name" %}</label>
+                <input type="text" name="last_name" required class="w-full p-2 border rounded"/>
+            </div>
+        </div>
+        <label class="block mt-4 text-sm font-medium">{% trans "Phone Number" %}</label>
+        <input type="text" name="phone" required class="w-full p-2 border rounded"/>
+        
+        <label class="block mt-4 text-sm font-medium">Email</label>
+        <input type="email" name="email" required class="w-full p-2 border rounded"/>
+        
+        <label class="block mt-4 text-sm font-medium">{% trans "Password" %}</label>
+        <input type="password" name="password" required class="w-full p-2 border rounded"/>
+        
+        <label class="block mt-4 text-sm font-medium">{% trans "Confirm Password" %}</label>
+        <input type="password" name="confirm_password" required class="w-full p-2 border rounded"/>
+        
+        <label class="block mt-4 text-sm font-medium">{% trans "Address" %}</label>
+        <textarea name="address" rows="2" class="w-full p-2 border rounded"></textarea>
+        
+        <label class="block mt-4 text-sm font-medium">{% trans "Food Allergies (e.g., nuts, milk, gluten)" %}</label>
+        <input type="text" name="allergy" class="w-full p-2 border rounded"/>
+        
+        <div class="mt-4 flex items-center">
+            <input type="checkbox" required class="mr-2">
+            <span class="text-sm">
+              {% trans "I accept the" %} <a href="#" class="text-[#3F8240] underline">{% trans "Privacy Policy" %}</a>
+            </span>
+        </div>
+        
+        <button type="submit" class="mt-6 w-full bg-[#BADE80] text-[#3F8240] font-bold py-2 rounded hover:bg-[#A3CF62]">
+            {% trans "Register" %}
+        </button>
+    </form>
+
+    <p class="mt-4 text-center text-sm">
+      {% trans "Already have an account?" %}
+      <a href="/login/" class="text-[#3F8240] underline">{% trans "Login" %}</a>
+    </p>
+</div>
+{% endblock %}

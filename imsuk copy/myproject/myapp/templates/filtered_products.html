@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}{% trans "Filtered Results" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+
+  <p class="text-center text-sm text-gray-500 mb-4">
+    {% blocktrans with count=products|length %}Found {{ count }} items{% endblocktrans %}
+  </p>
+  <h1 class="text-3xl font-bold text-green-700 mb-6 text-center">
+    {% trans "Results from Applied Filters" %}
+  </h1>
+
+  {% if products %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      {% for menu in products %}
+        <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col">
+          {% if menu.image %}
+            <img src="{{ menu.image.url }}" alt="{{ menu.title }}" class="w-full h-40 object-cover">
+          {% else %}
+            <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
+              {% trans "No Image" %}
+            </div>
+          {% endif %}
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-green-700 mb-1">{{ menu.title }}</h2>
+              <p class="text-sm text-gray-600 mb-2">
+                {{ menu.description|default:_("No description available") }}
+              </p>
+              <p class="text-sm text-gray-500">{{ menu.start_time }} – {{ menu.end_time }}</p>
+            </div>
+            <div class="mt-3">
+              {% if menu.price > menu.discount_price %}
+                <span class="text-gray-400 line-through text-sm">{{ menu.price|currency:"฿" }}</span>
+              {% endif %}
+              <span class="text-green-600 font-bold text-lg ml-2">{{ menu.discount_price|currency:"฿" }}</span>
+            </div>
+            <a href="{% url 'menu_detail' menu.id %}" class="mt-4 inline-block text-center bg-[#3F8240] hover:bg-[#2f6831] text-white py-2 px-4 rounded-full text-sm transition">
+              {% trans "View Details" %}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-gray-500 mt-16 text-lg">
+      {% trans "No menus matched your filters 😢" %}
+    </p>
+  {% endif %}
+
+  <div class="text-center mt-12">
+    <a href="{% url 'filter' %}" class="inline-block bg-[#bade80] hover:bg-[#a8d266] text-white px-6 py-2 rounded-full font-semibold transition">
+      {% trans "Adjust Filters" %}
+    </a>
+    <a href="{% url 'home' %}" class="ml-4 text-green-700 hover:underline text-sm">
+      {% trans "Back to Home" %}
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+  {{ restaurant.name }} | {{ restaurant.category.display_name }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+
+  <div class="mb-6">
+    <a href="{% url 'shop_list' restaurant.category.name %}" class="text-green-600 hover:underline text-sm">
+      ← {% trans "Back to Category:" %} {{ restaurant.category.display_name }}
+    </a>
+  </div>
+
+  <h1 class="text-4xl font-bold text-[#3F8240] mb-4">{{ restaurant.name }}</h1>
+
+  {% if restaurant.image %}
+    <img src="{{ restaurant.image.url }}"
+         alt="{{ restaurant.name }}"
+         class="w-full h-64 object-cover rounded-xl shadow mb-6">
+  {% else %}
+    <div class="w-full h-64 bg-gray-100 flex items-center justify-center rounded-xl mb-6 shadow-inner">
+      <span class="text-gray-400">{% trans "No Image Available" %}</span>
+    </div>
+  {% endif %}
+
+  {% if restaurant.description %}
+    <p class="text-gray-600 text-lg mb-10 leading-relaxed">
+      {{ restaurant.description }}
+    </p>
+  {% endif %}
+
+  <h2 class="text-2xl font-semibold text-[#3F8240] mb-4">{% trans "Menu" %}</h2>
+
+  {% if restaurant.menus.all %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for menu in restaurant.menus.all %}
+        <div class="bg-white border rounded-xl shadow hover:shadow-xl transition duration-300 flex flex-col">
+          
+          {% if menu.image %}
+            <img src="{{ menu.image.url }}" alt="{{ menu.title }}" class="w-full h-48 object-cover rounded-t-xl">
+          {% else %}
+            <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-t-xl">
+              <span class="text-gray-400">{% trans "No Image" %}</span>
+            </div>
+          {% endif %}
+
+          <div class="p-5 flex flex-col flex-1">
+            <h3 class="text-xl font-semibold text-[#3F8240]">{{ menu.title }}</h3>
+
+            {% if menu.description %}
+              <p class="text-gray-600 text-sm mt-1 mb-3">{{ menu.description|truncatechars:60 }}</p>
+            {% endif %}
+
+            <div class="flex items-center space-x-2 mb-4">
+              <span class="text-gray-400 line-through text-sm">฿{{ menu.price }}</span>
+              <span class="text-green-700 font-bold text-lg">฿{{ menu.discount_price }}</span>
+            </div>
+
+            <div class="mt-auto pt-2">
+              <a href="{% url 'menu_detail' menu.id %}"
+                 class="block text-center bg-[#3F8240] hover:bg-[#326a34] text-white font-semibold py-2 rounded-lg transition">
+                {% trans "View Details" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-400 mt-4">{% trans "This restaurant has no menu items." %}</p>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+

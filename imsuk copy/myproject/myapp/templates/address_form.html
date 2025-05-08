@@ -1,0 +1,93 @@
+{# myapp/templates/address_form.html #}
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+  {{ title }} | IMSUK
+{% endblock %}
+
+{% block content %}
+<section class="container mx-auto px-4 py-8 max-w-lg">
+  <a href="{% url 'address_list' %}"
+     class="inline-flex items-center text-gray-600 hover:text-green-700 mb-4 text-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+    ← {% trans "Back to My Addresses" %}
+  </a>
+
+  <div class="bg-white rounded-xl shadow-md p-6">
+    <h1 class="text-2xl font-semibold text-green-700 mb-6">{{ title }}</h1>
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+
+      <div>
+        {{ form.label.label_tag }}
+        {{ form.label }}
+        {% if form.label.errors %}
+          <p class="text-red-500 text-sm">{{ form.label.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        {{ form.full_address.label_tag }}
+        {{ form.full_address }}
+        {% if form.full_address.errors %}
+          <p class="text-red-500 text-sm">{{ form.full_address.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          {{ form.subdistrict.label_tag }}
+          {{ form.subdistrict }}
+          {% if form.subdistrict.errors %}
+            <p class="text-red-500 text-sm">{{ form.subdistrict.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div>
+          {{ form.district.label_tag }}
+          {{ form.district }}
+          {% if form.district.errors %}
+            <p class="text-red-500 text-sm">{{ form.district.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          {{ form.province.label_tag }}
+          {{ form.province }}
+          {% if form.province.errors %}
+            <p class="text-red-500 text-sm">{{ form.province.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div>
+          {{ form.zipcode.label_tag }}
+          {{ form.zipcode }}
+          {% if form.zipcode.errors %}
+            <p class="text-red-500 text-sm">{{ form.zipcode.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        {{ form.is_default }}
+        {{ form.is_default.label_tag }}
+      </div>
+
+      <div class="pt-6 flex space-x-4">
+        <button type="submit"
+                class="bg-green-700 hover:bg-green-800 text-white py-2 px-6 rounded-full font-medium transition">
+          {% trans "Save" %}
+        </button>
+        <a href="{% url 'address_list' %}"
+           class="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-6 rounded-full transition inline-block">
+          {% trans "Cancel" %}
+        </a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Order Successful" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center bg-white p-10 rounded-xl shadow-md">
+    <h2 class="text-2xl font-bold text-[#3F8240] mb-4">
+        {% trans "Thank you for your order!" %}
+    </h2>
+    <p class="mb-6">
+        {% trans "Your order has been successfully recorded." %}
+    </p>
+    <a href="/" class="inline-block bg-[#BADE80] text-[#3F8240] px-6 py-2 rounded font-semibold hover:bg-[#A3CF62]">
+        {% trans "Return to Homepage" %}
+    </a>
+</div>
+{% endblock %}

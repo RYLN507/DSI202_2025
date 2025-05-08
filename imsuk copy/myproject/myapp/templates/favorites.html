@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Favorite Restaurants & Menus" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+
+  <h2 class="text-2xl font-bold mb-4">{% trans "My Favorite Restaurants" %}</h2>
+  {% if favorite_restaurants %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      {% for r in favorite_restaurants %}
+        <div class="bg-white rounded shadow p-4">
+          {% if r.image %}
+            <img src="{{ r.image.url }}" class="w-full h-40 object-cover rounded mb-3">
+          {% endif %}
+          <h3 class="font-semibold text-lg">{{ r.name }}</h3>
+          <p class="text-sm text-gray-500">{{ r.category.display_name }}</p>
+          <a href="{% url 'restaurant_detail' r.id %}"
+             class="inline-block mt-2 text-green-600 hover:underline">{% trans "View Restaurant" %}</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-500 mb-12">{% trans "You don't have any favorite restaurants yet." %}</p>
+  {% endif %}
+
+  <h2 class="text-2xl font-bold mb-4">{% trans "My Favorite Menus" %}</h2>
+  {% if favorite_menus %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for m in favorite_menus %}
+        <div class="bg-white rounded shadow p-4">
+          {% if m.image %}
+            <img src="{{ m.image.url }}" class="w-full h-32 object-cover rounded mb-3">
+          {% endif %}
+          <h3 class="font-semibold">{{ m.title }}</h3>
+          <p class="text-sm text-gray-500">{{ m.restaurant.name }}</p>
+          <p class="text-green-600 font-bold">{{ m.price }}</p>
+          <a href="{% url 'menu_detail' m.id %}"
+             class="inline-block mt-2 text-green-600 hover:underline">{% trans "View Menu" %}</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-500">{% trans "You don't have any favorite menus yet." %}</p>
+  {% endif %}
+
+</div>
+{% endblock %}
