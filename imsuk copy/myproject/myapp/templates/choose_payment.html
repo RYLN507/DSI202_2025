@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Choose Payment Method" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-green-700 px-6 py-8">
+      <h2 class="text-center text-3xl font-extrabold text-white">
+        {% trans "How would you like to pay?" %}
+      </h2>
+    </div>
+    <form method="post" novalidate class="px-6 py-8 space-y-6">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+      <fieldset class="space-y-4">
+        <!-- VISA Option -->
+        <div>
+          <input type="radio"
+                 id="method-visa"
+                 name="payment_method"
+                 value="visa"
+                 class="sr-only peer" />
+
+          <label for="method-visa"
+                 class="flex items-center p-4 border rounded-xl cursor-pointer 
+                        transition 
+                        peer-checked:border-green-600 peer-checked:bg-green-50 
+                        hover:shadow-lg">
+            <img src="{% static 'images/visa_logo.png' %}"
+                 alt="VISA"
+                 class="h-8 w-auto mr-4" />
+            <div>
+              <p class="text-lg font-medium text-gray-800">{% trans "Pay with VISA" %}</p>
+              <p class="text-sm text-gray-500">{% trans "Fast & secure card payment" %}</p>
+            </div>
+          </label>
+        </div>
+
+        <!-- PromptPay Option -->
+        <div>
+          <input type="radio"
+                 id="method-promptpay"
+                 name="payment_method"
+                 value="promptpay"
+                 class="sr-only peer" />
+
+          <label for="method-promptpay"
+                 class="flex items-center p-4 border rounded-xl cursor-pointer 
+                        transition 
+                        peer-checked:border-green-600 peer-checked:bg-green-50 
+                        hover:shadow-lg">
+            <img src="{% static 'images/promptpay_icon.jpg' %}"
+                 alt="{% trans 'PromptPay' %}"
+                 class="h-8 w-auto mr-4" />
+            <div>
+              <p class="text-lg font-medium text-gray-800">{% trans "Pay with PromptPay (QR)" %}</p>
+              <p class="text-sm text-gray-500">{% trans "Scan code with your banking app" %}</p>
+            </div>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Continue Button -->
+      <button type="submit"
+              class="w-full flex justify-center py-3 px-6 bg-green-600 hover:bg-green-700 
+                     text-white font-bold rounded-full shadow-md transition">
+        {% trans "Continue to Review" %}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

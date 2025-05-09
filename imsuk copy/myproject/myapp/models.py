@@ -61,8 +61,7 @@ class PaymentMethod(models.Model):
 class Category(models.Model):
     name         = models.SlugField("รหัสหมวด", max_length=50, unique=True)
     display_name = models.CharField("ชื่อหมวด", max_length=100)
-    image        = models.ImageField("รูปหมวด", upload_to='categories/', blank=True)
-
+    image        = models.ImageField("รูปหมวด", upload_to='categories/', blank=True, null=True)
     class Meta:
         verbose_name        = "หมวดหมู่อาหาร"
         verbose_name_plural = "หมวดหมู่อาหาร"
@@ -246,7 +245,11 @@ from django.utils import timezone
 
 class Order(models.Model):
     """ คำสั่งซื้อ """
-    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    user          = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='orders'
+    )
     address       = models.ForeignKey(
         'Address',
         on_delete=models.SET_NULL,
@@ -259,6 +262,21 @@ class Order(models.Model):
     placed_at     = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
     is_paid       = models.BooleanField("ชำระเงินแล้ว", default=False)
 
+    # 1) ฟิลด์เก็บภาพสลิป (อัปโหลดไปใน media/payment_slips/)
+    slip          = models.ImageField(
+        "สลิปชำระเงิน",
+        upload_to='payment_slips/',
+        blank=True,
+        null=True
+    )
+    # 2) ฟิลด์เก็บสตริงข้อมูล QR (PromptPay payload)
+    qr_data       = models.TextField(
+        "ข้อมูล QR PromptPay",
+        blank=True,
+        null=True,
+        help_text="สตริงสำหรับสร้าง QR code (PromptPay payload)"
+    )
+
     wants_spoon   = models.BooleanField("ต้องการช้อนส้อม", default=False)
     wants_sauce   = models.BooleanField("ต้องการซอสหรือเครื่องปรุง", default=False)
 
@@ -268,6 +286,7 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order#{self.id} ของ {self.user.username}"
+
 
 
 

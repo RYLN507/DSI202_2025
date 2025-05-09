@@ -85,59 +85,70 @@
       </div>
     </div>
 
-    <!-- 💳 Payment Method -->
-    <div class="space-y-2">
-      <h2 class="flex items-center text-lg font-semibold text-[#3F8240]">
-        <span class="mr-2">💳</span>{% trans "Payment Method" %}
-      </h2>
-      <div class="flex items-center justify-between bg-white border border-gray-200 p-4 rounded-lg shadow-sm hover:shadow-md transition">
+
+  <!-- 💳 Payment Method -->
+  <div class="space-y-2">
+    <h2 class="flex items-center text-lg font-semibold text-[#3F8240]">
+      <span class="mr-2">💳</span>{% trans "Payment Method" %}
+    </h2>
+
+    {% if method == 'visa' %}
+      <a href="{% url 'choose_payment' %}?next={% url 'checkout' %}"
+         class="flex items-center justify-between border rounded-lg p-4 hover:shadow-md transition">
         <div class="flex items-center space-x-3">
-          <img src="{% static 'images/visa-logo.png' %}"
-               alt="VISA"
-               class="h-6">
+          <img src="{% static 'images/visa-logo.png' %}" class="h-6" alt="VISA">
           <span class="font-medium text-gray-800">{% trans "Pay with VISA" %}</span>
         </div>
-        <svg xmlns="http://www.w3.org/2000/svg"
-             class="h-5 w-5 text-gray-400"
-             fill="none"
-             viewBox="0 0 24 24"
-             stroke="currentColor">
-          <path stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7" />
-        </svg>
-      </div>
-    </div>
+        <svg class="h-5 w-5 text-gray-400" …>…</svg>
+      </a>
+    {% else %}
+      <a href="{% url 'choose_payment' %}?next={% url 'checkout' %}"
+         class="flex items-center justify-between border rounded-lg p-4 hover:shadow-md transition">
+        <div class="flex items-center space-x-3">
+          <img src="{% static 'images/promptpay-icon.png' %}" class="h-6" alt="PromptPay">
+          <span class="font-medium text-gray-800">{% trans "PromptPay (QR)" %}</span>
+        </div>
+        <svg class="h-5 w-5 text-gray-400" …>…</svg>
+      </a>
 
-    <!-- 💰 Summary -->
-    <div class="space-y-2 bg-white p-4 rounded-lg shadow-sm">
-      <div class="flex justify-between text-gray-600">
-        <span>{% trans "Subtotal" %}</span>
-        <span>{{ total_price|currency:"฿" }}</span>
+      <!-- your branded PromptPay QR -->
+      <div class="mt-4 text-center">
+        <img src="{% static qr_image_url %}"
+             alt="PromptPay QR"
+             class="inline-block w-64 h-64 object-contain rounded-lg shadow-md" />
+        <p class="mt-2 text-gray-700">
+          สแกน QR เพื่อโอนเข้าบัญชี<br>
+          ชื่อ: น.ส. ณฐมน วะทวิก้านตง<br>
+          บัญชี: xxx-x-x5768-x<br>
+          เลขอ้างอิง: 004999203757876
+        </p>
       </div>
-      <div class="flex justify-between text-gray-600">
-        <span>{% trans "Delivery Fee" %}</span>
-        <span>{{ delivery_fee|currency:"฿" }}</span>
-      </div>
-      <hr>
-      <div class="flex justify-between font-bold text-lg text-[#3F8240]">
-        <span>{% trans "Grand Total" %}</span>
-        <span>{{ grand_total|currency:"฿" }}</span>
-      </div>
-    </div>
 
-    <!-- ✅ Place Order Button -->
-    <div class="text-center">
-      <button type="submit"
-              class="inline-flex items-center space-x-2 bg-[#BADE80] text-[#3F8240] font-bold py-3 px-8 rounded-full hover:bg-[#A3CF62] shadow-lg transition">
-        <span>{% trans "Place Order" %}</span>
-      </button>
-    </div>
+      <!-- **NEW**: repeat the summary underneath the QR -->
+      <div class="mt-6 max-w-xs mx-auto bg-green-50 border border-green-200 rounded-xl p-4 text-green-800 space-y-2">
+        <div class="flex justify-between">
+          <span>{% trans "Subtotal" %}</span>
+          <span>฿{{ total_price|floatformat:0 }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>{% trans "Delivery Fee" %}</span>
+          <span>฿{{ delivery_fee|floatformat:0 }}</span>
+        </div>
+        <hr class="border-green-300 my-2">
+        <div class="flex justify-between font-bold text-lg">
+          <span>{% trans "Grand Total" %}</span>
+          <span>฿{{ grand_total|floatformat:0 }}</span>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 
-  </form>
+  <!-- 💰 Final Place Order -->
+  <div class="text-center">
+    <button form="checkout-form"
+            class="mt-8 bg-[#BADE80] text-[#3F8240] font-bold py-3 px-8 rounded-full hover:bg-[#A3CF62] shadow-lg transition">
+      {% trans "Place Order" %}
+    </button>
+  </div>
 </div>
 {% endblock %}
-
-
-

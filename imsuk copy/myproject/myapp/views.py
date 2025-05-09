@@ -473,6 +473,31 @@ def add_to_cart(request, menu_id):
 
     return redirect('cart')
 
+# myapp/views.py
+
+import base64
+from decimal import Decimal
+from io import BytesIO
+
+import qrcode
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+from .models import CartItem
+
+# Replace with your actual PromptPay ID
+PROMPTPAY_ID = "0982784097"
+
+def _generate_promptpay_payload(pp_id: str, amount: Decimal) -> str:
+    """
+    Simplified PromptPay payload builder.
+    For real production, use a library or full EMV spec.
+    """
+    # Format amount as string without trailing zeros, e.g. "123.45"
+    amt_str = f"{amount:.2f}"
+    # This is just a minimal illustration—real payload must follow EMVCo spec exactly!
+    return f"00020101021127{pp_id}5303THB54{amt_str}5802TH6304XXXX"
+
 @login_required
 def cart_view(request):
     items = CartItem.objects.filter(user=request.user)
@@ -480,11 +505,21 @@ def cart_view(request):
     delivery_fee = Decimal('29.00') if items else Decimal('0.00')
     grand_total = subtotal + delivery_fee
 
+    # Generate QR code image if there are items
+    qr_b64 = None
+    if items:
+        payload = _generate_promptpay_payload(PROMPTPAY_ID, grand_total)
+        img = qrcode.make(payload)
+        buf = BytesIO()
+        img.save(buf, format='PNG')
+        qr_b64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+
     return render(request, 'cart.html', {
-      'cart_items': items,
-      'subtotal': subtotal,
-      'delivery_fee': delivery_fee,
-      'grand_total': grand_total,
+        'cart_items': items,
+        'subtotal': subtotal,
+        'delivery_fee': delivery_fee,
+        'grand_total': grand_total,
+        'qr_b64': qr_b64,
     })
 
 @login_required
@@ -515,38 +550,24 @@ def update_cart(request, item_id):
     return render(request, 'partials/cart_item.html', {'item': item})
 
 
-
-
-
 from decimal import Decimal
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-
-from .models import CartItem, Address, Order, OrderItem
+from .models import CartItem, Address
 
 @login_required
 def checkout(request):
-    # ดึงสินค้าจากตะกร้า
-    cart_items = CartItem.objects.filter(user=request.user)
-
-    # คำนวณราคารวมเป็น Decimal
-    total_price = sum(
-        item.menu.discount_price * item.quantity
-        for item in cart_items
-    )
-
-    # ค่าจัดส่ง (ถ้ามีสินค้าเท่านั้น)
+    cart_items   = CartItem.objects.filter(user=request.user)
+    total_price  = sum(i.menu.discount_price * i.quantity for i in cart_items)
     delivery_fee = Decimal('29.00') if cart_items else Decimal('0.00')
+    grand_total  = total_price + delivery_fee
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
 
-    # รวมทั้งสิ้น
-    grand_total = total_price + delivery_fee
-
-    # ดึงที่อยู่เริ่มต้นของผู้ใช้
-    default_address = Address.objects.filter(
-        user=request.user,
-        is_default=True
-    ).first()
+    method = request.session.get('payment_method', 'visa')
+    qr_image_url = None
+    if method == 'promptpay':
+        # put your static file under static/images/…
+        qr_image_url = 'images/promptpay_sample.png'
 
     return render(request, 'checkout.html', {
         'cart_items':    cart_items,
@@ -554,7 +575,11 @@ def checkout(request):
         'delivery_fee':  delivery_fee,
         'grand_total':   grand_total,
         'default_address': default_address,
+        'method':        method,
+        'qr_image_url':  qr_image_url,
     })
+
+
 
 
 
@@ -596,10 +621,73 @@ def confirm_order(request):
     return redirect('order_success')
 
 
+# myapp/views.py
+
+from decimal import Decimal
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from .models import CartItem, Address, Order, OrderItem
+
 @login_required
-def order_success(request):
-    """หน้าสั่งซื้อสำเร็จ"""
-    return render(request, 'order_success.html')
+def place_order(request):
+    if request.method != 'POST':
+        return redirect('checkout')
+
+    # 1) Gather cart and totals
+    items       = CartItem.objects.filter(user=request.user)
+    subtotal    = sum(i.menu.discount_price * i.quantity for i in items)
+    delivery    = Decimal('29.00') if items else Decimal('0.00')
+    grand_total = subtotal + delivery
+
+    # 2) Create the Order
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+    order = Order.objects.create(
+        user=request.user,
+        address=default_address,
+        total_price=subtotal,
+        delivery_fee=delivery,
+        grand_total=grand_total,
+        placed_at=timezone.now(),
+        is_paid=False  # slip not yet uploaded
+    )
+
+    # 3) Create OrderItems
+    for ci in items:
+        OrderItem.objects.create(
+            order=order,
+            menu=ci.menu,
+            quantity=ci.quantity,
+            unit_price=ci.menu.discount_price
+        )
+
+    # 4) Clear cart
+    items.delete()
+
+    # 5) Redirect to the slip-upload page
+    return redirect('upload_slip', order_id=order.id)
+
+@login_required
+def upload_slip(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    if request.method == 'POST':
+        slip = request.FILES.get('slip')
+        if slip:
+            order.slip = slip
+            order.is_paid = True
+            order.save()
+            return redirect('order_success', order_id=order.id)
+    return render(request, 'upload_slip.html', {'order': order})
+
+
+@login_required
+def order_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'order_success.html', {
+        'order': order
+    })
 
 
 # myapp/views.py
@@ -982,3 +1070,107 @@ def address_move_down(request, pk):
         addr.order, nxt.order = nxt.order, addr.order
         addr.save(); nxt.save()
     return redirect('address_list')
+
+
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def choose_payment_method(request):
+    next_url = request.GET.get('next', reverse('checkout'))
+    if request.method == 'POST':
+        method = request.POST.get('payment_method')
+        if method in ('visa', 'promptpay'):
+            request.session['payment_method'] = method
+        return redirect(next_url)
+    return render(request, 'choose_payment.html', {'next': next_url})
+
+
+from django.shortcuts           import render, redirect
+from django.urls                import reverse
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def choose_payment_method(request):
+    """
+    Show the “choose Visa / PromptPay” page, then save the choice and
+    redirect straight into our final confirm_checkout view.
+    """
+    # Where to go once they've chosen?
+    next_url = request.GET.get('next') or reverse('confirm_checkout')
+
+    if request.method == 'POST':
+        method = request.POST.get('payment_method')
+        if method in ('visa', 'promptpay'):
+            request.session['payment_method'] = method
+        return redirect(next_url)
+
+    return render(request, 'choose_payment.html', {
+        'next': next_url
+    })
+
+
+# myapp/views.py (continuing)
+import qrcode, io, base64
+
+@login_required
+def confirm_checkout(request):
+    # read back the method
+    method = request.session.get('payment_method', 'visa')
+    items = CartItem.objects.filter(user=request.user)
+    subtotal    = sum(i.menu.discount_price * i.quantity for i in items)
+    delivery    = Decimal('29.00') if items else Decimal('0.00')
+    grand_total = subtotal + delivery
+
+    qr_b64 = None
+    if method == 'promptpay':
+        data = "0982784097"  # your real PromptPay payload here
+        img = qrcode.make(data)
+        buf = io.BytesIO(); img.save(buf, format='PNG')
+        qr_b64 = base64.b64encode(buf.getvalue()).decode()
+
+    return render(request, 'confirm_checkout.html', {
+      'cart_items':  items,
+      'total_price': subtotal,
+      'delivery_fee': delivery,
+      'grand_total': grand_total,
+      'method':       method,
+      'qr_b64':       qr_b64,
+    })
+
+@login_required
+def place_order(request):
+    if request.method != 'POST':
+        return redirect('checkout')
+
+    # 1. สร้าง Order ใหม่
+    items = CartItem.objects.filter(user=request.user)
+    subtotal = sum(i.menu.discount_price * i.quantity for i in items)
+    delivery = Decimal('29.00') if items else Decimal('0.00')
+    grand_total = subtotal + delivery
+
+    order = Order.objects.create(
+        user=request.user,
+        total_price=subtotal,
+        delivery_fee=delivery,
+        grand_total=grand_total,
+        placed_at=timezone.now(),
+        is_paid=(request.session.get('payment_method') == 'visa'),
+    )
+
+    # 2. สร้าง OrderItem แต่ละเมนู
+    for ci in items:
+        OrderItem.objects.create(
+            order=order,
+            menu=ci.menu,
+            quantity=ci.quantity,
+            unit_price=ci.menu.discount_price,
+        )
+    # 3. ล้างตะกร้า
+    items.delete()
+
+    # 4. redirect ไป thank-you page
+    return redirect('order_success', order_id=order.id)
+
+

@@ -52,14 +52,21 @@ urlpatterns = [
     path('cart/update/<int:item_id>/', views.update_cart, name='update_cart'),
     path('cart/', views.cart_view, name='cart'),
     path('checkout/', views.checkout, name='checkout'),
-    path('checkout/<int:order_id>/', views.checkout, name='checkout'),
-    path('checkout/confirm/', views.confirm_order, name='checkout_confirm'),
+
+    path('checkout/payment/',       views.choose_payment_method,      name='choose_payment'),
+    path('checkout/confirm/',       views.confirm_order,              name='checkout_confirm'),
+
+    # ฟอร์ม POST สร้าง Order จริง → ต้องไม่ชนกับ checkout/confirm/
+    path('checkout/place-order/',   views.place_order,                name='place_order'),
+
+    # ยืนยันคำสั่งซื้อซ้ำ (นำกลับมาชำระอีกครั้ง)
     path('checkout/confirm/<int:order_id>/', views.confirm_checkout_again, name='confirm_checkout_again'),
+    path('order/<int:order_id>/upload-slip/', views.upload_slip, name='upload_slip'),
     path('order-history/', views.order_history, name='order_history'),
     path('orders/<int:order_id>/order-again/', views.checkout_again, name='checkout_again'),
 
     # Order Success
-    path('order/success/', views.order_success, name='order_success'),
+    path('order/success/<int:order_id>/', views.order_success, name='order_success'),
 
     path('payment-methods/add/', views.payment_method_add, name='payment_method_add'),
     path('payment-methods/<int:pk>/edit/', views.payment_method_edit, name='payment_method_edit'),
@@ -75,4 +82,10 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    # เสิร์ฟ MEDIA
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # เสิร์ฟ STATIC ของแอปเราด้วย
+    urlpatterns += static(
+        settings.STATIC_URL, 
+        document_root=settings.BASE_DIR / 'myapp' / 'static'
+    )
