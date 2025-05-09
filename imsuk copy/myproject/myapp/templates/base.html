@@ -1,11 +1,55 @@
-{% load static %}
-{% load i18n %}
+{# templates/base.html #}
+{% load static i18n %}
+
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>{% block title %}IMSUK{% endblock %}</title>
+
+  {# ← only one head_extra block #}
+  {% block head_extra %}
+    <!-- HTMX -->
+    <script src="{% static 'js/htmx-1.9.6.min.js' %}"></script>
+    <!-- Tell HTMX about Django's CSRF token -->
+    <script>
+      (function() {
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(function(cookie) {
+              cookie = cookie.trim();
+              if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+              }
+            });
+          }
+          return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        document.body.addEventListener('htmx:configRequest', (event) => {
+          event.detail.headers['X-CSRFToken'] = csrftoken;
+        });
+      })();
+      <script>
+        htmx.onLoad(function(content) {
+          console.log('HTMX loaded content:', content);
+        });
+        document.body.addEventListener('htmx:beforeRequest', function(event) {
+          onsole.log('HTMX request to:', event.detail.path);
+        });
+        document.body.addEventListener('htmx:configRequest', (event) => {
+          console.log('CSRF Token added:', event.detail.headers['X-CSRFToken']);
+        });
+        document.body.addEventListener('htmx:afterRequest', function(event) {
+          console.log('HTMX response:', event.detail.xhr.responseText);
+        });
+      </script>
+  {% endblock %}
+
+
 
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">

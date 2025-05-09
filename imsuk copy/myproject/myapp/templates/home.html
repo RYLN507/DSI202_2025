@@ -145,26 +145,35 @@
   <section class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">{% trans "Flash Deal Menu" %}</h2>
-      <a href="{% url 'flash_all' %}" class="text-sm text-gray-600 hover:underline">{% trans "View All" %}</a>
+      <a href="{% url 'flash_all' %}" class="text-sm text-gray-600 hover:underline">
+        {% trans "View All" %}
+      </a>
     </div>
     <div class="flex space-x-4 overflow-x-auto pb-2">
       {% for item in flash_menus %}
-        <div class="bg-white rounded-lg shadow-lg w-60 flex-shrink-0 overflow-hidden">
-          <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-32 object-cover">
+        <a
+          href="{% url 'deal_menu_detail' item.id %}"
+          class="block bg-white rounded-lg shadow-lg w-60 flex-shrink-0 overflow-hidden hover:shadow-xl transition"
+        >
+          <img
+            src="{{ item.image.url }}"
+            alt="{{ item.title }}"
+            class="w-full h-32 object-cover"
+          >
           <div class="p-3">
-            <h3 class="font-semibold">{{ item.title }}</h3>
+            <h3 class="font-semibold text-green-700">{{ item.title }}</h3>
             <p class="text-gray-500 text-sm">{{ item.start_time }} – {{ item.end_time }}</p>
             <div class="mt-2 space-x-2">
               <span class="text-gray-400 line-through">{{ item.original_price|currency:"฿" }}</span>
               <span class="text-green-600 font-bold">{{ item.discounted_price|currency:"฿" }}</span>
             </div>
           </div>
-        </div>
+        </a>
       {% empty %}
         <p class="text-center text-gray-500">{% trans "No flash menus available" %}</p>
       {% endfor %}
     </div>
-  </section>
+  </section>  
 
   <section class="container mx-auto px-4 py-8">
     <h2 class="text-2xl font-bold mb-4">{% trans "Food Categories" %}</h2>

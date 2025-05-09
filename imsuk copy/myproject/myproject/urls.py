@@ -14,14 +14,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# imsuk/urls.py
-# myproject/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    # 1) หน้า admin
     path('admin/', admin.site.urls),
-    path('', include('myapp.urls')),  # Include URLs from the imsuk app
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # 2) Two-factor-auth (TOTP) — ใช้ prefix 'two-factor/'
+    #path('two-factor/', include('two_factor.urls')),
+
+    # 3) Django built-in auth URLs (login/logout/password change) — ใช้ /auth/
+    path('auth/', include('django.contrib.auth.urls')),
+
+    # 4) i18n สำหรับเปลี่ยนภาษา
+    path('i18n/', include('django.conf.urls.i18n')),
+
+    # 5) แอปหลักของคุณ
+    path('', include('myapp.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+

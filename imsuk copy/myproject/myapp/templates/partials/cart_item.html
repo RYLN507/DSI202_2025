@@ -1,28 +1,59 @@
-{# ต้องอยู่ในโฟลเดอร์ templates/partials/cart_item.html #}
-<div hx-id="cart-item-{{ item.id }}" class="flex items-center justify-between py-2 border-b">
-  <div class="flex items-center">
+{% load currency_filters i18n %}
+<div
+  id="cart-item-{{ item.id }}"
+  class="flex items-center justify-between bg-white rounded-xl shadow p-4"
+>
+  <div class="flex items-center space-x-4">
     {% if item.menu.image %}
-      <img src="{{ item.menu.image.url }}" alt="{{ item.menu.title }}" class="w-16 h-16 object-cover rounded mr-4">
+      <img
+        src="{{ item.menu.image.url }}"
+        alt="{{ item.menu.title }}"
+        class="w-20 h-20 object-cover rounded"
+      >
+    {% else %}
+      <div class="w-20 h-20 bg-gray-200 flex items-center justify-center rounded text-gray-500">
+        {% trans "No Image" %}
+      </div>
     {% endif %}
     <div>
-      <h4 class="font-semibold">{{ item.menu.title }}</h4>
-      <p class="text-sm text-gray-500">ราคา: {{ item.menu.price|currency:"฿" }}</p>
+      <p class="font-semibold text-green-700">{{ item.menu.title }}</p>
+      <p class="text-sm text-gray-500">{{ item.menu.restaurant.name }}</p>
+      <p class="text-sm text-gray-400">฿{{ item.menu.discount_price|floatformat:0 }}</p>
     </div>
   </div>
+
   <div class="flex items-center space-x-2">
-    <button 
-      hx-post="{% url 'update_cart' item.id %}" 
-      hx-include="[name=action]" 
+    {# Decrease quantity #}
+    <button
+      hx-post="{% url 'update_cart' item.id %}"
+      hx-headers='{"Content-Type":"application/json"}'
       hx-vals='{"action":"decrease"}'
-      class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">−</button>
-    <span>{{ item.quantity }}</span>
-    <button 
-      hx-post="{% url 'update_cart' item.id %}" 
-      hx-include="[name=action]" 
+      hx-target="#cart-item-{{ item.id }}"
+      hx-swap="outerHTML"
+      class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600"
+    >−</button>
+
+    <span class="font-semibold">{{ item.quantity }}</span>
+
+    {# Increase quantity #}
+    <button
+      hx-post="{% url 'update_cart' item.id %}"
+      hx-headers='{"Content-Type":"application/json"}'
       hx-vals='{"action":"increase"}'
-      class="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300">＋</button>
-  </div>
-  <div class="font-bold">
-    {{ item.menu.price|mul:item.quantity|currency:"฿" }}
+      hx-target="#cart-item-{{ item.id }}"
+      hx-swap="outerHTML"
+      class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-600"
+    >＋</button>
+
+    {# Remove item entirely #}
+    <button
+      hx-post="{% url 'update_cart' item.id %}"
+      hx-headers='{"Content-Type":"application/json"}'
+      hx-vals='{"action":"remove"}'
+      hx-target="#cart-item-{{ item.id }}"
+      hx-swap="delete"
+      class="bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-400"
+    >×</button>
   </div>
 </div>
+

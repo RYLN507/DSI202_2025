@@ -37,19 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
-    'django_extensions',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # ใช้แทน CommonMiddleware สำหรับ i18n
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',   # <= เติมบรรทัดนี้กลับ
+    #'django.contrib.messages.middleware.MessageMiddleware',
+    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'django_otp.middleware.OTPMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -126,11 +126,11 @@ STATICFILES_DIRS = [
     BASE_DIR / 'myapp' / 'static',
 ]
 
+# === สำหรับการจัดการ media (ไฟล์อัปโหลด เช่น รูปภาพ) ===
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# === สำหรับการจัดการ media (ไฟล์อัปโหลด เช่น รูปภาพ) ===
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'

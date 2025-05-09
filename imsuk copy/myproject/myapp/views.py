@@ -147,7 +147,28 @@ from .models import FlashMenu
 
 def flash_menu_detail(request, pk):
     flash_menu = get_object_or_404(FlashMenu, pk=pk)
-    return render(request, 'flash_detail.html', {'flash_menu': flash_menu})
+
+    # คำนวณ % ส่วนลด
+    try:
+        discount_pct = round(
+            (flash_menu.original_price - flash_menu.discounted_price)
+            / flash_menu.original_price * 100
+        )
+    except (TypeError, ZeroDivisionError):
+        discount_pct = 0
+
+    # แยก description เป็นลิสต์วัตถุดิบ
+    ingredients = []
+    if flash_menu.menu and flash_menu.menu.description:
+        ingredients = [ing.strip() for ing in flash_menu.menu.description.split(',') if ing.strip()]
+
+    context = {
+        'flash_menu': flash_menu,
+        'discount_pct': discount_pct,
+        'ingredients': ingredients,
+    }
+    return render(request, 'flash_detail.html', context)
+
 
 from django.utils import timezone
 
@@ -452,48 +473,49 @@ def add_to_cart(request, menu_id):
 
     return redirect('cart')
 
-from decimal import Decimal
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from .models import CartItem
-
 @login_required
 def cart_view(request):
     items = CartItem.objects.filter(user=request.user)
-
-    # คำนวณ Subtotal
     subtotal = sum(item.menu.discount_price * item.quantity for item in items)
-
-    # ค่าจัดส่ง
     delivery_fee = Decimal('29.00') if items else Decimal('0.00')
-
-    # ยอดรวมสุทธิ
     grand_total = subtotal + delivery_fee
 
     return render(request, 'cart.html', {
-        'cart_items': items,
-        'subtotal': subtotal,
-        'delivery_fee': delivery_fee,
-        'grand_total': grand_total,
+      'cart_items': items,
+      'subtotal': subtotal,
+      'delivery_fee': delivery_fee,
+      'grand_total': grand_total,
     })
-
-
 
 @login_required
 def update_cart(request, item_id):
-    """ปรับจำนวนในตะกร้า (HTMX)"""
-    item   = get_object_or_404(
-        CartItem, id=item_id, user=request.user
-    )
-    action = request.POST.get('action')
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    item = get_object_or_404(CartItem, id=item_id, user=request.user)
+    print(f"Received request for item_id: {item_id}")  # ดีบัก
+    try:
+        data = json.loads(request.body)
+        action = data.get('action')
+        print(f"Received action: {action}")  # ดีบัก
+    except json.JSONDecodeError:
+        print("JSON Decode Error")  # ดีบัก
+        return HttpResponse(status=400)
     if action == 'increase':
         item.quantity += 1
-    elif action == 'decrease' and item.quantity > 1:
-        item.quantity -= 1
-    item.save()
-    return render(
-        request, 'partials/cart_item.html', {'item': item}
-    )
+        item.save()
+    elif action == 'decrease':
+        if item.quantity > 1:
+            item.quantity -= 1
+            item.save()
+    elif action == 'remove':
+        item.delete()
+        return HttpResponse(status=204)
+    else:
+        return HttpResponse(status=400)
+    return render(request, 'partials/cart_item.html', {'item': item})
+
+
+
 
 
 from decimal import Decimal
@@ -581,34 +603,44 @@ def order_success(request):
 
 
 # myapp/views.py
-
 from decimal import Decimal
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .models import Order
 
-@login_required
 def order_history(request):
-    SHIPPING_FEE = Decimal('29.00')
-
-    # ดึงเฉพาะคำสั่งซื้อของ user
-    orders = Order.objects.filter(user=request.user).order_by('-placed_at')
-
-    # สร้าง list ของ dict ที่มีทั้ง order, ค่าส่ง และยอดรวม
+    orders = (
+        Order.objects
+        .filter(user=request.user)
+        .prefetch_related('items__menu')
+    )
     orders_data = []
+
     for order in orders:
-        total = order.total_price
-        shipping = SHIPPING_FEE
-        grand_total = total + shipping
+        # subtotal คำนวณจาก price_at_time เสมอ
+        subtotal = sum(
+            item.price_at_time * item.quantity
+            for item in order.items.all()
+        )
+
+        # ค่าส่งจากฟิลด์ delivery_fee
+        shipping = order.delivery_fee
+
+        # grand total = subtotal + shipping
+        grand_total = subtotal + shipping
+
         orders_data.append({
             'order': order,
+            'subtotal': subtotal,
             'shipping': shipping,
-            'grand_total': grand_total
+            'grand_total': grand_total,
         })
 
     return render(request, 'order_history.html', {
         'orders_data': orders_data,
     })
+
+
+
 
 
 @login_required
@@ -843,40 +875,45 @@ def confirm_checkout_again(request, order_id):
 
 
 
+# myapp/views.py
 from django.shortcuts import redirect, get_object_or_404
-from .models import Address
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from .models import Address
 
 @login_required
-def address_move_up(request, address_id):
-    address = get_object_or_404(Address, id=address_id, user=request.user)
-
-    # หาที่อยู่ก่อนหน้า
-    above = Address.objects.filter(user=request.user, order__lt=address.order).order_by('-order').first()
-
+def address_move_up(request, pk):
+    address = get_object_or_404(Address, id=pk, user=request.user)
+    above = (
+        Address.objects
+        .filter(user=request.user, order__lt=address.order)
+        .order_by('-order')
+        .first()
+    )
     if above:
         with transaction.atomic():
             address.order, above.order = above.order, address.order
             address.save()
             above.save()
-
     return redirect('address_list')
 
+
 @login_required
-def address_move_down(request, address_id):
-    address = get_object_or_404(Address, id=address_id, user=request.user)
-
-    # หาที่อยู่ถัดไป
-    below = Address.objects.filter(user=request.user, order__gt=address.order).order_by('order').first()
-
+def address_move_down(request, pk):
+    address = get_object_or_404(Address, id=pk, user=request.user)
+    below = (
+        Address.objects
+        .filter(user=request.user, order__gt=address.order)
+        .order_by('order')
+        .first()
+    )
     if below:
         with transaction.atomic():
             address.order, below.order = below.order, address.order
             address.save()
             below.save()
-
     return redirect('address_list')
+
 
 @login_required
 def reset_address_order(request):
