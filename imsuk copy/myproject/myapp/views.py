@@ -425,31 +425,58 @@ def menu_detail(request, menu_id):
     })
 
 
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
+from .models import Menu, CartItem
+
 @login_required
 def add_to_cart(request, menu_id):
-    """เพิ่มเมนูลงตะกร้า"""
+    """เพิ่มเมนูลงตะกร้า เก็บราคาหลังลดลงใน CartItem.price_at_time"""
     menu = get_object_or_404(Menu, id=menu_id)
+
+    # ถ้ายังไม่มีรายการนี้ในตะกร้า ให้สร้างขึ้นพร้อมราคาหลังลด ณ ปัจจุบัน
     item, created = CartItem.objects.get_or_create(
         user=request.user,
-        menu=menu
+        menu=menu,
+        defaults={'price_at_time': menu.discount_price}
     )
+
     if not created:
+        # มีอยู่แล้วก็เพิ่มจำนวน
         item.quantity += 1
-        item.save()
+
+    # อัปเดตราคาล่าสุดเผื่อส่วนลดเปลี่ยน
+    item.price_at_time = menu.discount_price
+    item.save()
+
     return redirect('cart')
+
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import CartItem
 
 @login_required
 def cart_view(request):
     items = CartItem.objects.filter(user=request.user)
-    total = sum(i.menu.price * i.quantity for i in items)
-    delivery_fee = 29
-    grand_total = total + delivery_fee
+
+    # คำนวณ Subtotal
+    subtotal = sum(item.menu.discount_price * item.quantity for item in items)
+
+    # ค่าจัดส่ง
+    delivery_fee = Decimal('29.00') if items else Decimal('0.00')
+
+    # ยอดรวมสุทธิ
+    grand_total = subtotal + delivery_fee
+
     return render(request, 'cart.html', {
         'cart_items': items,
-        'total_price': total,
+        'subtotal': subtotal,
         'delivery_fee': delivery_fee,
-        'grand_total': grand_total
+        'grand_total': grand_total,
     })
+
 
 
 @login_required
@@ -469,23 +496,44 @@ def update_cart(request, item_id):
     )
 
 
+from decimal import Decimal
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+
+from .models import CartItem, Address, Order, OrderItem
+
 @login_required
 def checkout(request):
+    # ดึงสินค้าจากตะกร้า
     cart_items = CartItem.objects.filter(user=request.user)
-    total_price = sum(item.menu.price * item.quantity for item in cart_items)
-    delivery_fee = 29
+
+    # คำนวณราคารวมเป็น Decimal
+    total_price = sum(
+        item.menu.discount_price * item.quantity
+        for item in cart_items
+    )
+
+    # ค่าจัดส่ง (ถ้ามีสินค้าเท่านั้น)
+    delivery_fee = Decimal('29.00') if cart_items else Decimal('0.00')
+
+    # รวมทั้งสิ้น
     grand_total = total_price + delivery_fee
 
-    # ✅ ดึงที่อยู่เริ่มต้นของผู้ใช้
-    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+    # ดึงที่อยู่เริ่มต้นของผู้ใช้
+    default_address = Address.objects.filter(
+        user=request.user,
+        is_default=True
+    ).first()
 
     return render(request, 'checkout.html', {
-        'cart_items': cart_items,
-        'total_price': total_price,
-        'delivery_fee': delivery_fee,
-        'grand_total': grand_total,
-        'default_address': default_address  # ✅ ต้องมีตรงนี้
+        'cart_items':    cart_items,
+        'total_price':   total_price,
+        'delivery_fee':  delivery_fee,
+        'grand_total':   grand_total,
+        'default_address': default_address,
     })
+
 
 
 @login_required
@@ -532,10 +580,36 @@ def order_success(request):
     return render(request, 'order_success.html')
 
 
+# myapp/views.py
+
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Order
+
 @login_required
 def order_history(request):
-    orders = request.user.orders.all().order_by('-placed_at')  # เรียงล่าสุดก่อน
-    return render(request, 'order_history.html', {'orders': orders})
+    SHIPPING_FEE = Decimal('29.00')
+
+    # ดึงเฉพาะคำสั่งซื้อของ user
+    orders = Order.objects.filter(user=request.user).order_by('-placed_at')
+
+    # สร้าง list ของ dict ที่มีทั้ง order, ค่าส่ง และยอดรวม
+    orders_data = []
+    for order in orders:
+        total = order.total_price
+        shipping = SHIPPING_FEE
+        grand_total = total + shipping
+        orders_data.append({
+            'order': order,
+            'shipping': shipping,
+            'grand_total': grand_total
+        })
+
+    return render(request, 'order_history.html', {
+        'orders_data': orders_data,
+    })
+
 
 @login_required
 def payment_method_add(request):
@@ -650,74 +724,123 @@ def product_filter(request):
     return render(request, 'filtered_products.html', {'products': products})
 
 
+from decimal import Decimal
+from django.shortcuts      import render, redirect, get_object_or_404
+from django.utils          import timezone
+from django.contrib.auth.decorators import login_required
+
+from .models import Order, OrderItem, Address
+
 @login_required
 def checkout_again(request, order_id):
-    # ดึงออเดอร์เดิม
+    # ดึงออร์เดอร์เดิม
     old_order = get_object_or_404(Order, id=order_id, user=request.user)
 
-    # สร้างออเดอร์ใหม่
-    new_order = Order.objects.create(user=request.user, is_paid=False)
+    # ค่าจัดส่งตายตัว
+    delivery_fee = Decimal('29.00')
 
-    # คัดลอก OrderItems จากออเดอร์เก่า
-    for item in old_order.items.all():
-        OrderItem.objects.create(
-            order=new_order,
-            menu=item.menu,
-            quantity=item.quantity,
-            price_at_time=item.menu.discount_price  # ราคาปัจจุบัน (ไม่ fix ราคาตอนนั้น)
+    # คำนวณ subtotal จากราคาหลังลดในเมนูเดิม
+    subtotal = sum(
+        item.menu.discount_price * item.quantity
+        for item in old_order.items.all()
+    )
+    # คำนวณยอดสุทธิ
+    grand_total = subtotal + delivery_fee
+
+    if request.method == 'POST':
+        # รับ address ที่ผู้ใช้เลือกจากฟอร์ม
+        address_id = request.POST.get('address_id')
+        address    = get_object_or_404(Address, id=address_id, user=request.user)
+
+        # สร้าง Order ใหม่ (ยังไม่ชำระเงิน)
+        new_order = Order.objects.create(
+            user        = request.user,
+            address     = address,
+            total_price = subtotal,      # เฉพาะสินค้า
+            delivery_fee= delivery_fee,  # ค่าส่ง
+            grand_total = grand_total,   # สินค้า+ส่ง
+            placed_at   = timezone.now(),
+            is_paid     = False,
         )
 
-    # คำนวณราคารวมใหม่
-    new_order.calculate_total_price()
-    new_order.save()
+        # คัดลอกรายการสินค้าเดิม
+        for item in old_order.items.all():
+            OrderItem.objects.create(
+                order         = new_order,
+                menu          = item.menu,
+                quantity      = item.quantity,
+                price_at_time = item.menu.discount_price,
+            )
 
-    # ส่งไปหน้า checkout
-    return redirect('checkout', order_id=new_order.id)
+        # ไปหน้าชำระเงินปกติของ Order ใหม่
+        return redirect('checkout', order_id=new_order.id)
+
+    # GET — แสดงฟอร์มยืนยันการสั่งอีกครั้ง
+    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+    return render(request, 'checkout_again.html', {
+        'old_order':      old_order,
+        'subtotal':       subtotal,
+        'delivery_fee':   delivery_fee,
+        'grand_total':    grand_total,
+        'default_address': default_address,
+    })
 
 
 
-def checkout_again(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-    return render(request, 'checkout_again.html', {'order': order})
+# myapp/views.py
+from decimal import Decimal
+from django.shortcuts      import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http    import require_POST
+from django.utils import timezone
+from django.contrib import messages
 
+from .models import Order, OrderItem, Address
 
 @require_POST
+@login_required
 def confirm_checkout_again(request, order_id):
-    old_order = get_object_or_404(Order, id=order_id, user=request.user)
+    old_order   = get_object_or_404(Order, id=order_id, user=request.user)
 
-    # รับค่าจากฟอร์ม
-    address_id = request.POST.get('address_id')
+    # ดึงค่าจากฟอร์ม
+    address_id  = request.POST.get('address_id')
     wants_spoon = 'wants_spoon' in request.POST
     wants_sauce = 'wants_sauce' in request.POST
 
-    # ตรวจสอบ address ที่รับมา
     address = get_object_or_404(Address, id=address_id, user=request.user)
 
-    # คำนวณราคารวมจากรายการเดิม
+    # คำนวณราคารวมสินค้าจาก OrderItem ของออร์เดอร์เก่า
     total_price = sum(item.quantity * item.price_at_time for item in old_order.items.all())
 
-    # สร้างคำสั่งซื้อใหม่
+    # กำหนดค่าจัดส่ง
+    delivery_fee = Decimal('29.00') if total_price > 0 else Decimal('0.00')
+    grand_total  = total_price + delivery_fee
+
+    # สร้างออร์เดอร์ใหม่ พร้อมฟิลด์ที่เพิ่งเพิ่ม
     new_order = Order.objects.create(
-        user=request.user,
-        address=address,
-        total_price=total_price,
-        placed_at=timezone.now(),
-        is_paid=True,
-        wants_spoon=wants_spoon,
-        wants_sauce=wants_sauce
+        user         = request.user,
+        address      = address,
+        total_price  = total_price,
+        delivery_fee = delivery_fee,
+        grand_total  = grand_total,
+        placed_at    = timezone.now(),
+        is_paid      = True,
+        wants_spoon  = wants_spoon,
+        wants_sauce  = wants_sauce,
     )
 
-    # คัดลอกรายการสินค้าเดิม
+    # คัดลอกรายการสินค้า
     for item in old_order.items.all():
         OrderItem.objects.create(
-            order=new_order,
-            menu=item.menu,
-            quantity=item.quantity,
-            price_at_time=item.price_at_time
+            order         = new_order,
+            menu          = item.menu,
+            quantity      = item.quantity,
+            price_at_time = item.price_at_time,
         )
 
     messages.success(request, "สั่งซื้ออีกครั้งสำเร็จ! ระบบได้บันทึกคำสั่งซื้อของคุณแล้ว")
     return redirect('order_history')
+
 
 
 from django.shortcuts import redirect, get_object_or_404

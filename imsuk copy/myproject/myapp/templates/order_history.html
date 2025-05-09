@@ -2,6 +2,7 @@
 {% load static %}
 {% load currency_filters %}
 {% load i18n %}
+{% load math_filters %}
 
 {% block title %}{% trans "Order History" %} | อิ่มสุข{% endblock %}
 
@@ -12,11 +13,13 @@
     {% trans "My Order History" %}
   </h1>
 
-  {% if orders %}
+  {% if orders_data %}
     <div class="space-y-8">
-      {% for order in orders %}
+      {% for data in orders_data %}
+        {% with order=data.order shipping=data.shipping grand=data.grand_total %}
         <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all p-6 border border-gray-100">
 
+          <!-- หัวบล็อกคำสั่งซื้อ -->
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-[#3F8240]">
               {% trans "Order" %} #{{ order.id }}
@@ -26,11 +29,14 @@
             </span>
           </div>
 
+          <!-- รายการสินค้าในคำสั่งซื้อ -->
           <div class="space-y-4">
             {% for item in order.items.all %}
               <div class="flex items-center space-x-4">
                 {% if item.menu.image %}
-                  <img src="{{ item.menu.image.url }}" alt="{{ item.menu.title }}" class="w-20 h-20 rounded-lg object-cover shadow">
+                  <img src="{{ item.menu.image.url }}"
+                       alt="{{ item.menu.title }}"
+                       class="w-20 h-20 rounded-lg object-cover shadow">
                 {% else %}
                   <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
                     {% trans "No Image" %}
@@ -39,49 +45,66 @@
 
                 <div class="flex-1">
                   <p class="text-lg text-gray-800 font-semibold">{{ item.menu.title }}</p>
-                  <p class="text-sm text-gray-500">{% trans "Quantity" %} {{ item.quantity }}</p>
+                  <p class="text-sm text-gray-500">
+                    {% trans "Quantity" %}: {{ item.quantity }}
+                  </p>
                 </div>
 
                 <div class="text-green-600 font-bold whitespace-nowrap text-lg">
                   {{ item.price_at_time|currency:"฿" }}
+                  × {{ item.quantity }} =
+                  {{ item.price_at_time|mul:item.quantity|currency:"฿" }}
                 </div>
               </div>
             {% endfor %}
           </div>
 
+          <!-- ยอดรวมท้ายสุด -->
           <div class="border-t border-gray-200 mt-6 pt-4">
             <div class="flex justify-between items-center">
-              <div>
-                <p class="text-gray-500 text-sm">{% trans "Total" %}</p>
-                <p class="text-2xl font-bold text-[#3F8240]">{{ order.total_price|currency:"฿" }}</p>
+              <div class="space-y-1">
+                <p class="text-gray-500 text-sm">{% trans "Subtotal" %}</p>
+                <p class="text-lg font-semibold">{{ order.total_price|currency:"฿" }}</p>
               </div>
-              <div class="text-right">
-                {% if order.is_paid %}
-                  <span class="inline-block text-green-600 text-sm font-semibold">{% trans "Paid" %}</span>
-                {% else %}
-                  <span class="inline-block text-red-500 text-sm font-semibold">{% trans "Unpaid" %}</span>
-                {% endif %}
-                <a href="{% url 'checkout_again' order.id %}" class="mt-2 block bg-[#3F8240] hover:bg-[#2a5a2b] text-white font-medium py-2 px-4 rounded-full text-sm">
-                  {% trans "Order Again" %}
-                </a>
+              <div class="space-y-1 text-right">
+                <p class="text-gray-500 text-sm">{% trans "Shipping Fee" %}</p>
+                <p class="text-lg font-semibold">{{ shipping|currency:"฿" }}</p>
               </div>
+              <div class="space-y-1 text-right">
+                <p class="text-[#3F8240] font-bold">{% trans "Grand Total" %}</p>
+                <p class="text-2xl font-bold text-[#3F8240]">{{ grand|currency:"฿" }}</p>
+              </div>
+            </div>
+            <div class="mt-4 text-right">
+              {% if order.is_paid %}
+                <span class="inline-block text-green-600 text-sm font-semibold">{% trans "Paid" %}</span>
+              {% else %}
+                <span class="inline-block text-red-500 text-sm font-semibold">{% trans "Unpaid" %}</span>
+              {% endif %}
+              <a href="{% url 'checkout_again' order.id %}"
+                 class="ml-4 inline-block bg-[#3F8240] hover:bg-[#2a5a2b] text-white font-medium py-2 px-4 rounded-full text-sm transition">
+                {% trans "Order Again" %}
+              </a>
             </div>
           </div>
 
         </div>
+        {% endwith %}
       {% endfor %}
     </div>
-
   {% else %}
     <div class="text-center text-gray-500 mt-20">
       <p class="text-lg">{% trans "You have no order history yet." %}</p>
-      <a href="{% url 'home' %}" class="mt-6 inline-block bg-[#3F8240] hover:bg-[#2a5a2b] text-white py-3 px-8 rounded-full transition text-lg">
+      <a href="{% url 'home' %}"
+         class="mt-6 inline-block bg-[#3F8240] hover:bg-[#2a5a2b] text-white py-3 px-8 rounded-full transition text-lg">
         {% trans "Start Ordering Now" %}
       </a>
     </div>
   {% endif %}
-
 </div>
 {% endblock %}
+
+
+
 
 

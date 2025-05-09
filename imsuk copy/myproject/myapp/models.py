@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db.models import Sum
+from decimal import Decimal   
 
 User = settings.AUTH_USER_MODEL
 
@@ -212,9 +213,22 @@ class FlashMenu(models.Model):
 
 class CartItem(models.Model):
     """ ตะกร้าสินค้า """
-    user     = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_items')
-    menu     = models.ForeignKey(Menu, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField("จำนวน", default=1)
+    user           = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='cart_items'
+    )
+    menu           = models.ForeignKey(
+        'Menu',
+        on_delete=models.CASCADE
+    )
+    quantity       = models.PositiveIntegerField("จำนวน", default=1)
+    price_at_time  = models.DecimalField(
+        "ราคาหลังลดเมื่อเพิ่มลงตะกร้า",
+        max_digits=8,
+        decimal_places=2,
+        default=Decimal('0.00')
+    )
 
     class Meta:
         unique_together = ('user', 'menu')
@@ -224,23 +238,37 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.menu.title} x{self.quantity}"
 
+
+# myapp/models.py
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
+
 class Order(models.Model):
     """ คำสั่งซื้อ """
-    user         = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    address      = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, related_name='orders')
-    total_price  = models.DecimalField("ราคารวม", max_digits=10, decimal_places=2)
-    placed_at    = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
-    is_paid      = models.BooleanField("ชำระเงินแล้ว", default=False)
+    user          = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    address       = models.ForeignKey(
+        'Address',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='orders'
+    )
+    total_price   = models.DecimalField("ราคารวมสินค้า", max_digits=10, decimal_places=2)
+    delivery_fee  = models.DecimalField("ค่าจัดส่ง", max_digits=6, decimal_places=2, default=0)
+    grand_total   = models.DecimalField("ยอดสุทธิ", max_digits=10, decimal_places=2, default=0)
+    placed_at     = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
+    is_paid       = models.BooleanField("ชำระเงินแล้ว", default=False)
 
-    wants_spoon  = models.BooleanField("ต้องการช้อนส้อม", default=False)
-    wants_sauce  = models.BooleanField("ต้องการซอสหรือเครื่องปรุง", default=False)
+    wants_spoon   = models.BooleanField("ต้องการช้อนส้อม", default=False)
+    wants_sauce   = models.BooleanField("ต้องการซอสหรือเครื่องปรุง", default=False)
 
     class Meta:
-        verbose_name = "ออร์เดอร์"
+        verbose_name        = "ออร์เดอร์"
         verbose_name_plural = "ออร์เดอร์"
 
     def __str__(self):
         return f"Order#{self.id} ของ {self.user.username}"
+
 
 
 class OrderItem(models.Model):

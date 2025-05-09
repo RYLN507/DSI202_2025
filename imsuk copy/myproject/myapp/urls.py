@@ -61,8 +61,12 @@ urlpatterns = [
     # Cart & Checkout
     path('cart/', views.cart_view, name='cart'),
     path('cart/update/<int:item_id>/', views.update_cart, name='update_cart'),
-    path('checkout/', views.checkout, name='checkout'),
-    path('checkout/confirm/', confirm_order, name='checkout_confirm'),
+    path('checkout/', views.checkout, name='checkout'),  # เพิ่มถ้ายังไม่มี
+    path('checkout/<int:order_id>/', views.checkout, name='checkout'),  # รองรับ order_id
+    path('checkout/confirm/', views.confirm_order, name='checkout_confirm'),
+    path('checkout/confirm/<int:order_id>/', views.confirm_checkout_again, name='confirm_checkout_again'),
+    path('order-history/', views.order_history, name='order_history'),
+    path('orders/<int:order_id>/order-again/', views.checkout_again, name='checkout_again'),
 
 
     # Order Success
@@ -72,8 +76,6 @@ urlpatterns = [
     path('deals/<int:deal_id>/toggle-favorite/', views.toggle_favorite_deal, name='toggle_favorite_deal'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='registration/password_change_form.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
-
-    path('order-history/', views.order_history, name='order_history'),
 
     path('payment-methods/add/', views.payment_method_add, name='payment_method_add'),
     path('payment-methods/<int:pk>/edit/', views.payment_method_edit, name='payment_method_edit'),

@@ -5,46 +5,110 @@
 {% block title %}{% trans "Favorite Restaurants & Menus" %} | IMSUK{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-10">
 
-  <h2 class="text-2xl font-bold mb-4">{% trans "My Favorite Restaurants" %}</h2>
-  {% if favorite_restaurants %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-      {% for r in favorite_restaurants %}
-        <div class="bg-white rounded shadow p-4">
-          {% if r.image %}
-            <img src="{{ r.image.url }}" class="w-full h-40 object-cover rounded mb-3">
-          {% endif %}
-          <h3 class="font-semibold text-lg">{{ r.name }}</h3>
-          <p class="text-sm text-gray-500">{{ r.category.display_name }}</p>
-          <a href="{% url 'restaurant_detail' r.id %}"
-             class="inline-block mt-2 text-green-600 hover:underline">{% trans "View Restaurant" %}</a>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p class="text-gray-500 mb-12">{% trans "You don't have any favorite restaurants yet." %}</p>
-  {% endif %}
+  <!-- ⭐ Favorite Restaurants -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-extrabold text-[#2F855A] mb-6">{% trans "My Favorite Restaurants" %}</h2>
 
-  <h2 class="text-2xl font-bold mb-4">{% trans "My Favorite Menus" %}</h2>
-  {% if favorite_menus %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {% for m in favorite_menus %}
-        <div class="bg-white rounded shadow p-4">
-          {% if m.image %}
-            <img src="{{ m.image.url }}" class="w-full h-32 object-cover rounded mb-3">
-          {% endif %}
-          <h3 class="font-semibold">{{ m.title }}</h3>
-          <p class="text-sm text-gray-500">{{ m.restaurant.name }}</p>
-          <p class="text-green-600 font-bold">{{ m.price }}</p>
-          <a href="{% url 'menu_detail' m.id %}"
-             class="inline-block mt-2 text-green-600 hover:underline">{% trans "View Menu" %}</a>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p class="text-gray-500">{% trans "You don't have any favorite menus yet." %}</p>
-  {% endif %}
+    {% if favorite_restaurants %}
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {% for r in favorite_restaurants %}
+          <div class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+            {% if r.image %}
+              <img 
+                src="{{ r.image.url }}" 
+                alt="{{ r.name }}"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              >
+            {% else %}
+              <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                {% trans "No Image" %}
+              </div>
+            {% endif %}
+            <div class="p-5">
+              <h3 class="text-xl font-semibold text-gray-800">{{ r.name }}</h3>
+              <p class="text-sm text-gray-500 mt-1">{{ r.category.display_name }}</p>
+              <a 
+                href="{% url 'restaurant_detail' r.id %}" 
+                class="inline-block mt-4 font-medium text-[#2F855A] hover:text-[#276749] transition-colors"
+              >
+                {% trans "View Restaurant" %} →
+              </a>
+            </div>
+            <span 
+              class="absolute top-4 right-4 text-2xl text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+              hx-post="{% url 'toggle_favorite_restaurant' r.id %}"
+              hx-swap="outerHTML"
+              title="{% trans 'Remove from favorites' %}"
+            >
+              ♥
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg mb-4">{% trans "You don't have any favorite restaurants yet." %}</p>
+        <a href="{% url 'shop_list' 'all' %}" class="inline-block bg-[#2F855A] text-white py-3 px-6 rounded-full hover:bg-[#276749] transition">
+          {% trans "Browse Restaurants" %}
+        </a>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- 🍽 Favorite Menus -->
+  <section>
+    <h2 class="text-3xl font-extrabold text-[#2F855A] mb-6">{% trans "My Favorite Menus" %}</h2>
+
+    {% if favorite_menus %}
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {% for m in favorite_menus %}
+          <div class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
+            {% if m.image %}
+              <img 
+                src="{{ m.image.url }}" 
+                alt="{{ m.title }}"
+                class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+              >
+            {% else %}
+              <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-400">
+                {% trans "No Image" %}
+              </div>
+            {% endif %}
+            <div class="p-5">
+              <h3 class="text-lg font-semibold text-gray-800">{{ m.title }}</h3>
+              <p class="text-sm text-gray-500 mt-1">{{ m.restaurant.name }}</p>
+              <p class="mt-2 text-xl font-bold text-[#2F855A]">฿{{ m.price|floatformat:0 }}</p>
+              <a
+              href="{% url 'menu_detail' m.id %}"
+              class="mt-4 block w-full bg-green-600 hover:bg-green-700 text-white text-center font-medium py-2 rounded-lg transition-colors"
+            >
+              {% trans "View Details" %}
+            </a>            
+            </div>
+            <span 
+              class="absolute top-4 right-4 text-2xl text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
+              hx-post="{% url 'toggle_favorite_menu' m.id %}"
+              hx-swap="outerHTML"
+              title="{% trans 'Remove from favorites' %}"
+            >
+              ♥
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">{% trans "You don't have any favorite menus yet." %}</p>
+        <a href="{% url 'shop_list' 'all' %}" class="inline-block bg-[#2F855A] text-white py-3 px-6 rounded-full hover:bg-[#276749] transition">
+          {% trans "Browse Menus" %}
+        </a>
+      </div>
+    {% endif %}
+  </section>
 
 </div>
 {% endblock %}
+
+
