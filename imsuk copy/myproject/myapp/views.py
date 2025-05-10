@@ -523,32 +523,62 @@ def cart_view(request):
         'qr_b64': qr_b64,
     })
 
+
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
+from .models import CartItem
+
+@login_required
+def cart_view(request):
+    cart_items = CartItem.objects.filter(user=request.user).select_related('menu__restaurant')
+    subtotal = sum(ci.menu.discount_price * ci.quantity for ci in cart_items)
+    delivery_fee = 29  # or however you compute it
+    grand_total = subtotal + delivery_fee
+
+    return render(request, 'cart.html', {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'delivery_fee': delivery_fee,
+        'grand_total': grand_total,
+    })
+
 @login_required
 def update_cart(request, item_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
     item = get_object_or_404(CartItem, id=item_id, user=request.user)
-    print(f"Received request for item_id: {item_id}")  # ดีบัก
-    try:
-        data = json.loads(request.body)
-        action = data.get('action')
-        print(f"Received action: {action}")  # ดีบัก
-    except json.JSONDecodeError:
-        print("JSON Decode Error")  # ดีบัก
-        return HttpResponse(status=400)
+    action = request.POST.get('action')
     if action == 'increase':
         item.quantity += 1
         item.save()
-    elif action == 'decrease':
-        if item.quantity > 1:
-            item.quantity -= 1
-            item.save()
+    elif action == 'decrease' and item.quantity > 1:
+        item.quantity -= 1
+        item.save()
     elif action == 'remove':
         item.delete()
         return HttpResponse(status=204)
     else:
         return HttpResponse(status=400)
-    return render(request, 'partials/cart_item.html', {'item': item})
+
+    # After updating quantity, re‐query everything to recalc totals:
+    cart_items = CartItem.objects.filter(user=request.user)
+    subtotal = sum(ci.menu.discount_price * ci.quantity for ci in cart_items)
+    delivery_fee = 29
+    grand_total = subtotal + delivery_fee
+
+    return render(request,
+                  'partials/cart_item_and_summary.html',
+                  {
+                    'item': item,
+                    'subtotal': subtotal,
+                    'delivery_fee': delivery_fee,
+                    'grand_total': grand_total,
+                  })
+
+
+
+
 
 
 from decimal import Decimal

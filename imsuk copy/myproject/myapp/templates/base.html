@@ -6,47 +6,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>{% block title %}IMSUK{% endblock %}</title>
 
-  {# ← only one head_extra block #}
   {% block head_extra %}
-    <!-- HTMX -->
+    <!-- 1) HTMX core -->
     <script src="{% static 'js/htmx-1.9.6.min.js' %}"></script>
-    <!-- Tell HTMX about Django's CSRF token -->
+    <!-- 2) HTMX Django‐CSRF extension (adds X-CSRFToken header) -->
+    <script src="{% static 'js/htmx-django-csrf.js' %}"></script>
+    <!-- 3) (Optional) debug -->
     <script>
-      (function() {
-        function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== '') {
-            document.cookie.split(';').forEach(function(cookie) {
-              cookie = cookie.trim();
-              if (cookie.startsWith(name + '=')) {
-                cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
-              }
-            });
-          }
-          return cookieValue;
-        }
-        const csrftoken = getCookie('csrftoken');
-        document.body.addEventListener('htmx:configRequest', (event) => {
-          event.detail.headers['X-CSRFToken'] = csrftoken;
-        });
-      })();
-      <script>
-        htmx.onLoad(function(content) {
-          console.log('HTMX loaded content:', content);
-        });
-        document.body.addEventListener('htmx:beforeRequest', function(event) {
-          onsole.log('HTMX request to:', event.detail.path);
-        });
-        document.body.addEventListener('htmx:configRequest', (event) => {
-          console.log('CSRF Token added:', event.detail.headers['X-CSRFToken']);
-        });
-        document.body.addEventListener('htmx:afterRequest', function(event) {
-          console.log('HTMX response:', event.detail.xhr.responseText);
-        });
-      </script>
+      htmx.onLoad(c => console.log('HTMX load', c));
+      document.body.addEventListener('htmx:beforeRequest', e => console.log('→', e.detail));
+      document.body.addEventListener('htmx:afterRequest', e => console.log('←', e.detail));
+    </script>
   {% endblock %}
 
 

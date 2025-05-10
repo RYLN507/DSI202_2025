@@ -1,3 +1,4 @@
+{# templates/cart.html #}
 {% extends 'base.html' %}
 {% load static i18n currency_filters %}
 
@@ -11,63 +12,13 @@
 
   {% if cart_items %}
     <div class="space-y-6">
-
+      {# 1) Render each item via the simple partial #}
       {% for item in cart_items %}
-        <div id="cart-item-{{ item.id }}" class="flex items-center justify-between bg-white rounded-xl shadow p-4">
-          <div class="flex items-center space-x-4">
-            {% if item.menu.image %}
-              <img src="{{ item.menu.image.url }}"
-                   alt="{{ item.menu.title }}"
-                   class="w-20 h-20 object-cover rounded">
-            {% else %}
-              <div class="w-20 h-20 bg-gray-200 flex items-center justify-center rounded text-gray-500">
-                {% trans "No Image" %}
-              </div>
-            {% endif %}
-            <div>
-              <p class="font-semibold text-green-700">{{ item.menu.title }}</p>
-              <p class="text-sm text-gray-500">{{ item.menu.restaurant.name }}</p>
-              <p class="text-sm text-gray-400">
-                ฿{{ item.menu.discount_price|floatformat:0 }}
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-center space-x-2">
-            <!-- ปุ่มลด -->
-            <button
-              hx-post="{% url 'update_cart' item.id %}"
-              hx-vals='{"action":"decrease"}'
-              hx-target="#cart-item-{{ item.id }}"
-              hx-swap="outerHTML"
-              class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-600">
-              −
-            </button>
-            <span class="font-semibold">{{ item.quantity }}</span>
-            <!-- ปุ่มเพิ่ม -->
-            <button
-              hx-post="{% url 'update_cart' item.id %}"
-              hx-vals='{"action":"increase"}'
-              hx-target="#cart-item-{{ item.id }}"
-              hx-swap="outerHTML"
-              class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-600">
-              ＋
-            </button>
-            <!-- ปุ่มลบ -->
-            <button
-              hx-post="{% url 'update_cart' item.id %}"
-              hx-vals='{"action":"remove"}'
-              hx-target="#cart-item-{{ item.id }}"
-              hx-swap="delete"
-              class="bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-400">
-              ×
-            </button>
-          </div>
-        </div>
+        {% include 'partials/cart_item.html' %}
       {% endfor %}
 
-      <!-- สรุปยอด -->
-      <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-green-800 text-base space-y-2">
+      {# 2) Render the summary exactly once #}
+      <div id="cart-summary" class="bg-green-50 border border-green-200 rounded-xl p-6 text-green-800 space-y-2">
         <div class="flex justify-between">
           <span>{% trans "Subtotal" %}</span>
           <span>฿{{ subtotal|floatformat:0 }}</span>
@@ -83,7 +34,7 @@
         </div>
       </div>
 
-      <!-- ปุ่ม Checkout -->
+      {# 3) Checkout button #}
       <div class="text-center mt-6">
         <a href="{% url 'checkout' %}"
            class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-full transition">
@@ -91,7 +42,6 @@
         </a>
       </div>
     </div>
-
   {% else %}
     <div class="text-center py-16">
       <p class="text-gray-500 text-lg mb-4">{% trans "Your cart is empty." %}</p>
@@ -103,6 +53,14 @@
   {% endif %}
 </div>
 {% endblock %}
+
+
+
+
+
+
+
+
 
 
 
