@@ -12,10 +12,10 @@
   {% if orders_data %}
     <div class="space-y-8">
       {% for data in orders_data %}
-        {% comment %} แต่ละบล็อคคำสั่งซื้อ {% endcomment %}
+        {# แต่ละบล็อคคำสั่งซื้อ #}
         <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
 
-          <!-- Header -->
+          {# Header #}
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-[#3F8240]">
               {% trans "Order" %} #{{ data.order.id }}
@@ -25,7 +25,7 @@
             </span>
           </div>
 
-          <!-- รายการสินค้า -->
+          {# รายการสินค้า #}
           <div class="space-y-4">
             {% for item in data.order.items.all %}
               <div class="flex items-center space-x-4">
@@ -42,31 +42,40 @@
                 {% endif %}
 
                 <div class="flex-1">
-                  <p class="text-lg font-semibold text-gray-800">{{ item.menu.title }}</p>
+                  <p class="text-lg font-semibold text-gray-800">
+                    {{ item.menu.title }}
+                  </p>
                   <p class="text-sm text-gray-500">
                     {% trans "Quantity" %}: {{ item.quantity }}
                   </p>
                 </div>
 
-                <div class="text-green-600 font-bold whitespace-nowrap text-lg">
-                  ฿{{ item.price_at_time|floatformat:0 }}
-                  × {{ item.quantity }} =
-                  ฿{{ item.price_at_time|mul:item.quantity|floatformat:0 }}
-                </div>
+                {# ใช้ discount_price ก่อน ถ้าไม่มี fallback เป็น price_at_time #}
+                {% with unit_price=item.menu.discount_price|default:item.price_at_time %}
+                  <div class="text-green-600 font-bold whitespace-nowrap text-lg">
+                    ฿{{ unit_price|floatformat:0 }}
+                    × {{ item.quantity }} =
+                    ฿{{ unit_price|mul:item.quantity|floatformat:0 }}
+                  </div>
+                {% endwith %}
               </div>
             {% endfor %}
           </div>
 
-          <!-- ยอดรวม -->
+          {# ยอดรวมและสถานะ #}
           <div class="border-t border-gray-200 mt-6 pt-4">
             <div class="flex justify-between items-center">
               <div>
                 <p class="text-gray-500 text-sm">{% trans "Subtotal" %}</p>
-                <p class="text-lg font-semibold">฿{{ data.subtotal|floatformat:0 }}</p>
+                <p class="text-lg font-semibold">
+                  ฿{{ data.subtotal|floatformat:0 }}
+                </p>
               </div>
               <div class="text-right">
                 <p class="text-gray-500 text-sm">{% trans "Shipping Fee" %}</p>
-                <p class="text-lg font-semibold">฿{{ data.shipping|floatformat:0 }}</p>
+                <p class="text-lg font-semibold">
+                  ฿{{ data.shipping|floatformat:0 }}
+                </p>
               </div>
               <div class="text-right">
                 <p class="text-[#3F8240] font-bold">{% trans "Grand Total" %}</p>
@@ -76,7 +85,6 @@
               </div>
             </div>
 
-            <!-- สถานะการชำระเงิน + สั่งอีกครั้ง -->
             <div class="mt-4 text-right">
               {% if data.order.is_paid %}
                 <span class="text-green-600 text-sm font-semibold">
@@ -95,6 +103,7 @@
               </a>
             </div>
           </div>
+
         </div>
       {% endfor %}
     </div>
@@ -109,8 +118,10 @@
       </a>
     </div>
   {% endif %}
+
 </div>
 {% endblock %}
+
 
 
 

@@ -765,24 +765,28 @@ from django.shortcuts import render
 from .models import Order
 
 def order_history(request):
+    # เรียงล่าสุดก่อน และดึง relation มาให้พร้อม
     orders = (
         Order.objects
         .filter(user=request.user)
+        .order_by('-placed_at')                   # ← เรียงจากล่าสุดก่อน
         .prefetch_related('items__menu')
     )
     orders_data = []
 
     for order in orders:
-        # subtotal คำนวณจาก price_at_time เสมอ
-        subtotal = sum(
-            item.price_at_time * item.quantity
-            for item in order.items.all()
-        )
+        subtotal = Decimal('0.0')
+        for item in order.items.all():
+            # เลือกใช้ราคาหลังลดถ้ามี (discount_price > 0) 
+            menu = item.menu
+            if menu.discount_price and menu.discount_price > Decimal('0.0'):
+                unit_price = menu.discount_price
+            else:
+                unit_price = item.price_at_time
 
-        # ค่าส่งจากฟิลด์ delivery_fee
-        shipping = order.delivery_fee
+            subtotal += unit_price * item.quantity
 
-        # grand total = subtotal + shipping
+        shipping = order.delivery_fee  # หรือ .shipping_fee ตามชื่อฟิลด์จริง
         grand_total = subtotal + shipping
 
         orders_data.append({
@@ -795,6 +799,7 @@ def order_history(request):
     return render(request, 'order_history.html', {
         'orders_data': orders_data,
     })
+
 
 
 
