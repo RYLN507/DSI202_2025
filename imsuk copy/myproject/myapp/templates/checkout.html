@@ -11,7 +11,7 @@
   </h1>
 
   <form method="POST"
-        action="{% url 'checkout_confirm' %}"
+        action="{% url 'place_order' %}"
         class="space-y-8 bg-white p-6 rounded-2xl shadow-lg">
     {% csrf_token %}
 
@@ -96,7 +96,7 @@
       <a href="{% url 'choose_payment' %}?next={% url 'checkout' %}"
          class="flex items-center justify-between border rounded-lg p-4 hover:shadow-md transition">
         <div class="flex items-center space-x-3">
-          <img src="{% static 'images/visa-logo.png' %}" class="h-6" alt="VISA">
+          <img src="{% static 'images/visa_logo.png' %}" class="h-6" alt="VISA">
           <span class="font-medium text-gray-800">{% trans "Pay with VISA" %}</span>
         </div>
         <svg class="h-5 w-5 text-gray-400" …>…</svg>
@@ -105,15 +105,16 @@
       <a href="{% url 'choose_payment' %}?next={% url 'checkout' %}"
          class="flex items-center justify-between border rounded-lg p-4 hover:shadow-md transition">
         <div class="flex items-center space-x-3">
-          <img src="{% static 'images/promptpay-icon.png' %}" class="h-6" alt="PromptPay">
+          <img src="{% static 'images/promptpay_icon.jpg' %}" class="h-6" alt="PromptPay">
           <span class="font-medium text-gray-800">{% trans "PromptPay (QR)" %}</span>
         </div>
         <svg class="h-5 w-5 text-gray-400" …>…</svg>
       </a>
+      {% endif %}
 
       <!-- your branded PromptPay QR -->
-      <div class="mt-4 text-center">
-        <img src="{% static qr_image_url %}"
+     <!--      <<div class="mt-4 text-center">
+        <img src="/static/images/promptpay_icon.jpg"
              alt="PromptPay QR"
              class="inline-block w-64 h-64 object-contain rounded-lg shadow-md" />
         <p class="mt-2 text-gray-700">
@@ -124,31 +125,36 @@
         </p>
       </div>
 
-      <!-- **NEW**: repeat the summary underneath the QR -->
-      <div class="mt-6 max-w-xs mx-auto bg-green-50 border border-green-200 rounded-xl p-4 text-green-800 space-y-2">
-        <div class="flex justify-between">
-          <span>{% trans "Subtotal" %}</span>
-          <span>฿{{ total_price|floatformat:0 }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>{% trans "Delivery Fee" %}</span>
-          <span>฿{{ delivery_fee|floatformat:0 }}</span>
-        </div>
-        <hr class="border-green-300 my-2">
-        <div class="flex justify-between font-bold text-lg">
-          <span>{% trans "Grand Total" %}</span>
-          <span>฿{{ grand_total|floatformat:0 }}</span>
-        </div>
+  <!-- 💰 Summary -->
+  <div class="space-y-2">
+    <h2 class="flex items-center text-lg font-semibold text-[#3F8240]">
+      <span class="mr-2">🧮</span>{% trans "Order Summary" %}
+    </h2>
+    <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-green-800 text-base space-y-2">
+     <div class="flex justify-between text-gray-600">
+        <span>{% trans "Subtotal" %}</span>
+       <span>{{ total_price|currency:"฿" }}</span>
       </div>
-    {% endif %}
-  </div>
+      <div class="flex justify-between text-gray-600">
+        <span>{% trans "Delivery Fee" %}</span>
+       <span>{{ delivery_fee|currency:"฿" }}</span>
+      </div>
+     <hr>
+     <div class="flex justify-between font-bold text-lg text-[#3F8240]">
+        <span>{% trans "Grand Total" %}</span>
+        <span>{{ grand_total|currency:"฿" }}</span>
+      </div>
+   </div>
+</div>
 
-  <!-- 💰 Final Place Order -->
-  <div class="text-center">
-    <button form="checkout-form"
-            class="mt-8 bg-[#BADE80] text-[#3F8240] font-bold py-3 px-8 rounded-full hover:bg-[#A3CF62] shadow-lg transition">
-      {% trans "Place Order" %}
-    </button>
-  </div>
+    <!-- ✅ ปุ่มสั่งซื้อ -->
+    <div class="text-center">
+      <button type="submit"
+              class="bg-[#BADE80] text-[#3F8240] font-bold py-3 px-8 rounded-full hover:bg-[#A3CF62] transition">
+         {% trans "Place Order" %}
+      </button>
+    </div>
+
+  </form>
 </div>
 {% endblock %}

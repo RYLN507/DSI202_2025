@@ -13,6 +13,7 @@ from django.utils.timezone import now
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
+from .forms  import SlipUploadForm
 
 
 from .models import (
@@ -554,9 +555,19 @@ from decimal import Decimal
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import CartItem, Address
+from .models import Order, CartItem, Address
 
 @login_required
 def checkout(request):
+    pending = Order.objects.filter(
+        user=request.user,
+        is_paid=False,
+        payment_method='promptpay',
+        slip__isnull=True
+    ).first()
+    if pending:
+        return redirect('upload_slip', order_id=pending.id)
+
     cart_items   = CartItem.objects.filter(user=request.user)
     total_price  = sum(i.menu.discount_price * i.quantity for i in cart_items)
     delivery_fee = Decimal('29.00') if cart_items else Decimal('0.00')
@@ -621,29 +632,45 @@ def confirm_order(request):
     return redirect('order_success')
 
 
-# myapp/views.py
-
 from decimal import Decimal
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.shortcuts       import render, redirect, get_object_or_404
+from django.urls            import reverse
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.utils           import timezone
 
 from .models import CartItem, Address, Order, OrderItem
 
 @login_required
 def place_order(request):
+    # ให้รองรับเฉพาะ POST เท่านั้น
     if request.method != 'POST':
         return redirect('checkout')
 
-    # 1) Gather cart and totals
-    items       = CartItem.objects.filter(user=request.user)
+    # 1) ดึงสินค้าในตะกร้า
+    items = CartItem.objects.filter(user=request.user)
+    if not items.exists():
+        # ถ้าตะกร้าว่าง → กลับไปหน้า checkout
+        return redirect('checkout')
+
+    # 2) คำนวณยอด
     subtotal    = sum(i.menu.discount_price * i.quantity for i in items)
-    delivery    = Decimal('29.00') if items else Decimal('0.00')
+    delivery    = Decimal('29.00')
     grand_total = subtotal + delivery
 
-    # 2) Create the Order
-    default_address = Address.objects.filter(user=request.user, is_default=True).first()
+    # 3) หาที่อยู่จัดส่งเริ่มต้น
+    default_address = Address.objects.filter(
+        user=request.user,
+        is_default=True
+    ).first()
+    if default_address is None:
+        # ถ้าไม่มี address → ไปหน้าเพิ่ม/เลือก address
+        return redirect('address_list')
+
+    # 4) อ่านวิธีจ่ายเงินจาก session
+    method = request.session.get('payment_method', 'visa')
+    is_paid = (method == 'visa')
+
+    # 5) สร้าง Order
     order = Order.objects.create(
         user=request.user,
         address=default_address,
@@ -651,8 +678,31 @@ def place_order(request):
         delivery_fee=delivery,
         grand_total=grand_total,
         placed_at=timezone.now(),
-        is_paid=False  # slip not yet uploaded
+        is_paid=is_paid,
+        payment_method=method,
     )
+
+    # 6) สร้าง OrderItem แต่ละตัว
+    for ci in items:
+        OrderItem.objects.create(
+            order=order,
+            menu=ci.menu,
+            quantity=ci.quantity,
+            price_at_time=ci.price_at_time,
+
+        )
+
+    # 7) ล้างตะกร้า
+    items.delete()
+
+    # 8) Redirect ตามวิธีจ่ายเงิน
+    if method == 'promptpay':
+        # ยังต้องอัปโหลดสลิปก่อนยืนยันการชำระ
+        return redirect('upload_slip', order_id=order.id)
+    else:
+        # จ่ายด้วย VISA (ถือว่าเรียบร้อย)
+        return redirect('order_success', order_id=order.id)
+
 
     # 3) Create OrderItems
     for ci in items:
@@ -669,17 +719,36 @@ def place_order(request):
     # 5) Redirect to the slip-upload page
     return redirect('upload_slip', order_id=order.id)
 
+from django.shortcuts           import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Order
+from .forms  import SlipUploadForm
+
 @login_required
 def upload_slip(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    # ดึงออร์เดอร์ที่ยังไม่ถูกจ่ายของ user
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+
     if request.method == 'POST':
-        slip = request.FILES.get('slip')
-        if slip:
-            order.slip = slip
+        # bind form กับ order instance
+        form = SlipUploadForm(request.POST, request.FILES, instance=order)
+        if form.is_valid():
+            # บันทึกไฟล์ slip เข้า order.slip
+            form.save()
+            # mark ว่าจ่ายแล้ว
             order.is_paid = True
             order.save()
-            return redirect('order_success', order_id=order.id)
-    return render(request, 'upload_slip.html', {'order': order})
+            # กลับมาแสดงหน้า upload อีกครั้งเพื่อ preview
+            return redirect('upload_slip', order_id=order.id)
+    else:
+        # GET ก็ bind form ด้วย instance เหมือนกัน เผื่อมี slip เดิมๆ
+        form = SlipUploadForm(instance=order)
+
+    return render(request, 'upload_slip.html', {
+        'order': order,
+        'form':  form,
+    })
+
 
 
 @login_required
@@ -853,6 +922,15 @@ from .models import Order, OrderItem, Address
 
 @login_required
 def checkout_again(request, order_id):
+    pending = Order.objects.filter(
+        user=request.user,
+        is_paid=False,
+        payment_method='promptpay',
+        slip__isnull=True
+    ).first()
+    if pending:
+        return redirect('upload_slip', order_id=pending.id)
+
     # ดึงออร์เดอร์เดิม
     old_order = get_object_or_404(Order, id=order_id, user=request.user)
 
@@ -920,6 +998,15 @@ from .models import Order, OrderItem, Address
 @require_POST
 @login_required
 def confirm_checkout_again(request, order_id):
+    pending = Order.objects.filter(
+        user=request.user,
+        is_paid=False,
+        payment_method='promptpay',
+        slip__isnull=True
+    ).first()
+    if pending:
+        return redirect('upload_slip', order_id=pending.id)
+    
     old_order   = get_object_or_404(Order, id=order_id, user=request.user)
 
     # ดึงค่าจากฟอร์ม
@@ -1138,39 +1225,5 @@ def confirm_checkout(request):
       'method':       method,
       'qr_b64':       qr_b64,
     })
-
-@login_required
-def place_order(request):
-    if request.method != 'POST':
-        return redirect('checkout')
-
-    # 1. สร้าง Order ใหม่
-    items = CartItem.objects.filter(user=request.user)
-    subtotal = sum(i.menu.discount_price * i.quantity for i in items)
-    delivery = Decimal('29.00') if items else Decimal('0.00')
-    grand_total = subtotal + delivery
-
-    order = Order.objects.create(
-        user=request.user,
-        total_price=subtotal,
-        delivery_fee=delivery,
-        grand_total=grand_total,
-        placed_at=timezone.now(),
-        is_paid=(request.session.get('payment_method') == 'visa'),
-    )
-
-    # 2. สร้าง OrderItem แต่ละเมนู
-    for ci in items:
-        OrderItem.objects.create(
-            order=order,
-            menu=ci.menu,
-            quantity=ci.quantity,
-            unit_price=ci.menu.discount_price,
-        )
-    # 3. ล้างตะกร้า
-    items.delete()
-
-    # 4. redirect ไป thank-you page
-    return redirect('order_success', order_id=order.id)
 
 

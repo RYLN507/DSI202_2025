@@ -100,7 +100,7 @@ class Menu(models.Model):
     description     = models.TextField("คำอธิบายสั้น", blank=True)
     details         = models.TextField("รายละเอียดเพิ่มเติม", blank=True)
     price           = models.DecimalField("ราคาปกติ", max_digits=8, decimal_places=2)
-    discount_price = models.DecimalField(
+    discount_price  = models.DecimalField(
     "ราคาหลังลด", max_digits=8, decimal_places=2,
     default=0.0,
     help_text="ถ้าไม่ลด ก็ใส่เท่ากับราคาปกติ"
@@ -238,7 +238,6 @@ class CartItem(models.Model):
         return f"{self.menu.title} x{self.quantity}"
 
 
-# myapp/models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -262,6 +261,15 @@ class Order(models.Model):
     placed_at     = models.DateTimeField("สั่งเมื่อ", default=timezone.now)
     is_paid       = models.BooleanField("ชำระเงินแล้ว", default=False)
 
+    payment_method = models.CharField(
+        "วิธีการชำระเงิน",
+        max_length=20,
+        choices=(
+            ('visa', 'VISA'),
+            ('promptpay', 'PromptPay'),
+        ),
+        default='visa',
+    )
     # 1) ฟิลด์เก็บภาพสลิป (อัปโหลดไปใน media/payment_slips/)
     slip          = models.ImageField(
         "สลิปชำระเงิน",
@@ -286,8 +294,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order#{self.id} ของ {self.user.username}"
-
-
 
 
 class OrderItem(models.Model):

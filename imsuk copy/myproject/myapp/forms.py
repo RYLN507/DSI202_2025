@@ -53,17 +53,24 @@ class AddressForm(forms.ModelForm):
             'zipcode':      _('รหัสไปรษณีย์'),
             'is_default':   _('ตั้งเป็นค่ามาตรฐาน'),
         }
+
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from .models import Order
 
 class SlipUploadForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['slip']
-        widgets = {
-            'slip': forms.ClearableFileInput(attrs={'class': 'form-input'}),
-        }
         labels = {
             'slip': _('Payment Slip'),
         }
+        widgets = {
+            'slip': forms.ClearableFileInput(attrs={
+                # adjust these classes to whatever you need
+                'class': 'absolute inset-0 w-full h-full opacity-0 cursor-pointer'
+            }),
+        }
+
+
 

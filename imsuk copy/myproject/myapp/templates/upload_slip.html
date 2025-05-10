@@ -4,53 +4,130 @@
 {% block title %}{% trans "Upload Payment Slip" %} | IMSUK{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl space-y-6">
-    <h2 class="text-center text-3xl font-extrabold text-green-700">
-      {% trans "Upload Your Payment Slip" %}
-    </h2>
-    <p class="text-center text-gray-600">
-      {% blocktrans %}Please upload an image or PDF of your payment slip for order #{{ order.id }}.{% endblocktrans %}
-    </p>
-    <form method="post"
-          enctype="multipart/form-data"
-          class="space-y-4">
-      {% csrf_token %}
-      {{ form.non_field_errors }}
-      <div class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition">
-        <input type="file"
-               name="slip"
-               accept="image/*,application/pdf"
-               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-        <div class="flex flex-col items-center justify-center space-y-2">
-          <svg xmlns="http://www.w3.org/2000/svg"
-               class="h-12 w-12 text-gray-400"
-               fill="none"
-               viewBox="0 0 24 24"
-               stroke="currentColor">
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 16V4m0 0L3 8m4-4l4 4m6 8v4m0 0l-4-4m4 4l4-4" />
-          </svg>
-          <p class="text-gray-600">{% trans "Drag & drop your file here, or click to browse" %}</p>
-          <p class="text-xs text-gray-400">{% trans "Supported: JPG, PNG, PDF" %}</p>
+<div class="max-w-5xl mx-auto my-16 px-4 sm:px-6 lg:px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    
+    <!-- LEFT: QR + Details + Preview -->
+    <div class="space-y-6">
+      <div class="bg-white rounded-3xl shadow-xl p-8 text-center transition hover:shadow-2xl">
+        <h2 class="text-2xl font-extrabold text-[#3F8240] mb-6">
+          {% trans "Scan to Pay (PromptPay)" %}
+        </h2>
+        <div class="inline-block bg-gray-50 p-4 rounded-xl">
+          <img src="{% static 'images/promptpay_icon.jpg' %}"
+               alt="{% trans 'PromptPay QR' %}"
+               class="w-56 h-56 object-contain" />
         </div>
+        <p class="mt-6 text-gray-700 space-y-1 leading-relaxed">
+          <span class="block font-medium">{% trans "สแกน QR เพื่อโอนเข้าบัญชี" %}</span>
+          <span class="block"><strong>{% trans "ชื่อ" %}:</strong> น.ส. ณฐมน วะทวิก้านตง</span>
+          <span class="block"><strong>{% trans "บัญชี" %}:</strong> xxx-x-x5768-x</span>
+          <span class="block"><strong>{% trans "เลขอ้างอิง" %}:</strong> 004999203757876</span>
+        </p>
       </div>
-      {% if form.slip.errors %}
-        <p class="text-red-600 text-sm">{{ form.slip.errors.as_text }}</p>
+
+      {% if order.slip %}
+      <div class="bg-white rounded-3xl shadow-xl p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          {% trans "Uploaded Slip Preview" %}
+        </h3>
+        <img src="{{ order.slip.url }}"
+             alt="{% trans 'Payment Slip' %}"
+             class="w-full rounded-xl border border-gray-200 object-contain" />
+      </div>
       {% endif %}
+    </div>
 
-      <button type="submit"
-              class="w-full flex justify-center py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full shadow-md transition">
-        {% trans "Submit Slip" %}
-      </button>
-    </form>
-
-    <a href="{% url 'order_success' order.id %}"
-       class="block mt-4 text-center text-sm text-gray-500 hover:underline">
-      {% trans "Back to Order Details" %}
-    </a>
+    <!-- RIGHT COLUMN: Upload Form -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+        <h2 class="text-2xl font-extrabold text-[#3F8240] mb-4">
+          {% trans "Upload Your Payment Slip" %}
+        </h2>
+        <p class="text-gray-600 mb-6">
+          {% trans "Please upload an image or PDF file of your payment slip to confirm payment." %}
+        </p>
+  
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+  
+          <!-- UPLOAD ZONE -->
+          <div id="upload-zone"
+               class="group relative flex flex-col items-center px-6 py-12 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-500 transition">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-12 w-12 text-gray-400 group-hover:text-green-500 mb-4 transition"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v8m0-8l-4 4m4-4l4 4M16 5l-4-4-4 4m8 0H8" />
+            </svg>
+            <span class="text-gray-600 group-hover:text-green-500 transition">
+              {% trans "Drag & drop, or click to browse" %}
+            </span>
+            {{ form.slip }}
+          </div>
+  
+          <!-- PREVIEW ZONE (hidden until file chosen) -->
+          <div id="preview-zone" class="hidden relative rounded-xl overflow-hidden border border-gray-200">
+            <img id="slip-preview"
+                 class="w-full object-contain"
+                 alt="{% trans 'Preview' %}" />
+            <!-- Change button -->
+            <button type="button"
+                    id="change-file"
+                    class="absolute top-2 right-2 bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-50 transition">
+              {% trans "Change" %}
+            </button>
+          </div>
+  
+          <!-- SUBMIT BUTTON -->
+          <button type="submit"
+                  class="mt-6 w-full py-3 bg-[#BADE80] hover:bg-[#A3CF62] text-[#3F8240] font-semibold rounded-full transition shadow">
+            {% trans "Submit Slip" %}
+          </button>
+        </form>
+  
+        <a href="{% url 'order_success' order.id %}"
+           class="block mt-4 text-center text-sm text-gray-500 hover:underline">
+          {% trans "Skip and view Order Details" %}
+        </a>
+      </div>
+    </div>
   </div>
-</div>
-{% endblock %}
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('id_slip');
+    const uploadZone = document.getElementById('upload-zone');
+    const previewZone = document.getElementById('preview-zone');
+    const previewImg  = document.getElementById('slip-preview');
+    const changeBtn   = document.getElementById('change-file');
+  
+    // when a file is selected
+    input.addEventListener('change', () => {
+      const file = input.files[0];
+      if (!file || !file.type.startsWith('image/')) {
+        // keep upload zone
+        previewZone.classList.add('hidden');
+        uploadZone.classList.remove('hidden');
+        return;
+      }
+      // show preview
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
+      uploadZone.classList.add('hidden');
+      previewZone.classList.remove('hidden');
+    });
+  
+    // clicking "Change" brings back the upload zone
+    changeBtn.addEventListener('click', () => {
+      input.value = '';  // clear selection
+      previewZone.classList.add('hidden');
+      uploadZone.classList.remove('hidden');
+    });
+  });
+  </script>
+  {% endblock %}
+
+
+
+
+
