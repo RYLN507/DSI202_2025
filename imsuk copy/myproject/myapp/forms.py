@@ -54,6 +54,7 @@ class AddressForm(forms.ModelForm):
             'is_default':   _('ตั้งเป็นค่ามาตรฐาน'),
         }
 
+# myapp/forms.py
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from .models import Order
@@ -62,15 +63,33 @@ class SlipUploadForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['slip']
+        widgets = {
+            'slip': forms.ClearableFileInput(attrs={
+                'class': 'opacity-0 absolute inset-0 cursor-pointer',
+            }),
+        }
         labels = {
             'slip': _('Payment Slip'),
         }
-        widgets = {
-            'slip': forms.ClearableFileInput(attrs={
-                # adjust these classes to whatever you need
-                'class': 'absolute inset-0 w-full h-full opacity-0 cursor-pointer'
-            }),
-        }
+
+    def clean_slip(self):
+        slip = self.cleaned_data.get('slip')
+        if not slip:
+            raise forms.ValidationError(_("กรุณาอัปโหลดสลิป"))
+        name = slip.name.lower()
+        ext = name.rsplit('.', 1)[-1]
+        allowed = ('jpg','jpeg','png','pdf')
+        if ext not in allowed:
+            raise forms.ValidationError(
+                _("ไฟล์ต้องเป็น JPG, PNG หรือ PDF เท่านั้น")
+            )
+        max_size = 2 * 1024 * 1024  # 2MB
+        if slip.size > max_size:
+            raise forms.ValidationError(
+                _("ขนาดไฟล์ต้องไม่เกิน 2MB")
+            )
+        return slip
+
 
 
 

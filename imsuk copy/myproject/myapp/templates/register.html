@@ -1,55 +1,103 @@
 <!-- register.html -->
 {% extends 'base.html' %}
 {% load i18n %}
+{% load static %}
 {% block title %}{% trans "Register" %} | IMSUK{% endblock %}
-{% block content %}
-<div class="max-w-lg mx-auto bg-white p-8 rounded-2xl shadow-md">
-    <h2 class="text-2xl font-bold mb-4 text-center text-[#3F8240]">{% trans "Welcome to IMSUK" %}</h2>
-    <form method="POST" action="">
-        {% csrf_token %}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium">{% trans "First Name" %}</label>
-                <input type="text" name="first_name" required class="w-full p-2 border rounded"/>
-            </div>
-            <div>
-                <label class="block text-sm font-medium">{% trans "Last Name" %}</label>
-                <input type="text" name="last_name" required class="w-full p-2 border rounded"/>
-            </div>
-        </div>
-        <label class="block mt-4 text-sm font-medium">{% trans "Phone Number" %}</label>
-        <input type="text" name="phone" required class="w-full p-2 border rounded"/>
-        
-        <label class="block mt-4 text-sm font-medium">Email</label>
-        <input type="email" name="email" required class="w-full p-2 border rounded"/>
-        
-        <label class="block mt-4 text-sm font-medium">{% trans "Password" %}</label>
-        <input type="password" name="password" required class="w-full p-2 border rounded"/>
-        
-        <label class="block mt-4 text-sm font-medium">{% trans "Confirm Password" %}</label>
-        <input type="password" name="confirm_password" required class="w-full p-2 border rounded"/>
-        
-        <label class="block mt-4 text-sm font-medium">{% trans "Address" %}</label>
-        <textarea name="address" rows="2" class="w-full p-2 border rounded"></textarea>
-        
-        <label class="block mt-4 text-sm font-medium">{% trans "Food Allergies (e.g., nuts, milk, gluten)" %}</label>
-        <input type="text" name="allergy" class="w-full p-2 border rounded"/>
-        
-        <div class="mt-4 flex items-center">
-            <input type="checkbox" required class="mr-2">
-            <span class="text-sm">
-              {% trans "I accept the" %} <a href="#" class="text-[#3F8240] underline">{% trans "Privacy Policy" %}</a>
-            </span>
-        </div>
-        
-        <button type="submit" class="mt-6 w-full bg-[#BADE80] text-[#3F8240] font-bold py-2 rounded hover:bg-[#A3CF62]">
-            {% trans "Register" %}
-        </button>
-    </form>
 
-    <p class="mt-4 text-center text-sm">
-      {% trans "Already have an account?" %}
-      <a href="/login/" class="text-[#3F8240] underline">{% trans "Login" %}</a>
-    </p>
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F7EFDB] to-[#DFB2A7] p-6">
+  <!-- เพิ่ม max-w-4xl ให้กว้างขึ้น -->
+  <div class="w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+    <div class="p-8">
+      <h2 class="text-3xl font-bold text-center text-[#276749] mb-6">
+        {% trans "Create your IMSUK account" %}
+      </h2>
+
+      <form method="POST" action="" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {% csrf_token %}
+
+        <!-- First & Last Name -->
+        <div>
+          <label for="first_name" class="block text-sm font-medium text-gray-700">{% trans "First Name" %}</label>
+          <input id="first_name" name="first_name" type="text" required
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="{% trans 'Your first name' %}" />
+        </div>
+        <div>
+          <label for="last_name" class="block text-sm font-medium text-gray-700">{% trans "Last Name" %}</label>
+          <input id="last_name" name="last_name" type="text" required
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="{% trans 'Your last name' %}" />
+        </div>
+
+        <!-- Phone & Email -->
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700">{% trans "Phone Number" %}</label>
+          <input id="phone" name="phone" type="tel" required
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="081-234-5678" />
+        </div>
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">{% trans "Email Address" %}</label>
+          <input id="email" name="email" type="email" required
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="you@example.com" />
+        </div>
+
+        <!-- Passwords -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">{% trans "Password" %}</label>
+          <input id="password" name="password" type="password" required
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="••••••••" />
+        </div>
+        <div>
+          <label for="confirm_password" class="block text-sm font-medium text-gray-700">{% trans "Confirm Password" %}</label>
+          <input id="confirm_password" name="confirm_password" type="password" required
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="••••••••" />
+        </div>
+
+        <!-- Address (full width) -->
+        <div class="lg:col-span-2">
+          <label for="address" class="block text-sm font-medium text-gray-700">{% trans "Address" %}</label>
+          <textarea id="address" name="address" rows="2"
+                    class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                    placeholder="{% trans 'Your address' %}"></textarea>
+        </div>
+
+        <!-- Allergy (full width) -->
+        <div class="lg:col-span-2">
+          <label for="allergy" class="block text-sm font-medium text-gray-700">
+            {% trans "Food Allergies (e.g., nuts, milk, gluten)" %}
+          </label>
+          <input id="allergy" name="allergy" type="text"
+                 class="mt-1 block w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#BADE80] transition"
+                 placeholder="{% trans 'List any allergies' %}" />
+        </div>
+
+        <!-- Privacy Policy -->
+        <div class="lg:col-span-2 flex items-start">
+          <input id="agree" name="agree" type="checkbox" required
+                 class="h-4 w-4 mt-1 text-[#3F8240] focus:ring-[#3F8240] border-gray-300 rounded" />
+          <label for="agree" class="ml-2 text-sm text-gray-600">
+            {% trans "I accept the" %}
+            <a href="#" class="text-[#3F8240] font-medium hover:underline">{% trans "Privacy Policy" %}</a>
+          </label>
+        </div>
+
+        <!-- Submit -->
+        <div class="lg:col-span-2">
+          <button type="submit"
+                  class="w-full py-3 bg-[#BADE80] hover:bg-[#A3CF62] text-[#22543D] font-semibold rounded-full shadow-md transition">
+            {% trans "Register" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
+
+

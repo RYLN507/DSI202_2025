@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load currency_filters %}
 {% load i18n %}
 
 {% block title %}{% trans "Favorite Restaurants & Menus" %} | IMSUK{% endblock %}
@@ -61,55 +62,70 @@
 <section>
   <h2 class="text-3xl font-extrabold text-[#2F855A] mb-6">{% trans "My Favorite Menus" %}</h2>
 
-  {% if favorite_menus %}
-    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      {% for m in favorite_menus %}
-        <div class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col">
-          {% if m.image %}
-            <img 
-              src="{{ m.image.url }}" 
-              alt="{{ m.title }}"
-              class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-            >
-          {% else %}
-            <div class="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-400">
-              {% trans "No Image" %}
-            </div>
-          {% endif %}
 
-          <div class="p-5 flex-1 flex flex-col">
-            <h3 class="text-lg font-semibold text-gray-800">{{ m.title }}</h3>
-            <p class="text-sm text-gray-500 mt-1">{{ m.restaurant.name }}</p>
-          
-            <div class="mt-auto">
-              {# แสดงราคาที่ลดก่อนเสมอ ถ้าไม่มีค่อย fallback #}
-              <p class="text-xl font-bold text-[#2F855A] leading-none mb-3">
-                ฿{{ m.discounted_price|default:m.discount_price|default:m.price|floatformat:0 }}
+  {% if favorite_menus %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for m in favorite_menus %}
+        <div class="flex flex-col bg-white rounded-xl shadow hover:shadow-lg overflow-hidden transition">
+          <!-- รูปขนาดคงที่ h-36 และ object-cover -->
+          <a href="{% url 'menu_detail' m.id %}">
+            {% if m.image %}
+            <img src="{{ m.image.url }}"
+                 alt="{{ m.title }}"
+                 class="w-full h-36 object-cover">
+            {% else %}
+            <div class="w-full h-36 bg-gray-200 flex items-center justify-center text-gray-500">
+              {% trans "No Image Available" %}
+            </div>
+            {% endif %}
+          </a>
+
+          <div class="p-4 flex flex-col justify-between h-full">
+            <div class="flex-grow">
+              <!-- ชื่อสีเขียวเข้ม text-[#3F8240] -->
+              <h3 class="font-bold text-[#3F8240] text-lg">{{ m.title }}</h3>
+              <!-- รายละเอียดสั้นๆ สีเทา -->
+              <p class="text-sm text-gray-600 line-clamp-2 mt-1">
+                {{ m.description }}
               </p>
-          
-              <a
-                href="{% url 'menu_detail' m.id %}"
-                class="block w-full bg-[#3F8240] hover:bg-[#2f6831] text-white text-center font-medium py-2 rounded-lg transition-colors"
-              >
+              <!-- เวลา -->
+              <p class="text-sm text-gray-500 mt-2">
+                {{ m.start_time|time:"H:i" }} – {{ m.end_time|time:"H:i" }}
+              </p>
+            </div>
+
+            <div class="mt-4">
+              {% if m.price > m.discount_price %}
+                <div class="flex items-baseline space-x-2">
+                  <!-- ราคาปกติเล็ก และขีดทับ -->
+                  <span class="text-gray-400 line-through text-lg">
+                    {{ m.price|floatformat:0 }} ฿
+                  </span>
+                  <!-- ราคาหลังลดใหญ่ขึ้น -->
+                  <span class="text-2xl font-bold text-green-700">
+                    {{ m.discount_price|floatformat:0 }} ฿
+                  </span>
+                </div>
+              {% else %}
+                <span class="text-2xl font-bold text-green-700">
+                  {{ m.price|floatformat:0 }} ฿
+                </span>
+              {% endif %}
+            
+              <a href="{% url 'menu_detail' m.id %}"
+                 class="block w-full bg-[#3F8240] hover:bg-[#2f6831] text-white py-2 text-center rounded-full font-semibold transition mt-3">
                 {% trans "View Details" %}
               </a>
             </div>
           </div>
-
-          <span 
-            class="absolute top-4 right-4 text-2xl text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
-            hx-post="{% url 'toggle_favorite_menu' m.id %}"
-            hx-swap="outerHTML"
-            title="{% trans 'Remove from favorites' %}"
-          >
-            ♥
-          </span>
         </div>
       {% endfor %}
     </div>
   {% else %}
     <div class="text-center py-12">
-      <p class="text-gray-500 text-lg">{% trans "You don't have any favorite menus yet." %}</p>
+      <p class="text-gray-500 text-lg">
+        😥 {% trans "You don't have any favorite menus yet." %}
+      </p>
       <a href="{% url 'shop_list' 'all' %}"
          class="inline-block bg-[#3F8240] hover:bg-[#2f6831] text-white py-3 px-6 rounded-full transition">
         {% trans "Browse Menus" %}
@@ -118,8 +134,4 @@
   {% endif %}
 </section>
 
-
-</div>
 {% endblock %}
-
-

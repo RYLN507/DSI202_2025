@@ -14,34 +14,34 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
 from .forms  import SlipUploadForm
-
-
+from django.contrib.auth import login
 from .models import (
     Profile, Address, PaymentMethod,
     Category, Restaurant, Menu,
     Deal, FlashMenu, FavoriteDeal,
     CartItem, Order, OrderItem
 )
+from django.shortcuts import render, redirect
 
 User = get_user_model()
 
 
 def register_view(request):
-    """สมัครสมาชิกใหม่"""
+    """สมัครสมาชิกใหม่ และล็อกอินอัตโนมัติ"""
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()               # สร้าง user ใหม่
+            login(request, user)             # ล็อกอินทันที
             messages.success(
                 request,
-                "สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ"
+                "ยินดีต้อนรับเข้าสู่ IMSUK ค่ะ"  # ข้อความต้อนรับ
             )
-            return redirect('login')
+            return redirect('home')          # เปลี่ยนเป็น URL name ของหน้าแรกคุณ
     else:
         form = UserCreationForm()
-    return render(
-        request, 'register.html', {'form': form}
-    )
+
+    return render(request, 'register.html', {'form': form})
 
 
 def filter_view(request):

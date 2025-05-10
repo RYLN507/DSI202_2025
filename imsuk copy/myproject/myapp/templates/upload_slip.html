@@ -26,7 +26,7 @@
         </p>
       </div>
 
-      {% if order.slip %}
+        {% if order.slip %}
       <div class="bg-white rounded-3xl shadow-xl p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">
           {% trans "Uploaded Slip Preview" %}
@@ -38,96 +38,111 @@
       {% endif %}
     </div>
 
-    <!-- RIGHT COLUMN: Upload Form -->
-    <div class="bg-white rounded-3xl shadow-xl p-8">
-        <h2 class="text-2xl font-extrabold text-[#3F8240] mb-4">
+    {# ─────────── RIGHT PANEL ─────────── #}
+    {% if not order.slip %}
+      <div class="bg-white rounded-3xl shadow-xl p-8 flex flex-col text-center transition hover:shadow-2xl">
+        <h2 class="text-2xl font-extrabold text-[#3F8240] mb-6">
           {% trans "Upload Your Payment Slip" %}
         </h2>
         <p class="text-gray-600 mb-6">
           {% trans "Please upload an image or PDF file of your payment slip to confirm payment." %}
         </p>
-  
-        <form method="POST" enctype="multipart/form-data">
+
+        <form method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col">
           {% csrf_token %}
-  
-          <!-- UPLOAD ZONE -->
-          <div id="upload-zone"
-               class="group relative flex flex-col items-center px-6 py-12 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-500 transition">
+
+          {# non-field errors #}
+          {% if form.non_field_errors %}
+            <div class="mb-4 text-sm text-red-600">
+              {% for err in form.non_field_errors %}
+                <p>{{ err }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {# ─── drag & drop zone label ─── #}
+          <label id="upload-zone"
+                 class="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed border-green-200 bg-green-50 hover:border-green-400 rounded-xl p-8 cursor-pointer transition">
             <svg xmlns="http://www.w3.org/2000/svg"
-                 class="h-12 w-12 text-gray-400 group-hover:text-green-500 mb-4 transition"
+                 class="h-12 w-12 text-green-400 mb-4"
                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v8m0-8l-4 4m4-4l4 4M16 5l-4-4-4 4m8 0H8" />
+                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v8m0-8l-4 4m4-4l4 4" />
             </svg>
-            <span class="text-gray-600 group-hover:text-green-500 transition">
-              {% trans "Drag & drop, or click to browse" %}
-            </span>
-            {{ form.slip }}
-          </div>
-  
-          <!-- PREVIEW ZONE (hidden until file chosen) -->
-          <div id="preview-zone" class="hidden relative rounded-xl overflow-hidden border border-gray-200">
+            <p class="text-green-600 font-medium">
+              {% trans "Drag & drop, or click anywhere here" %}
+            </p>
+
+            {# invisible file input overlaying the whole label #}
+            <input
+              id="id_slip"
+              name="{{ form.slip.html_name }}"
+              type="file"
+              accept="image/*,application/pdf"
+              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </label>
+
+          {# field error below zone #}
+          {% if form.slip.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.slip.errors.0 }}</p>
+          {% endif %}
+
+          {# ─── preview zone (hidden by default) ─── #}
+          <div id="preview-zone"
+               class="hidden relative rounded-xl overflow-hidden border border-gray-200 mt-6 flex-1">
             <img id="slip-preview"
-                 class="w-full object-contain"
+                 class="w-full h-full object-contain"
                  alt="{% trans 'Preview' %}" />
-            <!-- Change button -->
             <button type="button"
                     id="change-file"
-                    class="absolute top-2 right-2 bg-white border border-gray-300 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-50 transition">
+                    class="absolute top-3 right-3 bg-white text-gray-700 px-3 py-1 rounded-full shadow hover:shadow-md transition">
               {% trans "Change" %}
             </button>
           </div>
-  
-          <!-- SUBMIT BUTTON -->
+
+          {# submit button #}
           <button type="submit"
                   class="mt-6 w-full py-3 bg-[#BADE80] hover:bg-[#A3CF62] text-[#3F8240] font-semibold rounded-full transition shadow">
             {% trans "Submit Slip" %}
           </button>
         </form>
-  
+
         <a href="{% url 'order_success' order.id %}"
-           class="block mt-4 text-center text-sm text-gray-500 hover:underline">
+           class="mt-4 text-center text-sm text-gray-500 hover:underline">
           {% trans "Skip and view Order Details" %}
         </a>
       </div>
-    </div>
+    {% endif %}
   </div>
-  
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const input = document.getElementById('id_slip');
-    const uploadZone = document.getElementById('upload-zone');
-    const previewZone = document.getElementById('preview-zone');
-    const previewImg  = document.getElementById('slip-preview');
-    const changeBtn   = document.getElementById('change-file');
-  
-    // when a file is selected
-    input.addEventListener('change', () => {
-      const file = input.files[0];
-      if (!file || !file.type.startsWith('image/')) {
-        // keep upload zone
-        previewZone.classList.add('hidden');
-        uploadZone.classList.remove('hidden');
-        return;
-      }
-      // show preview
-      const url = URL.createObjectURL(file);
-      previewImg.src = url;
-      uploadZone.classList.add('hidden');
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const input       = document.getElementById('id_slip');
+  const uploadZone  = document.getElementById('upload-zone');
+  const previewZone = document.getElementById('preview-zone');
+  const previewImg  = document.getElementById('slip-preview');
+  const changeBtn   = document.getElementById('change-file');
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    // only preview images
+    if (file && file.type.startsWith('image/')) {
+      previewImg.src = URL.createObjectURL(file);
+      uploadZone .classList.add('hidden');
       previewZone.classList.remove('hidden');
-    });
-  
-    // clicking "Change" brings back the upload zone
-    changeBtn.addEventListener('click', () => {
-      input.value = '';  // clear selection
+    } else {
       previewZone.classList.add('hidden');
-      uploadZone.classList.remove('hidden');
-    });
+      uploadZone .classList.remove('hidden');
+    }
   });
-  </script>
-  {% endblock %}
 
-
-
-
-
+  changeBtn.addEventListener('click', () => {
+    input.value = '';
+    previewZone.classList.add('hidden');
+    uploadZone .classList.remove('hidden');
+  });
+});
+</script>
+{% endblock %}
