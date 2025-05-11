@@ -1,0 +1,116 @@
+<!-- templates/login.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#F7EFDB] to-[#DFB2A7] p-6">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+    <div class="p-8 space-y-6">
+      <h2 class="text-3xl font-bold text-center text-[#276749]">
+        {% trans "Welcome Back" %}
+      </h2>
+
+      {# Django messages (optional) #}
+      {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+        <div class="px-4 py-2 rounded-lg text-sm {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="POST" class="space-y-5">
+        {% csrf_token %}
+
+        <!-- Email -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            {% trans "Email Address" %}
+          </label>
+          <div class="mt-1 relative rounded-xl shadow-sm">
+            <input id="email" name="email" type="email" required
+                   class="block w-full pr-10 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#BADE80] transition"
+                   placeholder="you@example.com" />
+            <span class="absolute inset-y-0 right-3 flex items-center text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M16 12l-4-4m0 0l-4 4m4-4v12" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            {% trans "Password" %}
+          </label>
+          <div class="mt-1 relative rounded-xl shadow-sm">
+            <input id="password" name="password" type="password" required
+                   class="block w-full pr-10 p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#BADE80] transition"
+                   placeholder="••••••••" />
+            <span class="absolute inset-y-0 right-3 flex items-center text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 11c1.656 0 3-1.344 3-3S13.656 5 12 5s-3 1.344-3 3 1.344 3 3 3zm0 0v4m0 4h.01" />
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center">
+            <input id="remember_me" name="remember_me" type="checkbox"
+                   class="h-4 w-4 text-[#3F8240] focus:ring-[#3F8240] border-gray-300 rounded" />
+            <label for="remember_me" class="ml-2 text-gray-600">
+              {% trans "Remember me" %}
+            </label>
+          </div>
+          <a href="{% url 'password_reset' %}" class="text-[#3F8240] hover:underline">
+            {% trans "Forgot password?" %}
+          </a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="w-full flex justify-center py-3 bg-[#BADE80] hover:bg-[#A3CF62] text-[#22543D] font-semibold rounded-full shadow-md transition">
+          {% trans "Login" %}
+        </button>
+      </form>
+
+      <div class="mt-4 flex items-center justify-center space-x-2">
+        <span class="text-gray-400">or</span>
+      </div>
+
+      {# Google OAuth sign-in button #}
+      <div class="flex justify-center">
+        <a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}"
+           class="flex items-center px-4 py-2 border border-gray-300 rounded-full hover:shadow-md transition">
+          <img src="{% static 'images/google_logo.png' %}" alt="Google logo" class="h-5 w-5 mr-2" />
+          <span class="text-gray-700 font-medium">
+            {% trans "Sign in with Google" %}
+          </span>
+        </a>
+      </div>
+
+      <p class="mt-6 text-center text-gray-500 text-sm">
+        {% trans "Don’t have an account?" %}
+        <a href="{% url 'register' %}" class="text-[#3F8240] font-medium hover:underline">
+          {% trans "Sign up" %}
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
