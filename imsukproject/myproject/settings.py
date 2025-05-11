@@ -28,9 +28,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost', cast=lambda v: [s.strip() for s in v.split(',')])
+
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '127.0.0.1:8000',   # เพิ่มบรรทัดนี้เข้าไป
+]
 
 # Application definition
 

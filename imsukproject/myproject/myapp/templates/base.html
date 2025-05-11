@@ -21,8 +21,6 @@
     </script>
   {% endblock %}
 
-
-
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <!-- Tailwind -->
@@ -59,39 +57,53 @@
       </form>
 
       <!-- กลุ่มไอคอน -->
-      <div class="flex flex-col items-center justify-center flex-1">
-        <a href="{% url 'profile' %}" class="mb-10">
+      <div class="flex flex-col items-center justify-center flex-1 space-y-10">
+        <a href="{% url 'profile' %}">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
         </a>
-        <a href="{% url 'address_list' %}" class="mb-10">
+        <a href="{% url 'address_list' %}">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </a>
-        <a href="{% url 'order_history' %}" class="mb-10">
+        <!-- ไอคอนใหม่: บอร์ดชุมชน & รีวิวเชิงลึก -->
+        <a href="{% url 'community_board' %}">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"/>
           </svg>
         </a>
-        <a href="{% url 'payment_methods' %}" class="mb-10">
+        <a href="{% url 'order_history' %}">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </a>
-        <a href="{% url 'help_center' %}" class="mb-10">
+        <a href="{% url 'payment_methods' %}">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+        </a>
+        <a href="{% url 'help_center' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </a>
       </div>
 
       <!-- Logout -->
-      <a href="{% url 'logout' %}">
+      <a href="{% url 'logout' %}" class="mt-6">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
         </svg>
       </a>
     </aside>
@@ -99,39 +111,38 @@
     <!-- Main Content -->
     <div class="flex flex-col min-h-screen pl-32">
       <!-- Top Banner -->
-      <!-- Top Banner -->
-<section class="relative top-banner-gradient h-32 flex items-center w-full">
-  <!-- Overlay รูปผลไม้ -->
-  <img src="{% static 'images/fruit.jpg' %}"
-       class="absolute inset-0 w-full h-full object-cover opacity-20"
-       alt="fruit bg"/>
+      <section class="relative top-banner-gradient h-32 flex items-center w-full">
+        <!-- Overlay รูปผลไม้ -->
+        <img src="{% static 'images/fruit.jpg' %}"
+             class="absolute inset-0 w-full h-full object-cover opacity-20"
+             alt="fruit bg"/>
 
-  <!-- เนื้อหาแบนเนอร์ -->
-  <div class="relative z-10 container mx-auto flex items-center px-6">
-    <!-- ซ้าย -->
-    <div class="flex-1 text-center text-[#f7efdb]">
-      <p>{% trans "Care" %}</p>
-      <p>{% trans "Sharing" %}</p>
-      <p>{% trans "Understanding in every meal" %}</p>
-    </div>
+        <!-- เนื้อหาแบนเนอร์ -->
+        <div class="relative z-10 container mx-auto flex items-center px-6">
+          <!-- ซ้าย -->
+          <div class="flex-1 text-center text-[#f7efdb]">
+            <p>{% trans "Care" %}</p>
+            <p>{% trans "Sharing" %}</p>
+            <p>{% trans "Understanding in every meal" %}</p>
+          </div>
 
-    <!-- โลโก้ตรงกลาง -->
-    <div class="flex-1 flex justify-center">
-      <a href="{% url 'home' %}">
-        <img src="{% static 'images/imsuk.logo.png' %}"
-             alt="IMSUK Logo"
-             class="w-32 h-32 mb-4 animate-pulse"/>
-      </a>
-    </div>
+          <!-- โลโก้ตรงกลาง -->
+          <div class="flex-1 flex justify-center">
+            <a href="{% url 'home' %}">
+              <img src="{% static 'images/imsuk.logo.png' %}"
+                   alt="IMSUK Logo"
+                   class="w-32 h-32 mb-4 animate-pulse"/>
+            </a>
+          </div>
 
-    <!-- ขวา -->
-    <div class="flex-1 text-center text-[#f7efdb]">
-      <p>{% trans "Empathy" %}</p>
-      <p>{% trans "Vitality" %}</p>
-      <p>{% trans "Reciprocity" %}</p>
-    </div>
-  </div>
-</section>
+          <!-- ขวา -->
+          <div class="flex-1 text-center text-[#f7efdb]">
+            <p>{% trans "Empathy" %}</p>
+            <p>{% trans "Vitality" %}</p>
+            <p>{% trans "Reciprocity" %}</p>
+          </div>
+        </div>
+      </section>
 
       <!-- Content Block -->
       <main class="flex-1">
@@ -146,3 +157,4 @@
   </div>
 </body>
 </html>
+

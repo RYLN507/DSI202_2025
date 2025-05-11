@@ -1262,3 +1262,67 @@ def confirm_checkout(request):
     })
 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
+from django.db.models import Q
+from .models import Post
+from .forms import PostForm
+
+def board_list(request):
+    qs = Post.objects.select_related('author').all()
+    q   = request.GET.get('q')
+    cat = request.GET.get('category')
+    if q:
+        qs = qs.filter(Q(title__icontains=q) | Q(content__icontains=q))
+    if cat in ('deal','leftovers'):
+        qs = qs.filter(content__icontains=cat)  # เปลี่ยนเงื่อนไขให้ตรงกับคุณ
+    
+    paginator   = Paginator(qs, 9)
+    page_number = request.GET.get('page')
+    page_obj    = paginator.get_page(page_number)
+
+    return render(request, 'community/board_list.html',{
+        'posts':       page_obj.object_list,
+        'page_obj':    page_obj,
+        'is_paginated': page_obj.has_other_pages(),
+    })
+
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    return render(request, 'community/post_detail.html', {'post': post})
+
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm()
+    return render(request, 'community/post_form.html', {'form': form})
+
+@login_required
+def edit_post(request, pk):
+    post = get_object_or_404(Post, pk=pk, author=request.user)
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'community/post_form.html', {'form': form, 'edit': True})
+
+@login_required
+def delete_post(request, pk):
+    post = get_object_or_404(Post, pk=pk, author=request.user)
+    if request.method == 'POST':
+        post.delete()
+        return redirect('community_board')
+    return render(request, 'community/post_confirm_delete.html', {'post': post})
+

@@ -139,3 +139,13 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_display        = ('order', 'menu', 'quantity', 'price_at_time')
     raw_id_fields       = ('order', 'menu')
     search_fields       = ('order__id', 'menu__title')
+
+from django.contrib import admin
+from .models import Post
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'created_at', 'likes')
+    list_filter  = ('created_at', 'author')
+    search_fields = ('title', 'content', 'author__username')
+    date_hierarchy = 'created_at'

@@ -82,6 +82,12 @@ urlpatterns = [
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
 
     path('oauth/', include('social_django.urls', namespace='social')),
+
+    path('community/',               views.board_list,   name='community_board'),
+    path('community/create/',        views.create_post,  name='create_post'),
+    path('community/post/<int:pk>/', views.post_detail,  name='post_detail'),
+    path('community/post/<int:pk>/edit/',   views.edit_post,    name='edit_post'),
+    path('community/post/<int:pk>/delete/', views.delete_post,  name='delete_post'),
 ]
 
 if settings.DEBUG:

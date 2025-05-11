@@ -91,5 +91,25 @@ class SlipUploadForm(forms.ModelForm):
         return slip
 
 
+# myapp/forms.py
+from django import forms
+from .models import Post
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title','content','image']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class':'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3F8240]'
+            }),
+            'content': forms.Textarea(attrs={
+                'class':'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3F8240] h-40'
+            }),
+            'image': forms.ClearableFileInput(attrs={
+                'class':'text-gray-700 cursor-pointer'
+            }),
+        }
+
 
 

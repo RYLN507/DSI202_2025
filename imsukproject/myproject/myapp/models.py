@@ -309,3 +309,27 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.menu.title} x{self.quantity}"
+    
+
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class Post(models.Model):
+    author      = models.ForeignKey(User, on_delete=models.CASCADE, related_name='community_posts')
+    title       = models.CharField('หัวข้อ', max_length=200)
+    content     = models.TextField('เนื้อหา')
+    image       = models.ImageField('รูปภาพ', upload_to='community/', blank=True, null=True)
+    created_at  = models.DateTimeField('วันที่สร้าง', default=timezone.now)
+    updated_at  = models.DateTimeField('อัปเดตล่าสุด', auto_now=True)
+    likes       = models.PositiveIntegerField('ยอดไลก์', default=0)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'โพสต์ชุมชน'
+        verbose_name_plural = 'โพสต์ชุมชน'
+
+    def __str__(self):
+        return self.title
