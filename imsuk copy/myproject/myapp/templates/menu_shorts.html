@@ -1,70 +1,82 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load currency_filters %}
-{% load i18n %}
+{% load static currency_filters i18n %}
 
 {% block title %}{% trans "Menu Shorts" %}{% endblock %}
 
 {% block content %}
-  {# Full‐screen vertical scroll container #}
-  <div class="h-screen overflow-y-auto snap-y snap-mandatory scrollbar-thin scrollbar-thumb-gray-400">
-    {% for item in menus %}
-      {# Each “short” fills the viewport height #}
-      <div class="relative w-full h-screen snap-start">
-        
-        {# Background image covers full #}
-        {% if item.image %}
-          <img src="{{ item.image.url }}"
-               alt="{{ item.title }}"
-               class="absolute inset-0 w-full h-full object-cover"/>
-        {% else %}
-          <div class="absolute inset-0 bg-gray-200"></div>
-        {% endif %}
+  {# Container สำหรับ scroll #}
+  <div id="shorts-container"
+       class="relative h-screen overflow-y-auto scroll-smooth snap-y snap-mandatory">
 
-        {# Dark gradient for text legibility #}
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+    <div id="shorts-wrapper">
+      {% for item in menus %}
+        <div class="short-card snap-start my-8 mx-auto
+                    aspect-[9/16] w-[70vh] max-w-xs
+                    rounded-2xl overflow-hidden
+                    relative">
+          {# ภาพพื้นหลัง #}
+          {% if item.image %}
+            <img src="{{ item.image.url }}"
+                 alt="{{ item.title }}"
+                 class="absolute inset-0 w-full h-full object-cover"/>
+          {% else %}
+            <div class="absolute inset-0 bg-gray-200"></div>
+          {% endif %}
 
-        {# Text overlay: title, desc, price #}
-        <div class="absolute bottom-16 left-6 max-w-md text-white">
-          <h2 class="text-4xl font-bold mb-2">{{ item.title }}</h2>
-          <p class="text-lg mb-4">{{ item.description }}</p>
-          <p class="text-3xl font-semibold">
-            {{ item.discount_price|currency:"฿" }}
-          </p>
+          {# Dark overlay #}
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+
+          {# ข้อความ #}
+          <div class="absolute bottom-4 left-4 text-white">
+            <h2 class="text-3xl font-bold">{{ item.title }}</h2>
+            <p class="text-base">{{ item.description }}</p>
+            <p class="text-2xl font-semibold mt-2">
+              {{ item.discount_price|currency:"฿" }}
+            </p>
+          </div>
+
+          {# ปุ่มแอคชัน #}
+          <div class="absolute top-1/2 right-4 flex flex-col space-y-3 transform -translate-y-1/2">
+            <a href="{% url 'menu_detail' item.id %}" class="p-2 bg-white/80 rounded-full shadow-md">
+              🔍
+            </a>
+            <form action="{% url 'toggle_favorite_menu' item.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="p-2 bg-white/80 rounded-full shadow-md">
+                ❤️
+              </button>
+            </form>
+            <form action="{% url 'add_to_cart' item.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="p-2 bg-white/80 rounded-full shadow-md">
+                🛒
+              </button>
+            </form>
+          </div>
         </div>
-
-        {# Vertical action buttons: view, like, cart #}
-        <div class="absolute top-1/2 right-6 transform -translate-y-1/2 flex flex-col space-y-4">
-          <!-- View Details -->
-          <a href="{% url 'menu_detail' item.id %}"
-             class="p-3 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-shadow shadow-lg"
-             aria-label="{% trans 'View details of' %} {{ item.title }}">
-            🔍
-          </a>
-          <!-- Like / Favorite -->
-          <form action="{% url 'toggle_favorite_menu' item.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit"
-                    class="p-3 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-shadow shadow-lg"
-                    aria-label="{% trans 'Like' %} {{ item.title }}">
-              ❤️
-            </button>
-          </form>
-          <!-- Add to Cart -->
-          <form action="{% url 'add_to_cart' item.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit"
-                    class="p-3 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-shadow shadow-lg"
-                    aria-label="{% trans 'Add to cart' %} {{ item.title }}">
-              🛒
-            </button>
-          </form>
-        </div>
-      </div>
-    {% empty %}
-      <p class="p-8 text-center text-gray-600">
-        {% trans "No menu items to show." %}
-      </p>
-    {% endfor %}
+      {% endfor %}
+    </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const wrapper = document.getElementById('shorts-wrapper');
+      const cards   = Array.from(wrapper.children);
+
+      // Fisher–Yates shuffle
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        wrapper.appendChild(cards[j]);
+        cards.splice(j, 1);
+      }
+
+      // Auto-scroll ทุก 4 วินาที
+      let idx = 0;
+      const total = wrapper.children.length;
+      setInterval(() => {
+        idx = (idx + 1) % total;
+        wrapper.children[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 4000);
+    });
+  </script>
 {% endblock %}
