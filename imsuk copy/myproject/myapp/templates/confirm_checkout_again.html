@@ -22,9 +22,14 @@
       </h3>
       <div class="bg-[#F7EFDB] p-4 rounded text-sm leading-relaxed">
         {% if default_address %}
-          <p class="font-medium text-gray-700">{{ default_address.label }}</p>
-          <p class="text-gray-600">{{ default_address.display_address }}</p>
-          <input type="hidden" name="address_id" value="{{ default_address.id }}">
+          <p class="font-medium text-gray-700">
+            {{ default_address.label }}
+          </p>
+          <p class="text-gray-600">
+            {{ default_address.display_address }}
+          </p>
+          <input type="hidden" name="address_id"
+                 value="{{ default_address.id }}">
         {% else %}
           <p class="italic text-gray-400">
             {% trans "You don't have a shipping address yet." %}
@@ -46,9 +51,13 @@
         {% for item in old_order.items.all %}
           <li class="flex justify-between">
             <span>
-              {{ item.menu.restaurant.name }} – {{ item.menu.title }} × {{ item.quantity }}
+              {{ item.menu.restaurant.name }}
+              - {{ item.menu.title }}
+              × {{ item.quantity }}
             </span>
-            <span>{{ item.price_at_time|currency:"฿" }}</span>
+            <span>
+              {{ item.price_at_time|currency:"฿" }}
+            </span>
           </li>
         {% endfor %}
       </ul>
@@ -89,16 +98,18 @@
     <div class="space-y-2 text-right">
       <div class="flex justify-between">
         <span class="text-gray-500">{% trans "Subtotal" %}</span>
-        <span class="text-gray-800 font-medium">{{ subtotal|currency:"฿" }}</span>
+        <span>{{ old_order.total_price|currency:"฿" }}</span>
       </div>
       <div class="flex justify-between">
         <span class="text-gray-500">{% trans "Shipping Fee" %}</span>
-        <span class="text-gray-800 font-medium">{{ delivery_fee|currency:"฿" }}</span>
+        <span>{{ delivery_fee|currency:"฿" }}</span>
       </div>
       <hr class="border-gray-200">
       <div class="flex justify-between font-bold text-lg">
         <span class="text-green-700">{% trans "Grand Total" %}</span>
-        <span class="text-green-700">{{ grand_total|currency:"฿" }}</span>
+        <span class="text-green-700">
+          {{ old_order.total_price|add:delivery_fee|currency:"฿" }}
+        </span>
       </div>
     </div>
 
@@ -109,10 +120,10 @@
         ✅ {% trans "Place Order" %}
       </button>
     </div>
+
   </form>
 </div>
 {% endblock %}
-
 
 
 

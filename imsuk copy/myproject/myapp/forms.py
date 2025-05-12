@@ -120,6 +120,21 @@ class PostForm(forms.ModelForm):
             }),
         }
 
+from django import forms
+from .models import Comment
+
+class CommentForm(forms.ModelForm):
+    content = forms.CharField(
+        label='',
+        widget=forms.Textarea(attrs={
+            'rows': 3,
+            'placeholder': 'เขียนคอมเมนต์ของคุณ...'
+        })
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['content']
 
 
 

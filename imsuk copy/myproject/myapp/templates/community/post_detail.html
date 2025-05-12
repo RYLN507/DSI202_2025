@@ -61,11 +61,50 @@
     {% endif %}
   </div>
 
-  <!-- Comments Section (Placeholder) -->
-  <section class="border-t pt-8">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Comments</h2>
-    <p class="text-gray-600 italic">Comments feature coming soon…</p>
-  </section>
+  <!-- Comments List -->
+  <div class="space-y-4">
+    {% for comment in comments %}
+      <div class="flex items-start space-x-4 bg-white p-4 rounded-xl shadow-sm">
+        {# Avatar (use Gravatar or user.profile.image.url if available) #}
+        <img src="{% if comment.author.profile.image %}{{ comment.author.profile.image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+             alt="{{ comment.author.username }}"
+             class="w-10 h-10 rounded-full object-cover"/>
+
+        <div class="flex-1">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-900">{{ comment.author.username }}</span>
+            <span class="text-xs text-gray-500">{{ comment.created_at|date:"M j, Y H:i" }}</span>
+          </div>
+          <p class="mt-1 text-gray-800">{{ comment.content }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-gray-700 italic">ยังไม่มีคอมเมนต์ ใส่ความเห็นแรกกันเลย!</p>
+    {% endfor %}
+  </div>
+
+  <!-- Comment Form -->
+  <div class="mt-8">
+    {% if user.is_authenticated %}
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <textarea name="content"
+                  rows="3"
+                  class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="เขียนคอมเมนต์ของคุณ...">{{ form.content.value }}</textarea>
+        <button type="submit"
+                class="inline-flex items-center px-5 py-2 bg-green-700 hover:bg-green-800 text-white font-medium rounded-lg transition">
+          ส่งคอมเมนต์
+        </button>
+      </form>
+    {% else %}
+      <p class="text-gray-700">
+        กรุณา <a href="{% url 'login' %}" class="text-green-600 underline">เข้าสู่ระบบ</a> เพื่อคอมเมนต์
+      </p>
+    {% endif %}
+  </div>
+</section>
 
 </div>
 {% endblock %}
+

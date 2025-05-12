@@ -5,10 +5,9 @@
 {% block title %}Community Feed{% endblock %}
 
 {% block content %}
-<!-- Full-width background strip -->
 <div class="bg-[#F7EFDB]">
 
-  <!-- Composer (full viewport width) -->
+  <!-- Composer -->
   <div class="w-full bg-white shadow-md mb-8">
     <div class="max-w-4xl mx-auto flex items-center space-x-4 px-6 py-4">
       {% if user.is_authenticated and user.profile.image %}
@@ -28,7 +27,7 @@
     </div>
   </div>
 
-  <!-- Centered feed container -->
+  <!-- Feed Container -->
   <div class="max-w-4xl mx-auto px-4 space-y-6 pb-12">
 
     {# Search & Filter #}
@@ -56,7 +55,7 @@
     {# Posts Feed #}
     {% for post in posts %}
       <div class="bg-white rounded-2xl shadow overflow-hidden">
-        <!-- Post Header -->
+        <!-- Header -->
         <div class="flex items-center px-6 py-4 space-x-3">
           {% if post.author.profile.image %}
             <img src="{{ post.author.profile.image.url }}"
@@ -71,40 +70,49 @@
           </div>
         </div>
 
-        {# Post Image #}
+        {# Image #}
         {% if post.image %}
           <img src="{{ post.image.url }}"
                alt="{{ post.title }}"
                class="w-full object-cover max-h-80">
         {% endif %}
 
-        {# Post Content #}
+        {# Content #}
         <div class="px-6 py-4 space-y-2">
-          {# Title in green #}
-          <h2 class="text-lg font-semibold text-gray-900">
-            {{ post.title }}
-          </h2>
-          {# Details in black #}
-          <p class="text-gray-900">
-            {{ post.content|linebreaks }}          
-          </p>
+          <h2 class="text-lg font-semibold text-gray-900">{{ post.title }}</h2>
+          <p class="text-gray-900">{{ post.content|linebreaks }}</p>
         </div>
 
-        {# Post Actions #}
+        {# Actions: Like & Comment #}
         <div class="border-t px-6 py-3 flex items-center justify-between">
-          {# Like button & count #}
-          <form action="{% url 'like_post' post.pk %}" method="post"
-                class="flex items-center space-x-1 hover:text-[#3F8240] transition">
-            {% csrf_token %}
-            <button type="submit" class="focus:outline-none">
-              <img src="{% static 'images/imsuk.logo.png' %}"
-                   alt="อิ่มสุข"
+          <div class="flex items-center space-x-6">
+            {# Like button + count #}
+            <form action="{% url 'like_post' post.pk %}" method="post"
+                  class="flex items-center space-x-1 hover:text-[#3F8240] transition">
+              {% csrf_token %}
+              <button type="submit" class="focus:outline-none">
+                <img src="{% static 'images/imsuk.logo.png' %}"
+                     alt="Like"
+                     class="h-5 w-5"/>
+              </button>
+              <span class="text-gray-600">{{ post.likes }}</span>
+            </form>
+
+            {# Comment button + count #}
+            <a href="{% url 'post_detail' post.pk %}#comments"
+               class="flex items-center space-x-1 text-gray-600 hover:text-[#3F8240] transition">
+              <img src="{% static 'images/comment_icon.png' %}"
+                   alt="Comments"
                    class="h-5 w-5"/>
-            </button>
-            <span class="text-gray-600">{{ post.likes }}</span>
-          </form>
+              <span>{{ post.comments.count }}</span>
+            </a>
+          </div>
+
+          {# View full post #}
           <a href="{% url 'post_detail' post.pk %}"
-             class="text-gray-600 hover:text-[#3F8240] transition">View Post</a>
+             class="text-gray-600 hover:text-[#3F8240] transition">
+            View Post
+          </a>
         </div>
       </div>
     {% empty %}
@@ -135,6 +143,7 @@
   </div>
 </div>
 {% endblock %}
+
 
 
 
