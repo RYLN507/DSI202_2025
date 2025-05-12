@@ -45,6 +45,7 @@ class RestaurantAdmin(admin.ModelAdmin):
     search_fields     = ('name', 'address', 'phone')
     raw_id_fields     = ('category',)
     filter_horizontal = ('favorites',)
+
     fieldsets = (
         (None, {
             'fields': (
@@ -63,7 +64,14 @@ class RestaurantAdmin(admin.ModelAdmin):
                 'favorites',
             ),
         }),
+        ('Community Story', {
+            'fields': (
+                'story_summary', 'story_full', 'community_image',
+            ),
+            'description': 'เรื่องราวและภาพประกอบที่จะนำไปแสดงในหน้า Community Feed'
+        }),
     )
+
 
 
 @admin.register(Menu)

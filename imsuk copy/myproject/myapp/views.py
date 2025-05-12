@@ -1314,6 +1314,8 @@ from django.db.models             import Q
 from .models                      import Post, PostCategory
 from .forms                       import PostForm
 
+from myapp.models import Restaurant
+
 def board_list(request):
     qs = Post.objects.select_related('author','category').all()
 
@@ -1331,6 +1333,11 @@ def board_list(request):
     page_number = request.GET.get('page')
     page_obj    = paginator.get_page(page_number)
 
+    # ✅ เพิ่ม: ร้านที่มี story_summary
+    stories = Restaurant.objects.filter(
+        story_summary__isnull=False
+    ).exclude(story_summary__exact='')[:10]
+
     return render(request, 'community/board_list.html', {
         'posts'       : page_obj.object_list,
         'page_obj'    : page_obj,
@@ -1338,7 +1345,9 @@ def board_list(request):
         'query'       : q,
         'selected_cat': cat,
         'categories'  : PostCategory.objects.all(),
+        'stories'     : stories,   # ✅ เพิ่มตรงนี้
     })
+
 
 # views.py
 from django.contrib.auth.decorators import login_required
@@ -1472,4 +1481,15 @@ def post_detail(request, pk):
         'post': post,
         'comments': comments,
         'form': form,
+    })
+
+from myapp.models import Restaurant  # แน่ใจว่า import ถูกต้องตาม app ของคุณ
+
+def story_list(request):
+    stories = Restaurant.objects.filter(
+        story_summary__isnull=False
+    ).exclude(story_summary__exact='')
+
+    return render(request, 'community/story_list.html', {
+        'stories': stories,
     })

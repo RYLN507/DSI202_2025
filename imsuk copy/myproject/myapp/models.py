@@ -69,6 +69,8 @@ class Category(models.Model):
     def __str__(self):
         return self.display_name
 
+from django.db import models
+
 class Restaurant(models.Model):
     name           = models.CharField("ชื่อร้าน", max_length=100)
     category       = models.ForeignKey(
@@ -96,8 +98,14 @@ class Restaurant(models.Model):
         verbose_name="ผู้ที่ชื่นชอบ"
     )
 
+    # เพิ่มฟิลด์สำหรับเรื่องราวของร้าน
+    story_summary  = models.TextField("เรื่องราวแบบย่อ", blank=True)
+    story_full     = models.TextField("เรื่องราวเต็ม", blank=True)
+    community_image = models.ImageField("ภาพปกเรื่องราวใน Community", upload_to="story/", blank=True)
+
     def __str__(self):
         return self.name
+
 
 
 

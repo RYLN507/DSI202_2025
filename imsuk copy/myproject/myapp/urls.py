@@ -5,6 +5,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.urls import include 
+from .views import story_list
+
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -96,6 +98,9 @@ urlpatterns = [
     path('shop/<int:category_id>/', views.shop_list, name='shop_list'),
 
     path('menu-shorts/', views.menu_shorts, name='menu_shorts'),
+
+    path('stories/', story_list, name='story_list'),
+
     
 
 ]

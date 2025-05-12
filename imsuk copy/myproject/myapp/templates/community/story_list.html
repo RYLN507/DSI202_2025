@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}เรื่องราวร้านทั้งหมด | IMSUK{% endblock %}
+
+{% block content %}
+<div class="bg-[#F7EFDB] min-h-screen py-10">
+  <div class="max-w-4xl mx-auto px-4 space-y-6">
+    
+    <!-- หัวข้อหลัก -->
+    <h1 class="text-3xl font-extrabold text-[#3F8240] text-center mb-4">
+      🏠 เรื่องราวร้านในชุมชน
+    </h1>
+
+    <!-- รายการการ์ดร้านทั้งหมด -->
+    {% for restaurant in stories %}
+      <a href="{% url 'restaurant_detail' restaurant.id %}"
+         class="block bg-white rounded-2xl shadow-md hover:shadow-lg transition p-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-6">
+
+          <!-- รูปปก -->
+          {% if restaurant.community_image %}
+            <img src="{{ restaurant.community_image.url }}"
+                 alt="{{ restaurant.name }}"
+                 class="w-full sm:w-40 h-32 object-cover rounded mb-3 sm:mb-0">
+          {% else %}
+            <div class="w-full sm:w-40 h-32 bg-gray-200 rounded flex items-center justify-center text-sm text-gray-500">
+              ไม่มีรูป
+            </div>
+          {% endif %}
+
+          <!-- ข้อความ -->
+          <div class="flex-1">
+            <h2 class="text-xl font-bold text-[#3F8240] mb-1">{{ restaurant.name }}</h2>
+            <p class="text-sm text-gray-600 leading-relaxed line-clamp-3">
+              {{ restaurant.story_summary }}
+            </p>
+          </div>
+
+        </div>
+      </a>
+    {% empty %}
+      <p class="text-center text-gray-500 mt-10">ยังไม่มีร้านที่มีเรื่องราวในชุมชน</p>
+    {% endfor %}
+
+  </div>
+</div>
+{% endblock %}

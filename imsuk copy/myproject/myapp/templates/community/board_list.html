@@ -27,6 +27,35 @@
     </div>
   </div>
 
+<!-- 🏠 เรื่องราวร้านในชุมชน -->
+{% if stories %}
+<div class="max-w-4xl mx-auto px-4">
+  <div class="bg-[#FFF8EC] p-6 rounded-2xl shadow mb-8">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text-[#3F8240]">🏠 เรื่องราวร้านในชุมชน</h2>
+      <a href="{% url 'story_list' %}" class="text-sm text-[#3F8240] hover:underline">ดูทั้งหมด</a>
+    </div>
+
+    <div class="flex space-x-4 overflow-x-auto scrollbar-hide">
+      {% for restaurant in stories %}
+        <a href="{% url 'restaurant_detail' restaurant.id %}"
+           class="min-w-[280px] bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+          {% if restaurant.community_image %}
+            <img src="{{ restaurant.community_image.url }}"
+                 alt="{{ restaurant.name }}"
+                 class="h-36 w-full object-cover rounded mb-2">
+          {% endif %}
+          <h3 class="font-semibold text-lg text-[#3F8240] truncate">{{ restaurant.name }}</h3>
+          <p class="text-sm text-gray-600 mt-1 line-clamp-3">
+            {{ restaurant.story_summary }}
+          </p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
   <!-- Feed Container -->
   <div class="max-w-4xl mx-auto px-4 space-y-6 pb-12">
 
