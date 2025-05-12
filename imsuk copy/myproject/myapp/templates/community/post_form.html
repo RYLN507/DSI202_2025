@@ -1,21 +1,20 @@
 {# templates/community/post_form.html #}
 {% extends 'base.html' %}
-{% load static %}
-{% load i18n %}
-
+{% load static i18n %}
 
 {% block title %}
   {% if edit %}Edit Post{% else %}Create New Post{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="bg-[#F7EFDB] min-h-screen py-8">
+<div class="bg-[#F7EFDB] min-h-screen">
 
-  <!-- Full-width header -->
-  <div class="w-full bg-white shadow mb-6">
+  <!-- Full-width header (no bottom margin) -->
+  <div class="w-full bg-white shadow mb-0">
     <div class="max-w-4xl mx-auto flex items-center space-x-4 px-6 py-4">
       {% if user.is_authenticated and user.profile.image %}
-        <img src="{{ user.profile.image.url }}" alt="{{ user.username }}’s avatar"
+        <img src="{{ user.profile.image.url }}"
+             alt="{{ user.username }}’s avatar"
              class="h-10 w-10 rounded-full object-cover flex-shrink-0">
       {% else %}
         <div class="h-10 w-10 bg-gray-200 rounded-full flex-shrink-0"></div>
@@ -26,9 +25,9 @@
     </div>
   </div>
 
-  <!-- Centered form card -->
+  <!-- Centered form card (no extra top margin) -->
   <div class="max-w-4xl mx-auto px-6">
-    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden mt-6">
       <form method="post" enctype="multipart/form-data" class="px-8 py-8 space-y-6">
         {% csrf_token %}
 
@@ -89,7 +88,9 @@
             <select name="category" id="select-category"
                     class="px-3 py-2 border border-gray-300 rounded-full
                            focus:outline-none focus:ring-2 focus:ring-[#3F8240] bg-white">
-              <option value="">{% trans "Category" %}</option>
+                           <option value="">All Categories</option>
+                           <option value="deal"      {% if selected_cat == 'deal'      %}selected{% endif %}>Deals</option>
+                           <option value="leftovers" {% if selected_cat == 'leftovers' %}selected{% endif %}>Leftover Ideas</option>
               {% for cat in categories %}
                 <option value="{{ cat.name }}"
                   {% if cat.name == selected_cat %}selected{% endif %}>
