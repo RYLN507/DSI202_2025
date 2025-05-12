@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit Address" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow">
+    <h2 class="text-2xl font-bold mb-4 text-[#3F8240] text-center">{% trans "Edit Address" %}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label class="block text-sm font-medium mb-1">{% trans "Address Name" %}</label>
+        <input type="text" name="label" value="{{ address.label }}" class="w-full p-2 border rounded mb-4" required>
+
+        <label class="block text-sm font-medium mb-1">{% trans "Full Address" %}</label>
+        <textarea name="full_address" class="w-full p-2 border rounded mb-4" rows="2" required>{{ address.full_address }}</textarea>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">{% trans "Subdistrict" %}</label>
+                <input type="text" name="subdistrict" value="{{ address.subdistrict }}" class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">{% trans "District" %}</label>
+                <input type="text" name="district" value="{{ address.district }}" class="w-full p-2 border rounded">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">{% trans "Province" %}</label>
+                <input type="text" name="province" value="{{ address.province }}" class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">{% trans "Postal Code" %}</label>
+                <input type="text" name="zipcode" value="{{ address.zipcode }}" class="w-full p-2 border rounded">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="is_default" class="mr-2"
+                       {% if address.is_default %}checked{% endif %}>
+                {% trans "Set as default address" %}
+            </label>
+        </div>
+
+        <div class="flex justify-between">
+            <button type="submit" class="bg-[#BADE80] text-[#3F8240] font-bold px-6 py-2 rounded hover:bg-[#A3CF62]">
+                {% trans "Save" %}
+            </button>
+            <a href="{% url 'address_list' %}" class="text-sm underline text-[#3F8240] self-center">
+                {% trans "Back to Address List" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

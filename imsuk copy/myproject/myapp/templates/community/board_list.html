@@ -1,0 +1,149 @@
+{# templates/community/board_list.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Community Feed{% endblock %}
+
+{% block content %}
+<!-- Full-width background strip -->
+<div class="bg-[#F7EFDB]">
+
+  <!-- Composer (full viewport width) -->
+  <div class="w-full bg-white shadow-md mb-8">
+    <div class="max-w-4xl mx-auto flex items-center space-x-4 px-6 py-4">
+      {% if user.is_authenticated and user.profile.image %}
+        <img src="{{ user.profile.image.url }}"
+             alt="{{ user.username }}’s avatar"
+             class="h-10 w-10 rounded-full object-cover flex-shrink-0">
+      {% else %}
+        <div class="h-10 w-10 bg-gray-200 rounded-full flex-shrink-0"></div>
+      {% endif %}
+      <button
+        type="button"
+        onclick="location.href='{% url 'create_post' %}'"
+        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full
+               px-5 py-3 text-left focus:outline-none transition">
+        What’s on your mind?
+      </button>
+    </div>
+  </div>
+
+  <!-- Centered feed container -->
+  <div class="max-w-4xl mx-auto px-4 space-y-6 pb-12">
+
+    {# Search & Filter #}
+    <form id="filter-form" method="get"
+          class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
+      <input type="text" name="q" form="filter-form"
+             value="{{ request.GET.q|default:'' }}"
+             placeholder="Search posts..."
+             class="flex-1 px-4 py-2 border border-gray-300 rounded-full
+                    focus:outline-none focus:ring-2 focus:ring-[#3F8240]" />
+      <select name="category" onchange="this.form.submit()"
+              class="px-4 py-2 border border-gray-300 rounded-full
+                     focus:outline-none focus:ring-2 focus:ring-[#3F8240] bg-white">
+        <option value="">All Categories</option>
+        <option value="deal"      {% if request.GET.category == 'deal'      %}selected{% endif %}>Deals</option>
+        <option value="leftovers" {% if request.GET.category == 'leftovers' %}selected{% endif %}>Leftover Ideas</option>
+      </select>
+      <button type="submit"
+              class="px-5 py-2 bg-[#3F8240] hover:bg-[#336534] text-white
+                     rounded-full transition">
+        Filter
+      </button>
+    </form>
+
+    {# Posts Feed #}
+    {% for post in posts %}
+      <div class="bg-white rounded-2xl shadow overflow-hidden">
+        <!-- Post Header -->
+        <div class="flex items-center px-6 py-4 space-x-3">
+          {% if post.author.profile.image %}
+            <img src="{{ post.author.profile.image.url }}"
+                 alt="{{ post.author.username }}’s avatar"
+                 class="h-8 w-8 rounded-full object-cover flex-shrink-0">
+          {% else %}
+            <div class="h-8 w-8 bg-gray-200 rounded-full flex-shrink-0"></div>
+          {% endif %}
+          <div>
+            <p class="text-gray-800 font-medium">{{ post.author.username }}</p>
+            <p class="text-xs text-gray-500">{{ post.created_at|date:"M d, Y H:i" }}</p>
+          </div>
+        </div>
+
+        {# Post Image #}
+        {% if post.image %}
+          <img src="{{ post.image.url }}"
+               alt="{{ post.title }}"
+               class="w-full object-cover max-h-80">
+        {% endif %}
+
+        {# Post Content #}
+        <div class="px-6 py-4 space-y-2">
+          {# Title in green #}
+          <h2 class="text-lg font-semibold text-gray-900">
+            {{ post.title }}
+          </h2>
+          {# Details in black #}
+          <p class="text-gray-900">
+            {{ post.content|linebreaks }}          
+          </p>
+        </div>
+
+        {# Post Actions #}
+        <div class="border-t px-6 py-3 flex items-center justify-between">
+          {# Like button & count #}
+          <form action="{% url 'like_post' post.pk %}" method="post"
+                class="flex items-center space-x-1 hover:text-[#3F8240] transition">
+            {% csrf_token %}
+            <button type="submit" class="focus:outline-none">
+              <img src="{% static 'images/imsuk.logo.png' %}"
+                   alt="อิ่มสุข"
+                   class="h-5 w-5"/>
+            </button>
+            <span class="text-gray-600">{{ post.likes }}</span>
+          </form>
+          <a href="{% url 'post_detail' post.pk %}"
+             class="text-gray-600 hover:text-[#3F8240] transition">View Post</a>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-gray-600 py-20">No posts to show.</p>
+    {% endfor %}
+
+    {# Pagination #}
+    {% if is_paginated %}
+      <div class="flex justify-center space-x-4 pt-4">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}"
+             class="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition">
+            Prev
+          </a>
+        {% endif %}
+        <span class="px-3 py-1 text-gray-700">
+          {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}"
+             class="px-3 py-1 bg-gray-200 rounded-full hover:bg-gray-300 transition">
+            Next
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+{# templates/shop_list.html #}
+{% extends 'base.html' %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+  {% if category %}
+    {% blocktrans %}Category: {{ category.display_name }}{% endblocktrans %}
+  {% else %}
+    {% trans "All Restaurants" %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 space-y-8">
+
+  {# Back link & heading ตามเดิม #}
+  <p>
+    <a href="{% url 'home' %}" class="text-gray-600 hover:underline">
+      ← {% trans "Back to Home" %}
+    </a>
+  </p>
+  <h1 class="text-3xl font-bold text-green-700">
+    {% if category %}
+      {% blocktrans %}Category: {{ category.display_name }}{% endblocktrans %}
+    {% else %}
+      {% trans "All Restaurants" %}
+    {% endif %}
+  </h1>
+
+  {# ส่วนรายชื่อร้าน #}
+  {% if restaurants %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for restaurant in restaurants %}
+        <div class="bg-white rounded-xl shadow hover:shadow-lg overflow-hidden transition">
+          <a href="{% url 'restaurant_detail' restaurant.id %}">
+            {% if restaurant.image %}
+              <img src="{{ restaurant.image.url }}"
+                   alt="{{ restaurant.name }}"
+                   class="w-full h-48 object-cover">
+            {% else %}
+              <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500">
+                {% trans "No Image Available" %}
+              </div>
+            {% endif %}
+          </a>
+          <div class="p-4">
+            <h3 class="text-xl font-semibold text-green-700 mb-1">{{ restaurant.name }}</h3>
+            {% if restaurant.address %}
+              <p class="text-xs text-gray-500">📍 {{ restaurant.address|truncatechars:30 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-600">
+      {% if category %}
+        {% trans "There are no restaurants in this category yet." %}
+      {% else %}
+        {% trans "There are no restaurants to display." %}
+      {% endif %}
+    </p>
+  {% endif %}
+
+  {# **ส่วนเมนูทั้งหมดในหมวด** #}
+  <h2 class="text-2xl font-bold text-green-700 mt-12 mb-4">{% trans "Menus" %}</h2>
+  {% if menus %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for item in menus %}
+        <div class="flex flex-col bg-white rounded-xl shadow hover:shadow-lg overflow-hidden transition">
+          <a href="{% url 'menu_detail' item.id %}">
+            {% if item.image %}
+              <img src="{{ item.image.url }}"
+                   alt="{{ item.title }}"
+                   class="w-full h-36 object-cover">
+            {% else %}
+              <div class="w-full h-36 bg-gray-200 flex items-center justify-center text-gray-500">
+                {% trans "No Image Available" %}
+              </div>
+            {% endif %}
+          </a>
+          <div class="p-4 flex flex-col justify-between h-full">
+            <div class="flex-grow">
+              <h3 class="font-bold text-green-700 text-lg mb-1">{{ item.title }}</h3>
+              <p class="text-sm text-gray-600 line-clamp-2 mb-2">
+                {{ item.description|default:_("No description available") }}
+              </p>
+              <p class="text-xs text-gray-500">{{ item.start_time }} – {{ item.end_time }}</p>
+            </div>
+            <div class="mt-4">
+              {% if item.normal_price > item.discount_price %}
+                <span class="text-gray-400 line-through block text-sm">
+                  {{ item.normal_price|currency:"฿" }}
+                </span>
+              {% endif %}
+              <span class="text-green-600 font-bold block mb-2">
+                {{ item.discount_price|currency:"฿" }}
+              </span>
+              <a href="{% url 'menu_detail' item.id %}"
+                 class="block w-full bg-[#3F8240] hover:bg-[#2f6831] text-white py-2 text-center rounded-full font-semibold">
+                {% trans "View Details" %}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-600">{% trans "No menus available" %}</p>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+
+
+
+ 

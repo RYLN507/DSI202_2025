@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "My Profile" %} | อิ่มสุข{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+
+  <h1 class="text-4xl font-bold text-[#3F8240] mb-10 text-center">
+    {% trans "My Profile" %}
+  </h1>
+
+  <div class="bg-white rounded-2xl shadow-md p-8 space-y-12">
+
+    {# === Profile Picture Section === #}
+    <div class="flex flex-col items-center space-y-4">
+      {# Avatar #}
+      {% if profile.image %}
+        <img src="{{ profile.image.url }}"
+             class="w-28 h-28 rounded-full object-cover border-4 border-[#3F8240] shadow"
+             alt="{% trans 'Profile Picture' %}">
+      {% else %}
+        <div class="w-28 h-28 rounded-full bg-green-100 flex items-center justify-center text-4xl text-[#3F8240] font-bold shadow">
+          {{ user.username|first|upper }}
+        </div>
+      {% endif %}
+
+      {# ชื่อเต็มใต้รูป #}
+      <p class="text-xl font-semibold text-[#276749]">
+        {{ user.get_full_name|default:user.username }}
+      </p>
+
+      {# Single form for upload & remove #}
+      <form method="POST" enctype="multipart/form-data" class="flex items-center space-x-3">
+        {% csrf_token %}
+        <input type="file" name="image" id="id_image" accept="image/*" class="hidden">
+        <label for="id_image"
+               class="cursor-pointer bg-[#f0fdf4] text-[#3F8240] px-4 py-2 rounded-full shadow hover:bg-[#e2faea] transition font-semibold text-sm">
+          {% trans "Choose Profile Picture" %}
+        </label>
+
+        {# Upload button #}
+        <button name="upload_image" value="1" type="submit"
+                class="bg-[#3F8240] hover:bg-[#2a5a2b] text-white text-sm px-4 py-2 rounded-full transition">
+          {% trans "Upload" %}
+        </button>
+
+        {# Remove button #}
+        {% if profile.image %}
+          <button name="remove_image" value="1" type="submit"
+                  class="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-full transition">
+            {% trans "Remove" %}
+          </button>
+        {% endif %}
+      </form>
+    </div>
+
+
+    {# Default Address #}
+    <div>
+      <h3 class="text-lg font-semibold text-[#3F8240] mb-2">{% trans "Default Address" %}</h3>
+      {% if default_address %}
+        <p class="text-gray-700">{{ default_address }}</p>
+      {% else %}
+        <p class="text-gray-400 italic">{% trans "No default address set." %}</p>
+      {% endif %}
+      <a href="{% url 'address_list' %}" class="inline-block mt-3 bg-[#3F8240] hover:bg-[#2a5a2b] text-white px-4 py-2 rounded-full text-sm">
+        {% trans "Change Address" %}
+      </a>
+    </div>
+
+    {# Payment Methods #}
+    <div>
+      <h3 class="text-lg font-semibold text-[#3F8240] mb-2">{% trans "Payment Methods" %}</h3>
+      {% if user.payment_methods.exists %}
+        <ul class="list-disc list-inside text-gray-700 space-y-1">
+          {% for payment in user.payment_methods.all %}
+            <li>{{ payment.name }} - {{ payment.details }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-400 italic">{% trans "No payment methods added yet." %}</p>
+      {% endif %}
+      <a href="{% url 'payment_methods' %}" class="inline-block mt-3 bg-[#3F8240] hover:bg-[#2a5a2b] text-white px-4 py-2 rounded-full text-sm">
+        {% trans "Manage Payment Methods" %}
+      </a>
+    </div>
+
+    {# Edit Password #}
+    <div>
+      <h3 class="text-lg font-semibold text-[#3F8240] mb-2">{% trans "Account Security" %}</h3>
+      <a href="{% url 'password_change' %}" class="inline-block mt-3 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-full text-sm">
+        {% trans "Change Password" %}
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,71 @@
+{# templates/community/post_detail.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-10 max-w-3xl">
+
+  <!-- Post Header -->
+  <header class="mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-2">{{ post.title }}</h1>
+    <p class="text-sm text-gray-500">
+      by <span class="font-medium">{{ post.author.username }}</span>
+      &bull; {{ post.created_at|date:"F j, Y H:i" }}
+      {% if post.updated_at and post.updated_at != post.created_at %}
+        <span class="ml-2 text-gray-400">(Updated {{ post.updated_at|date:"F j, Y H:i" }})</span>
+      {% endif %}
+    </p>
+  </header>
+
+  <!-- Featured Image -->
+  {% if post.image %}
+    <div class="mb-8">
+      <img src="{{ post.image.url }}"
+           alt="{{ post.title }}"
+           class="w-full rounded-2xl shadow-lg object-cover">
+    </div>
+  {% endif %}
+
+  <!-- Content -->
+  <article class="prose prose-lg mb-12">
+    {{ post.content|linebreaks }}
+  </article>
+
+  <!-- Post Actions & Likes -->
+  <div class="flex items-center justify-between mb-12">
+
+    {# Like button form #}
+    <form action="{% url 'like_post' post.pk %}" method="post" class="flex items-center space-x-2">
+      {% csrf_token %}
+      <button type="submit" class="focus:outline-none">
+        <img src="{% static 'images/imsuk.logo.png' %}"
+             alt="อิ่มสุข"
+             class="h-6 w-6"/>
+      </button>
+      <span class="text-gray-600">{{ post.likes }}</span>
+    </form>
+
+    {% if user == post.author %}
+      <div class="space-x-4">
+        <a href="{% url 'edit_post' post.pk %}"
+           class="inline-flex items-center px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-medium rounded-lg transition">
+          Edit
+        </a>
+        <a href="{% url 'delete_post' post.pk %}"
+           class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition">
+          Delete
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Comments Section (Placeholder) -->
+  <section class="border-t pt-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Comments</h2>
+    <p class="text-gray-600 italic">Comments feature coming soon…</p>
+  </section>
+
+</div>
+{% endblock %}

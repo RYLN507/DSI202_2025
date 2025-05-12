@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}
+  {{ menu.title }} | {{ menu.restaurant.category.display_name }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+
+  <!-- Back Link -->
+  <p class="mb-6">
+    <a href="{% url 'shop_list' menu.restaurant.category.name %}" class="text-green-700 hover:underline text-sm flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      ← {% trans "Back to category:" %} {{ menu.restaurant.category.display_name }}
+    </a>
+  </p>
+
+  <!-- Title -->
+  <h1 class="text-4xl font-bold text-green-700 mb-6">{{ menu.title }}</h1>
+
+  <!-- Card Container -->
+  <div class="bg-white rounded-xl shadow-xl overflow-hidden lg:flex">
+
+    <!-- Image Section with fixed aspect ratio -->
+    <div class="lg:w-1/2 aspect-[4/3] overflow-hidden">
+      {% if menu.image %}
+      <img src="{{ menu.image.url }}"
+           alt="{{ menu.title }}"
+           class="w-full h-full object-cover"/>
+      {% else %}
+      <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+        <span class="text-gray-500">{% trans "No image available" %}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Content Section with scrollable area -->
+    <div class="lg:w-1/2 p-8 flex flex-col">
+      <!-- Scrollable info -->
+      <div class="overflow-auto space-y-5 max-h-[500px]">
+        <p class="text-sm text-gray-500">
+          {% trans "Sold:" %} <strong>{{ menu.sold_count }}</strong> {% trans "items" %}
+        </p>
+        <p class="text-sm text-gray-500">
+          🕒 {% trans "Available time:" %} {{ menu.start_time|time:"H:i" }} – {{ menu.end_time|time:"H:i" }}
+        </p>
+
+        <div class="flex items-baseline space-x-3">
+          {% if menu.price > menu.discount_price %}
+          <span class="text-gray-400 line-through text-lg">{{ menu.price|currency:"฿" }}</span>
+          {% endif %}
+          <span class="text-3xl font-bold text-green-700">{{ menu.discount_price|currency:"฿" }}</span>
+        </div>
+
+        {% if menu.description %}
+        <div>
+          <h2 class="text-xl font-semibold text-green-700 mb-1">{% trans "What you'll get" %}</h2>
+          <p class="text-gray-700">{{ menu.description }}</p>
+        </div>
+        {% endif %}
+
+        {% if menu.details %}
+        <div>
+          <h2 class="text-xl font-semibold text-green-700 mb-1">{% trans "Menu Details" %}</h2>
+          <ul class="list-disc list-inside text-gray-700 space-y-1">
+            {% for line in menu.details.splitlines %}
+              {% if line %}
+              <li>{{ line }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Action Buttons pinned to bottom -->
+      <div class="mt-auto pt-6 space-y-3">
+        <form action="{% url 'add_to_cart' menu.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="w-full bg-[#bade80] hover:bg-[#a8d266] text-white font-semibold py-2 rounded-full transition">
+            {% trans "Add to Cart" %}
+          </button>
+        </form>
+        <form action="{% url 'toggle_favorite_menu' menu.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="w-full border border-[#bade80] text-[#3F8240] hover:bg-[#f4faea] font-semibold py-2 rounded-full transition">
+            {% trans "Add to Favorites" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+
+
+

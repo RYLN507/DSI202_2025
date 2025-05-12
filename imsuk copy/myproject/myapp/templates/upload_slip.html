@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Upload Payment Slip" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto my-16 px-4 sm:px-6 lg:px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    
+    <!-- LEFT: QR + Details + Preview -->
+    <div class="space-y-6">
+      <div class="bg-white rounded-3xl shadow-xl p-8 text-center transition hover:shadow-2xl">
+        <h2 class="text-2xl font-extrabold text-[#3F8240] mb-6">
+          {% trans "Scan to Pay (PromptPay)" %}
+        </h2>
+        <div class="inline-block bg-gray-50 p-4 rounded-xl">
+          <img src="{% static 'images/promptpay_icon.jpg' %}"
+               alt="{% trans 'PromptPay QR' %}"
+               class="w-56 h-56 object-contain" />
+        </div>
+        <p class="mt-6 text-gray-700 space-y-1 leading-relaxed">
+          <span class="block font-medium">{% trans "สแกน QR เพื่อโอนเข้าบัญชี" %}</span>
+          <span class="block"><strong>{% trans "ชื่อ" %}:</strong> น.ส. ณฐมน วะทวิก้านตง</span>
+          <span class="block"><strong>{% trans "บัญชี" %}:</strong> xxx-x-x5768-x</span>
+          <span class="block"><strong>{% trans "เลขอ้างอิง" %}:</strong> 004999203757876</span>
+        </p>
+      </div>
+
+        {% if order.slip %}
+      <div class="bg-white rounded-3xl shadow-xl p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          {% trans "Uploaded Slip Preview" %}
+        </h3>
+        <img src="{{ order.slip.url }}"
+             alt="{% trans 'Payment Slip' %}"
+             class="w-full rounded-xl border border-gray-200 object-contain" />
+      </div>
+      {% endif %}
+    </div>
+
+    {# ─────────── RIGHT PANEL ─────────── #}
+    {% if not order.slip %}
+      <div class="bg-white rounded-3xl shadow-xl p-8 flex flex-col text-center transition hover:shadow-2xl">
+        <h2 class="text-2xl font-extrabold text-[#3F8240] mb-6">
+          {% trans "Upload Your Payment Slip" %}
+        </h2>
+        <p class="text-gray-600 mb-6">
+          {% trans "Please upload an image or PDF file of your payment slip to confirm payment." %}
+        </p>
+
+        <form method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col">
+          {% csrf_token %}
+
+          {# non-field errors #}
+          {% if form.non_field_errors %}
+            <div class="mb-4 text-sm text-red-600">
+              {% for err in form.non_field_errors %}
+                <p>{{ err }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {# ─── drag & drop zone label ─── #}
+          <label id="upload-zone"
+                 class="relative flex-1 flex flex-col items-center justify-center border-2 border-dashed border-green-200 bg-green-50 hover:border-green-400 rounded-xl p-8 cursor-pointer transition">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 class="h-12 w-12 text-green-400 mb-4"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v8m0-8l-4 4m4-4l4 4" />
+            </svg>
+            <p class="text-green-600 font-medium">
+              {% trans "Drag & drop, or click anywhere here" %}
+            </p>
+
+            {# invisible file input overlaying the whole label #}
+            <input
+              id="id_slip"
+              name="{{ form.slip.html_name }}"
+              type="file"
+              accept="image/*,application/pdf"
+              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </label>
+
+          {# field error below zone #}
+          {% if form.slip.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.slip.errors.0 }}</p>
+          {% endif %}
+
+          {# ─── preview zone (hidden by default) ─── #}
+          <div id="preview-zone"
+               class="hidden relative rounded-xl overflow-hidden border border-gray-200 mt-6 flex-1">
+            <img id="slip-preview"
+                 class="w-full h-full object-contain"
+                 alt="{% trans 'Preview' %}" />
+            <button type="button"
+                    id="change-file"
+                    class="absolute top-3 right-3 bg-white text-gray-700 px-3 py-1 rounded-full shadow hover:shadow-md transition">
+              {% trans "Change" %}
+            </button>
+          </div>
+
+          {# submit button #}
+          <button type="submit"
+                  class="mt-6 w-full py-3 bg-[#BADE80] hover:bg-[#A3CF62] text-[#3F8240] font-semibold rounded-full transition shadow">
+            {% trans "Submit Slip" %}
+          </button>
+        </form>
+
+        <a href="{% url 'order_success' order.id %}"
+           class="mt-4 text-center text-sm text-gray-500 hover:underline">
+          {% trans "Skip and view Order Details" %}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const input       = document.getElementById('id_slip');
+  const uploadZone  = document.getElementById('upload-zone');
+  const previewZone = document.getElementById('preview-zone');
+  const previewImg  = document.getElementById('slip-preview');
+  const changeBtn   = document.getElementById('change-file');
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    // only preview images
+    if (file && file.type.startsWith('image/')) {
+      previewImg.src = URL.createObjectURL(file);
+      uploadZone .classList.add('hidden');
+      previewZone.classList.remove('hidden');
+    } else {
+      previewZone.classList.add('hidden');
+      uploadZone .classList.remove('hidden');
+    }
+  });
+
+  changeBtn.addEventListener('click', () => {
+    input.value = '';
+    previewZone.classList.add('hidden');
+    uploadZone .classList.remove('hidden');
+  });
+});
+</script>
+{% endblock %}

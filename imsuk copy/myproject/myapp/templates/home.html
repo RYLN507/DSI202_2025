@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}{% trans "Home" %} | {% trans "IMSUK" %}{% endblock %}
+
+{% block content %}
+  <nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="container mx-auto px-4 py-3 flex items-center">
+      <form action="{% url 'home' %}" method="get" class="relative flex-1 mr-4">
+        <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#3F8240]" fill="none" viewBox="0 0 24 24" stroke="#3F8240">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 4a7 7 0 00-5.916 10.72l-1.387 1.387a1 
+                     1 0 001.414 1.415l1.387-1.387A7 
+                     7 0 1011 4z"/>
+          </svg>
+        </div>
+        <input
+          type="search"
+          name="q"
+          value="{{ query|default:'' }}"
+          placeholder="{% trans 'Search for your menu or restaurant' %}"
+          class="w-full border border-gray-300 rounded-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+      </form>
+
+      <div class="flex items-center space-x-4">
+        <a href="{% url 'filter' %}" class="focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#EFACA5]" fill="none" viewBox="0 0 24 24" stroke="#EFACA5">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L14 12.414V19a1 1 0 01-.553.894l-4 2A1 1 0 018 21v-8.586L3.293 6.707A1 1 0 013 6V4z"/>
+          </svg>
+        </a>
+        <a href="{% url 'favorites' %}" class="focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#EFACA5]" fill="none" viewBox="0 0 20 20" stroke="#EFACA5">
+            <path d="M3.172 5.172a4 4 0 015.656 0L10 
+                     6.344l1.172-1.172a4 4 0 115.656 
+                     5.656L10 18l-6.828-6.828a4 4 0 
+                     010-5.656z"/>
+          </svg>
+        </a>
+        <a href="{% url 'cart' %}" class="relative focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#EFACA5]" fill="none" viewBox="0 0 24 24" stroke="#EFACA5">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 3h2l1 9h12l1-9h2m-16 12a1 1 0 100 2 1 1 0 000-2zm12 0a1 1 0 100 2 1 1 0 000-2z"/>
+          </svg>
+          {% if user.is_authenticated and request.user.cart_items.count %}
+            <span class="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              {{ request.user.cart_items.count }}
+            </span>
+          {% endif %}
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  {% if user.is_authenticated and user.profile.default_address %}
+    <div class="bg-green-50 border-l-4 border-green-400 container mx-auto px-4 py-3 my-4">
+      <span class="font-semibold text-green-800">{% trans "Delivery address:" %}</span>
+      {{ user.profile.default_address }}
+      <a href="{% url 'address_list' %}" class="underline text-green-700 ml-2">{% trans "Change address" %}</a>
+    </div>
+  {% endif %}
+
+  {% if query %}
+    <section class="container mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold mb-6">{% trans "Search results for" %} "{{ query }}"</h2>
+
+      <h3 class="text-xl font-semibold mb-2 text-green-700">{% trans "Restaurants" %}</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {% for restaurant in restaurants %}
+          <a href="{% url 'restaurant_detail' restaurant.id %}" class="block bg-white rounded-lg shadow hover:shadow-lg overflow-hidden">
+            {% if restaurant.image %}
+              <img src="{{ restaurant.image.url }}" alt="{{ restaurant.name }}" class="w-full h-36 object-cover">
+            {% else %}
+              <div class="w-full h-36 bg-gray-200 flex items-center justify-center text-gray-500">
+                {% trans "No Image" %}
+              </div>
+            {% endif %}
+            <div class="p-4">
+              <h4 class="font-bold text-green-700">{{ restaurant.name }}</h4>
+              <p class="text-gray-600 text-sm">{{ restaurant.description|default:_("No description") }}</p>
+            </div>
+          </a>
+        {% empty %}
+          <p class="text-gray-500 col-span-full">{% trans "No restaurants match" %} "{{ query }}"</p>
+        {% endfor %}
+      </div>
+
+      <h3 class="text-xl font-semibold mb-2 text-green-700">{% trans "Menus" %}</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for menu in menus %}
+          <a href="{% url 'menu_detail' menu.id %}" class="block bg-white rounded-lg shadow hover:shadow-lg overflow-hidden">
+            {% if menu.image %}
+              <img src="{{ menu.image.url }}" alt="{{ menu.title }}" class="w-full h-36 object-cover">
+            {% else %}
+              <div class="w-full h-36 bg-gray-200 flex items-center justify-center text-gray-500">
+                {% trans "No Image" %}
+              </div>
+            {% endif %}
+            <div class="p-4">
+              <h4 class="font-bold text-green-700">{{ menu.title }}</h4>
+              <p class="text-gray-600 text-sm">{{ menu.description|default:_("No description") }}</p>
+              <p class="mt-2">
+                <span class="text-gray-400 line-through">{{ menu.price|currency:"฿" }}</span>
+                <span class="text-green-600 font-bold">{{ menu.discount_price|currency:"฿" }}</span>
+              </p>
+            </div>
+          </a>
+        {% empty %}
+          <p class="text-gray-500 col-span-full">{% trans "No menu items match" %} "{{ query }}"</p>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <section class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">{% trans "Dinner Deals" %}</h2>
+      <a href="{% url 'deal_all' %}" class="text-sm text-gray-600 hover:underline">{% trans "View All" %}</a>
+    </div>
+    <div class="flex space-x-4 overflow-x-auto pb-2">
+      {% for deal in deals %}
+        <div class="bg-white rounded-lg shadow-lg w-60 flex-shrink-0 overflow-hidden">
+          <a href="{% url 'deal_menu_detail' deal.id %}">
+            <img src="{{ deal.image.url }}" alt="{{ deal.title }}" class="w-full h-32 object-cover">
+            <div class="p-3">
+              <h3 class="font-semibold">{{ deal.title }}</h3>
+              <p class="text-gray-500 text-sm">{{ deal.start_time|time:"H:i" }} – {{ deal.end_time|time:"H:i" }}</p>
+              <div class="mt-2 space-x-2">
+                <span class="text-gray-400 line-through">{{ deal.original_price|currency:"฿" }}</span>
+                <span class="text-green-600 font-bold">{{ deal.discounted_price|currency:"฿" }}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% empty %}
+        <p class="text-center text-gray-500">{% trans "No deals at the moment" %}</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold text">{% trans "Flash Deal Menu" %}</h2>
+      <a href="{% url 'flash_all' %}" class="text-sm text-gray-600 hover:underline">{% trans "View All" %}</a>
+    </div>
+    <div class="flex space-x-4 overflow-x-auto pb-2">
+      {% for item in flash_menus %}
+        <div class="bg-white rounded-lg shadow-lg w-60 flex-shrink-0 overflow-hidden">
+          <a href="{% url 'flash_menu_detail' item.id %}">
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-32 object-cover">
+            <div class="p-3">
+              <h3 class="font-semibold">{{ item.title }}</h3>
+              <p class="text-gray-500 text-sm">{{ item.start_time|time:"H:i" }} – {{ item.end_time|time:"H:i" }}</p>
+              <div class="mt-2 space-x-2">
+                <span class="text-gray-400 line-through">{{ item.original_price|currency:"฿" }}</span>
+                <span class="text-green-600 font-bold">{{ item.discount_price|currency:"฿" }}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% empty %}
+        <p class="text-center text-gray-500">{% trans "No flash menus available" %}</p>
+      {% endfor %}
+    </div>
+  </section>
+  
+
+  <section class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-4">{% trans "Food Categories" %}</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-6">
+      {% for cat in categories %}
+        <a href="{% url 'shop_list' cat.name %}" class="relative block rounded-lg overflow-hidden group">
+          <img src="{{ cat.image.url }}" alt="{{ cat.display_name }}" class="w-full h-32 object-cover group-hover:scale-105 transition-transform">
+          <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <h3 class="text-white text-lg font-semibold">{{ cat.display_name }}</h3>
+          </div>
+        </a>
+      {% empty %}
+        <p class="col-span-full text-center text-gray-500">{% trans "No categories yet" %}</p>
+      {% endfor %}
+    </div>
+  </section>
+
+{% endblock %}

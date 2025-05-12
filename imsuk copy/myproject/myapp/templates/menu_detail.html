@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}{{ menu.title }} | {% trans "Menu Details" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10 max-w-3xl">
+  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+    
+    <!-- รูปภาพ -->
+    {% if menu.image %}
+      <img src="{{ menu.image.url }}" alt="{{ menu.title }}" class="w-full h-64 object-cover">
+    {% else %}
+      <div class="w-full h-64 bg-gray-200 flex items-center justify-center text-gray-500">
+        {% trans "No Image Available" %}
+      </div>
+    {% endif %}
+
+    <!-- เนื้อหา -->
+    <div class="p-6 space-y-4">
+      <h1 class="text-3xl font-bold text-green-700">{{ menu.title }}</h1>
+
+      <!-- คำอธิบาย -->
+      {% if menu.description %}
+        <p class="text-gray-700">{{ menu.description }}</p>
+      {% else %}
+        <p class="text-gray-400 italic">{% trans "No description available for this menu." %}</p>
+      {% endif %}
+
+      <!-- ราคา -->
+      <div class="mt-4">
+        {% if menu.discount_price %}
+          <span class="text-xl text-gray-400 line-through mr-2">{{ menu.price|currency:"฿" }}</span>
+          <span class="text-2xl text-green-600 font-bold">{{ menu.discount_price|currency:"฿" }}</span>
+        {% else %}
+          <span class="text-2xl text-green-700 font-bold">{{ menu.price|currency:"฿" }}</span>
+        {% endif %}
+      </div>
+
+      <!-- เวลาให้บริการ -->
+      <div class="text-sm text-gray-500">
+        {% trans "Available Time" %}: {{ menu.start_time|default:"00:00" }} - {{ menu.end_time|default:"23:59" }}
+      </div>
+
+      <!-- ปุ่มเพิ่มลงตะกร้า -->
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_to_cart' menu.id %}">
+          {% csrf_token %}
+          <button type="submit"
+                  class="mt-6 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-full transition">
+            🛒 {% trans "Add to Cart" %}
+          </button>
+        </form>
+      {% else %}
+        <p class="mt-6 text-red-500 font-medium">{% trans "Please log in to place an order." %}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+

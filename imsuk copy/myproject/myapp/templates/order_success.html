@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Order Successful" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg text-center space-y-6">
+    <!-- Success Icon -->
+    <img src="{% static 'images/imsuk.logo.png' %}" alt="{% trans 'Success' %}" class="mx-auto h-16 w-16">
+
+    <h2 class="text-2xl font-extrabold text-green-700">
+      {% trans "Thank you for your order!" %}
+    </h2>
+
+    <p class="text-gray-600">
+      {% blocktrans with order_id=order.id %}
+        Your order #{{ order_id }} has been successfully placed.
+      {% endblocktrans %}
+    </p>
+
+    <p class="text-gray-600">
+      {% trans "Next, please upload your payment slip to complete the payment." %}
+    </p>
+
+    <!-- Upload Slip Button -->
+    <a href="{% url 'upload_slip' order.id %}"
+       class="block w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition">
+      {% trans "Upload Payment Slip" %}
+    </a>
+
+    <!-- Back to Home -->
+    <a href="{% url 'home' %}"
+       class="inline-block mt-4 text-sm text-gray-500 hover:underline">
+      {% trans "Return to Homepage" %}
+    </a>
+  </div>
+</div>
+{% endblock %}
+

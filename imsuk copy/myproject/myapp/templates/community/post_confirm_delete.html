@@ -1,0 +1,30 @@
+{# templates/community/post_confirm_delete.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Delete Post{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-12 max-w-lg">
+  <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-4">
+      Confirm Delete
+    </h1>
+    <p class="text-gray-600 mb-6">
+      Are you sure you want to delete the post:
+      <span class="font-medium text-gray-800">“{{ post.title }}”</span>?
+    </p>
+    <form method="post" class="space-x-4">
+      {% csrf_token %}
+      <button type="submit"
+              class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition">
+        Yes, Delete
+      </button>
+      <a href="{% url 'post_detail' post.pk %}"
+         class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition">
+        Cancel
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}

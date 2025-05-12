@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load i18n currency_filters %}
+
+{% block title %}{% trans "Checkout" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-2xl shadow-md mt-10">
+
+  <h2 class="text-2xl font-bold text-[#3F8240] mb-6 text-center">
+    {% trans "Confirm Your Order" %}
+  </h2>
+
+  <form method="POST"
+        action="{% url 'confirm_checkout_again' old_order.id %}"
+        class="space-y-8">
+    {% csrf_token %}
+
+    <!-- 📍 ที่อยู่จัดส่ง -->
+    <div>
+      <h3 class="font-semibold text-[#3F8240] mb-2">
+        📍 {% trans "Shipping Address" %}
+      </h3>
+      <div class="bg-[#F7EFDB] p-4 rounded text-sm leading-relaxed">
+        {% if default_address %}
+          <p class="font-medium text-gray-700">{{ default_address.label }}</p>
+          <p class="text-gray-600">{{ default_address.display_address }}</p>
+          <input type="hidden" name="address_id" value="{{ default_address.id }}">
+        {% else %}
+          <p class="italic text-gray-400">
+            {% trans "You don't have a shipping address yet." %}
+          </p>
+        {% endif %}
+        <a href="{% url 'address_list' %}"
+           class="text-xs text-[#3F8240] underline inline-block mt-2">
+          {% trans "Change Address" %}
+        </a>
+      </div>
+    </div>
+
+    <!-- 🍽️ เมนูของคุณ -->
+    <div>
+      <h3 class="font-semibold text-[#3F8240] mb-2">
+        🍽️ {% trans "Your Menu" %}
+      </h3>
+      <ul class="list-disc list-inside text-gray-700 space-y-1">
+        {% for item in old_order.items.all %}
+          <li class="flex justify-between">
+            <span>
+              {{ item.menu.restaurant.name }} – {{ item.menu.title }} × {{ item.quantity }}
+            </span>
+            <span>{{ item.price_at_time|currency:"฿" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- 🧂 ตัวเลือกเพิ่มเติม -->
+    <div>
+      <h3 class="font-semibold text-[#3F8240] mb-2">
+        🧂 {% trans "Additional Options" %}
+      </h3>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="wants_spoon"
+                 class="accent-[#3F8240]"
+                 {% if old_order.wants_spoon %}checked{% endif %}>
+          <span>{% trans "I want plastic utensils" %}</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="wants_sauce"
+                 class="accent-[#3F8240]"
+                 {% if old_order.wants_sauce %}checked{% endif %}>
+          <span>{% trans "I want sauce/condiments" %}</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 💳 วิธีชำระเงิน -->
+    <div>
+      <h3 class="font-semibold text-[#3F8240] mb-2">
+        💳 {% trans "Payment Method" %}
+      </h3>
+      <div class="bg-blue-600 text-white text-sm font-semibold text-center py-2 rounded">
+        {% trans "Pay with VISA" %}
+      </div>
+    </div>
+
+    <!-- 💰 สรุปราคา -->
+    <div class="space-y-2 text-right">
+      <div class="flex justify-between">
+        <span class="text-gray-500">{% trans "Subtotal" %}</span>
+        <span class="text-gray-800 font-medium">{{ subtotal|currency:"฿" }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-500">{% trans "Shipping Fee" %}</span>
+        <span class="text-gray-800 font-medium">{{ delivery_fee|currency:"฿" }}</span>
+      </div>
+      <hr class="border-gray-200">
+      <div class="flex justify-between font-bold text-lg">
+        <span class="text-green-700">{% trans "Grand Total" %}</span>
+        <span class="text-green-700">{{ grand_total|currency:"฿" }}</span>
+      </div>
+    </div>
+
+    <!-- ✅ ปุ่มสั่งซื้อ -->
+    <div class="text-center">
+      <button type="submit"
+              class="bg-[#BADE80] text-[#3F8240] font-bold py-3 px-8 rounded-full hover:bg-[#A3CF62] transition">
+        ✅ {% trans "Place Order" %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+
+
+

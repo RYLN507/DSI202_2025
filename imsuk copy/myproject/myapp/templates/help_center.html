@@ -1,0 +1,54 @@
+{# templates/help_center.html #}
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Help Center" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">{% trans "Help Center" %}</h1>
+  <p class="mb-6">
+    {% trans "If you have questions or issues using IMSUK, please refer to the information below or contact us at:" %}
+  </p>
+
+  <ul class="list-disc list-inside mb-8 space-y-2">
+    <li>{% trans "Email" %}: <a href="mailto:support@imsuk.example" class="text-green-600 hover:underline">support@imsuk.example</a></li>
+    <li>{% trans "Phone" %}: <a href="tel:+66123456789" class="text-green-600 hover:underline">+66 1234 567 89</a></li>
+    <li>Line Official: <span class="font-semibold">@imsuk_support</span></li>
+  </ul>
+
+  <h2 class="text-2xl font-semibold mb-4">{% trans "Frequently Asked Questions (FAQ)" %}</h2>
+  <div class="space-y-4">
+    <details class="border rounded-lg p-4">
+      <summary class="cursor-pointer font-medium">
+        {% trans "How can I change my delivery address?" %}
+      </summary>
+      <p class="mt-2">
+        {% trans "Go to" %} <a href="{% url 'address_list' %}" class="text-green-600 hover:underline">{% trans "My Addresses" %}</a> 
+        {% trans "and choose 'Edit' or 'Add New' to update your delivery address." %}
+      </p>
+    </details>
+
+    <details class="border rounded-lg p-4">
+      <summary class="cursor-pointer font-medium">
+        {% trans "Where can I view my order history?" %}
+      </summary>
+      <p class="mt-2">
+        {% trans "Go to" %} <a href="{% url 'order_history' %}" class="text-green-600 hover:underline">{% trans "Order History" %}</a> 
+        {% trans "to view all your past orders." %}
+      </p>
+    </details>
+
+    <details class="border rounded-lg p-4">
+      <summary class="cursor-pointer font-medium">
+        {% trans "How can I contact the restaurant?" %}
+      </summary>
+      <p class="mt-2">
+        {% trans "At the" %} <a href="{% url 'restaurant_detail' 1 %}" class="text-green-600 hover:underline">{% trans "Restaurant Detail Page" %}</a> 
+        {% trans "you will find contact info at the bottom." %}
+      </p>
+    </details>
+  </div>
+</div>
+{% endblock %}

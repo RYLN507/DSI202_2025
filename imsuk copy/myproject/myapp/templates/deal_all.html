@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}🍽️ {% trans "Dinner Deals" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold text-[#3F8240]">🍽️ {% trans "Dinner Deals" %}</h1>
+    <a href="{% url 'home' %}"
+       class="text-sm text-gray-500 hover:text-[#3F8240] hover:underline">
+      ← {% trans "Back to Home" %}
+    </a>
+  </div>
+
+  {% if deals %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {% for deal in deals %}
+        <div class="relative bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col">
+          {% if deal.image %}
+            <a href="{% url 'deal_menu_detail' deal.id %}">
+              <img src="{{ deal.image.url }}"
+                   alt="{{ deal.title }}"
+                   class="w-full h-48 object-cover rounded-lg mb-4"/>
+            </a>
+            <div class="absolute top-4 left-4 bg-[#BADE80] text-white text-xs px-3 py-1 rounded-full shadow font-bold">
+              {% trans "Special Deal" %}
+            </div>
+          {% else %}
+            <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-lg mb-4">
+              <span class="text-gray-500">{% trans "No image available" %}</span>
+            </div>
+          {% endif %}
+
+          <h2 class="text-lg font-semibold text-[#3F8240] mb-1">{{ deal.title }}</h2>
+          <p class="text-sm text-gray-500 mb-2">
+            🕒 {{ deal.start_time|time:"H:i" }} – {{ deal.end_time|time:"H:i" }}
+          </p>
+
+          <div class="flex items-baseline space-x-2 mb-4">
+            <span class="text-gray-400 line-through text-sm">{{ deal.original_price|currency:"฿" }}</span>
+            <span class="text-xl font-bold text-[#3F8240]">{{ deal.discounted_price|currency:"฿" }}</span>
+          </div>
+
+          <a href="{% url 'deal_menu_detail' deal.id %}"
+             class="mt-auto inline-block w-full bg-[#3F8240] hover:bg-[#2f6831] text-white font-medium text-sm py-2 rounded-full text-center transition">
+            {% trans "View Details" %}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-gray-500 mt-10">😥 {% trans "No dinner deals available at the moment." %}</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+

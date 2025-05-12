@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static i18n currency_filters %}
+
+{% block title %}{% trans "Confirm Your Order" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="w-full max-w-3xl bg-white p-8 rounded-2xl shadow-xl space-y-8">
+    <h1 class="text-3xl font-extrabold text-center text-green-700">
+      {% trans "Confirm Your Order" %}
+    </h1>
+
+    <form method="POST" action="{% url 'place_order' %}" class="space-y-8">
+      {% csrf_token %}
+
+      <!-- Shipping Address -->
+      <div class="space-y-2">
+        <h2 class="flex items-center text-lg font-semibold text-green-700">
+          📍 {% trans "Shipping Address" %}
+        </h2>
+        <div class="bg-green-50 p-4 rounded-lg border border-green-200 relative">
+          {% if default_address %}
+            <p class="font-medium text-gray-800">{{ default_address.label }}</p>
+            <p class="text-gray-600">{{ default_address.display_address }}</p>
+            <input type="hidden" name="address_id" value="{{ default_address.id }}">
+          {% else %}
+            <p class="italic text-gray-500">{% trans "You don’t have a shipping address yet." %}</p>
+          {% endif %}
+          <a href="{% url 'address_list' %}" class="absolute top-2 right-2 text-xs text-green-700 hover:underline">
+            {% trans "Change" %}
+          </a>
+        </div>
+      </div>
+
+      <!-- Your Menu -->
+      <div class="space-y-2">
+        <h2 class="flex items-center text-lg font-semibold text-green-700">
+          🍽️ {% trans "Your Menu" %}
+        </h2>
+        <div class="divide-y divide-gray-200 rounded-lg border border-gray-100 shadow-sm overflow-hidden">
+          {% for item in cart_items %}
+            <div class="flex items-center justify-between p-4 hover:bg-gray-50 transition">
+              <div class="flex items-center space-x-4">
+                {% if item.menu.image %}
+                  <img src="{{ item.menu.image.url }}"
+                       alt="{{ item.menu.title }}"
+                       class="w-16 h-16 rounded-lg object-cover">
+                {% else %}
+                  <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                    {% trans "No Img" %}
+                  </div>
+                {% endif %}
+                <div>
+                  <p class="font-medium text-gray-800">{{ item.menu.title }}</p>
+                  <p class="text-sm text-gray-500">
+                    {% trans "Qty" %}: {{ item.quantity }}
+                  </p>
+                </div>
+              </div>
+              <p class="text-lg font-semibold text-green-700">
+                {{ item.menu.discount_price|currency:"฿" }}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Additional Options -->
+      <div class="space-y-2">
+        <h2 class="flex items-center text-lg font-semibold text-green-700">
+          🧂 {% trans "Additional Options" %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-green-50 p-4 rounded-lg">
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" name="wants_spoon" class="accent-green-600" {% if wants_spoon %}checked{% endif %}/>
+            <span class="text-gray-700">{% trans "Include cutlery" %}</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" name="wants_sauce" class="accent-green-600" {% if wants_sauce %}checked{% endif %}/>
+            <span class="text-gray-700">{% trans "Include sauce/condiments" %}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Payment Method & QR -->
+      <div class="space-y-2">
+        <h2 class="flex items-center text-lg font-semibold text-green-700">
+          💳 {% trans "Payment Method" %}
+        </h2>
+        <div class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          {% if method == 'visa' %}
+            <div class="flex items-center space-x-3">
+              <img src="{% static 'images/visa_logo.png' %}" alt="VISA" class="h-6">
+              <span class="font-medium text-gray-800">{% trans "Pay with VISA" %}</span>
+            </div>
+          {% else %}
+            <div class="flex items-center space-x-3">
+              <img src="{% static 'images/promptpay_icon.jpg' %}" alt="PromptPay" class="h-6">
+              <span class="font-medium text-gray-800">{% trans "Pay with PromptPay (QR)" %}</span>
+            </div>
+            {% if qr_b64 %}
+              <div class="mt-4 flex justify-center">
+                <img src="data:image/png;base64,{{ qr_b64 }}"
+                     alt="PromptPay QR code"
+                     class="w-48 h-48 border rounded-lg" />
+              </div>
+              <p class="mt-2 text-center text-sm text-gray-600">
+                {% trans "Scan this QR code with your banking app to pay." %}
+              </p>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+
+    <!-- 💰 Summary -->
+    <div class="bg-green-50 border border-green-200 rounded-xl p-6 text-green-800 text-base space-y-2">
+        <div class="flex justify-between text-gray-600">
+          <span>{% trans "Subtotal" %}</span>
+          <span>{{ total_price|currency:"฿" }}</span>
+        </div>
+        <div class="flex justify-between text-gray-600">
+          <span>{% trans "Delivery Fee" %}</span>
+          <span>{{ delivery_fee|currency:"฿" }}</span>
+        </div>
+        <hr>
+        <div class="flex justify-between font-bold text-lg text-[#3F8240]">
+          <span>{% trans "Grand Total" %}</span>
+          <span>{{ grand_total|currency:"฿" }}</span>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+      <!-- Place Order -->
+      <div class="text-center mt-6">
+        <a href="{% url 'checkout' %}"           
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-10 rounded-full transition">
+            {% trans "Proceed to Checkout" %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+

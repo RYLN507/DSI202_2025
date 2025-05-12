@@ -1,0 +1,147 @@
+{# templates/restaurant_detail.html #}
+{% extends 'base.html' %}
+{% load i18n static currency_filters %}
+
+{% block title %}
+  {{ restaurant.name }} | IMSUK
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 space-y-8">
+
+  {# Back link #}
+  <p>
+    {% if restaurant.category and restaurant.category.slug %}
+      <a href="{% url 'shop_list' restaurant.category.slug %}"
+         class="text-gray-600 hover:underline">
+        ← {% trans "Back to Categories" %}
+      </a>
+    {% else %}
+      <a href="{% url 'shop_list' %}"
+         class="text-gray-600 hover:underline">
+        ← {% trans "Back to Categories" %}
+      </a>
+    {% endif %}
+  </p>
+
+  {# Two-column header #}
+  <div class="flex flex-col lg:flex-row bg-white rounded-xl shadow overflow-hidden">
+    {# Left: banner/image with fixed 4:3 aspect ratio #}
+    <div class="lg:w-1/2 flex-shrink-0 aspect-[4/3]">
+      {% if restaurant.image %}
+        <img src="{{ restaurant.image.url }}"
+             alt="{{ restaurant.name }}"
+             class="w-full h-full object-cover">
+      {% else %}
+        <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">
+          {% trans "No Image Available" %}
+        </div>
+      {% endif %}
+    </div>
+
+    {# Right: details #}
+    <div class="lg:w-1/2 flex-1 p-6 space-y-4">
+      <h1 class="text-3xl font-bold text-green-700">{{ restaurant.name }}</h1>
+      {% if restaurant.description %}
+        <p class="text-gray-700">{{ restaurant.description }}</p>
+      {% endif %}
+      <ul class="space-y-2 text-gray-800">
+        {% if restaurant.address %}
+          <li><strong>📍 ที่อยู่:</strong> {{ restaurant.address }}</li>
+        {% endif %}
+        {% if restaurant.phone %}
+          <li><strong>📞 โทร:</strong> {{ restaurant.phone }}</li>
+        {% endif %}
+        {% if restaurant.email %}
+          <li><strong>✉️ อีเมล:</strong> {{ restaurant.email }}</li>
+        {% endif %}
+        {% if restaurant.website %}
+          <li>
+            <strong>🌐 เว็บ:</strong>
+            <a href="{{ restaurant.website }}" class="text-green-600" target="_blank">
+              {{ restaurant.website }}
+            </a>
+          </li>
+        {% endif %}
+        {% if restaurant.instagram %}
+          <li>
+            <strong>📸 IG:</strong>
+            <a href="https://instagram.com/{{ restaurant.instagram }}"
+               class="text-green-600" target="_blank">
+              @{{ restaurant.instagram }}
+            </a>
+          </li>
+        {% endif %}
+        {% if restaurant.line_id %}
+          <li><strong>💬 LINE:</strong> {{ restaurant.line_id }}</li>
+        {% endif %}
+        {% if restaurant.opening_hours %}
+          <li><strong>⏰ เปิด–ปิด:</strong> {{ restaurant.opening_hours }}</li>
+        {% endif %}
+        {% if restaurant.price_range %}
+          <li><strong>💲 ช่วงราคา:</strong> {{ restaurant.price_range }}</li>
+        {% endif %}
+        {% if restaurant.rating_avg %}
+          <li><strong>⭐ คะแนนเฉลี่ย:</strong> {{ restaurant.rating_avg }} / 5</li>
+        {% endif %}
+        <li><strong>❤️ ชื่นชอบ:</strong> {{ restaurant.favorites.count }} คน</li>
+      </ul>
+    </div>
+  </div>
+
+  {# เมนู #}
+  {% if menus %}
+    <h2 class="text-2xl font-semibold text-gray-800">{% trans "Menu" %}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for item in menus %}
+        <div class="flex flex-col bg-white rounded-xl shadow hover:shadow-lg overflow-hidden transition">
+          <a href="{% url 'menu_detail' item.id %}">
+            {% if item.image %}
+              <img src="{{ item.image.url }}" alt="{{ item.title }}"
+                   class="w-full h-36 object-cover">
+            {% else %}
+              <div class="w-full h-36 bg-gray-200 flex items-center justify-center text-gray-500">
+                {% trans "No Image" %}
+              </div>
+            {% endif %}
+          </a>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-green-700 mb-1">{{ item.title }}</h3>
+              <p class="text-sm text-gray-600 mb-2">
+                {{ item.description|default:_("No description") }}
+              </p>
+              <p class="text-xs text-gray-500">{{ item.start_time }} – {{ item.end_time }}</p>
+            </div>
+            <div class="mt-4">
+              {% if item.normal_price > item.discount_price %}
+                <span class="text-gray-400 line-through text-sm">
+                  {{ item.normal_price|currency:"฿" }}
+                </span>
+              {% endif %}
+              <span class="text-lg font-bold text-green-600 ml-2">
+                {{ item.discount_price|currency:"฿" }}
+              </span>
+            </div>
+            <a href="{% url 'menu_detail' item.id %}"
+               class="mt-4 inline-block bg-[#3F8240] hover:bg-[#2f6831] text-white 
+                      text-center py-2 px-4 rounded-full font-semibold transition">
+              {% trans "View Details" %}
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-gray-600">{% trans "No menu items available." %}</p>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+
+
+
+
+
+

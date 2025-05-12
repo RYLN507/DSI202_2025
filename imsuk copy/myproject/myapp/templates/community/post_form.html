@@ -1,0 +1,215 @@
+{# templates/community/post_form.html #}
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+
+{% block title %}
+  {% if edit %}Edit Post{% else %}Create New Post{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="bg-[#F7EFDB] min-h-screen py-8">
+
+  <!-- Full-width header -->
+  <div class="w-full bg-white shadow mb-6">
+    <div class="max-w-4xl mx-auto flex items-center space-x-4 px-6 py-4">
+      {% if user.is_authenticated and user.profile.image %}
+        <img src="{{ user.profile.image.url }}" alt="{{ user.username }}’s avatar"
+             class="h-10 w-10 rounded-full object-cover flex-shrink-0">
+      {% else %}
+        <div class="h-10 w-10 bg-gray-200 rounded-full flex-shrink-0"></div>
+      {% endif %}
+      <h2 class="text-lg font-medium text-gray-700">
+        {% if edit %}Edit your post{% else %}What’s on your mind?{% endif %}
+      </h2>
+    </div>
+  </div>
+
+  <!-- Centered form card -->
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <form method="post" enctype="multipart/form-data" class="px-8 py-8 space-y-6">
+        {% csrf_token %}
+
+        <!-- Title -->
+        <div>
+          <label class="block text-gray-800 font-medium mb-2">Title</label>
+          {{ form.title }}
+          {% if form.title.errors %}
+            <p class="mt-1 text-red-600 text-sm">{{ form.title.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div>
+          <label class="block text-gray-800 font-medium mb-2">Content</label>
+          {{ form.content }}
+          {% if form.content.errors %}
+            <p class="mt-1 text-red-600 text-sm">{{ form.content.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Image upload + preview + clear -->
+        <div>
+          <label class="block text-gray-800 font-medium mb-2">Photo (optional)</label>
+          <div id="image-dropzone"
+               class="relative cursor-pointer border-2 border-dashed border-gray-300 rounded-lg
+                      h-48 flex items-center justify-center hover:border-[#3F8240] transition">
+            <input id="id_image" name="image" type="file" accept="image/*"
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <div id="image-placeholder" class="text-gray-400">
+              Click or drag to upload image
+            </div>
+            <img id="image-preview" src="#" alt="Preview"
+                 class="absolute inset-0 object-cover w-full h-full rounded-lg hidden" />
+            <button type="button" id="image-clear-btn"
+                    class="absolute top-2 right-2 bg-white bg-opacity-75 hover:bg-opacity-100
+                           text-gray-600 rounded-full p-2 text-xl hidden focus:outline-none">
+              &times;
+            </button>
+          </div>
+          {% if form.image.errors %}
+            <p class="mt-1 text-red-600 text-sm">{{ form.image.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Hidden fields for extras -->
+        <input type="hidden" name="link"    id="input-link">
+        <input type="hidden" name="tags"    id="input-tags">
+        <input type="hidden" name="feeling" id="input-feeling">
+
+        <!-- Action buttons row -->
+        <div class="flex flex-wrap items-center justify-between py-4 border-t space-y-2 sm:space-y-0">
+
+          <!-- Left: Category select + other pills -->
+          <div class="flex flex-wrap space-x-2 items-center">
+
+            <!-- Native Category select -->
+            <select name="category" id="select-category"
+                    class="px-3 py-2 border border-gray-300 rounded-full
+                           focus:outline-none focus:ring-2 focus:ring-[#3F8240] bg-white">
+              <option value="">{% trans "Category" %}</option>
+              {% for cat in categories %}
+                <option value="{{ cat.name }}"
+                  {% if cat.name == selected_cat %}selected{% endif %}>
+                  {{ cat.display_name }}
+                </option>
+              {% endfor %}
+            </select>
+
+            <!-- Link pill -->
+            <button type="button" id="btn-link"
+                    class="flex items-center space-x-1 px-3 py-2 bg-gray-100 hover:bg-gray-200
+                           rounded-full text-gray-600 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 14a5 5 0 007.07 0l3.54-3.54a5 5 0 00-7.07-7.07l-1.06 1.06M14 10a5 5 0 00-7.07 0L3.39 13.54a5 5 0 007.07 7.07l1.06-1.06"/>
+              </svg>
+              <span id="label-link">Add Link</span>
+            </button>
+
+            <!-- Tag People pill -->
+            <button type="button" id="btn-tags"
+                    class="flex items-center space-x-1 px-3 py-2 bg-gray-100 hover:bg-gray-200
+                           rounded-full text-gray-600 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 8h2a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10a2 2 0 012-2h2"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 12v.01"/>
+              </svg>
+              <span id="label-tags">Tag People</span>
+            </button>
+
+            <!-- Feeling pill -->
+            <button type="button" id="btn-feeling"
+                    class="flex items-center space-x-1 px-3 py-2 bg-gray-100 hover:bg-gray-200
+                           rounded-full text-gray-600 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                   viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21
+                         12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span id="label-feeling">Feeling</span>
+            </button>
+          </div>
+
+          <!-- Right: Cancel & Post -->
+          <div class="flex space-x-2">
+            <a href="{% url 'community_board' %}"
+               class="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700
+                      font-medium rounded-full transition">
+              Cancel
+            </a>
+            <button type="submit"
+                    class="px-6 py-2 bg-[#3F8240] hover:bg-[#336534] text-white
+                           font-semibold rounded-full shadow transition">
+              {% if edit %}Save{% else %}Post{% endif %}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Image preview + clear
+  const input = document.getElementById('id_image'),
+        preview = document.getElementById('image-preview'),
+        placeholder = document.getElementById('image-placeholder'),
+        clearBtn = document.getElementById('image-clear-btn');
+
+  input.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    preview.src = URL.createObjectURL(file);
+    preview.classList.remove('hidden');
+    placeholder.classList.add('hidden');
+    clearBtn.classList.remove('hidden');
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    preview.classList.add('hidden');
+    clearBtn.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+  });
+
+  // Link prompt
+  document.getElementById('btn-link').addEventListener('click', () => {
+    const url = prompt('Paste a link:');
+    if (url) {
+      document.getElementById('input-link').value = url;
+      document.getElementById('label-link').innerText = 'Link added';
+    }
+  });
+
+  // Tag prompt
+  document.getElementById('btn-tags').addEventListener('click', () => {
+    const tags = prompt('Enter usernames (comma-separated):');
+    if (tags) {
+      document.getElementById('input-tags').value = tags;
+      document.getElementById('label-tags').innerText = `${tags.split(',').length} tagged`;
+    }
+  });
+
+  // Feelings cycle
+  const feelings = ['Happy','Grateful','Inspired','Excited','Blessed'];
+  let idx = -1;
+  document.getElementById('btn-feeling').addEventListener('click', () => {
+    idx = (idx + 1) % feelings.length;
+    document.getElementById('input-feeling').value = feelings[idx];
+    document.getElementById('label-feeling').innerText = feelings[idx];
+  });
+
+  // Sync <select> into hidden field (category)
+  document.getElementById('select-category').addEventListener('change', function() {
+    document.getElementById('input-category').value = this.value;
+  });
+</script>
+{% endblock %}
+

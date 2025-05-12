@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Product Filter" %} | IMSUK{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">{% trans "Filters" %}</h1>
+    <a href="javascript:history.back()" class="text-gray-600 hover:text-gray-800">✕ {% trans "Close" %}</a>
+  </div>
+
+  <form method="get" action="{% url 'product_filter' %}" class="space-y-8">
+
+    <!-- Available now toggle -->
+    <div>
+      <label class="flex items-center space-x-4">
+        <span class="font-semibold">{% trans "Only show menus available now" %}</span>
+        <input type="checkbox" name="available_now" value="1"
+               class="toggle-checkbox hidden"
+               {% if request.GET.available_now %}checked{% endif %}>
+        <div class="toggle-slot w-12 h-6 bg-gray-300 rounded-full shadow-inner relative">
+          <div class="toggle-button absolute w-6 h-6 bg-white rounded-full inset-y-0 left-0"></div>
+        </div>
+      </label>
+    </div>
+
+    <!-- Food categories -->
+    <div>
+      <h2 class="font-semibold mb-2">{% trans "Food Categories" %}</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {% for cat in categories %}
+          <label class="flex items-center space-x-2">
+            <input type="checkbox"
+                   name="category"
+                   value="{{ cat.name }}"
+                   class="form-checkbox text-[#bade80]"
+                   {% if cat.name in selected_categories %}checked{% endif %}>
+            <span>{{ cat.display_name }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Allergy filters (checkboxes) -->
+    <div>
+      <h2 class="font-semibold mb-2">{% trans "Allergy Filters" %}</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="no_milk" value="1"
+                 class="form-checkbox h-5 w-5 text-[#bade80]"
+                 {% if no_milk %}checked{% endif %}>
+          <span>{% trans "Milk" %}</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="no_egg" value="1"
+                 class="form-checkbox h-5 w-5 text-[#bade80]"
+                 {% if no_egg %}checked{% endif %}>
+          <span>{% trans "Egg" %}</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="no_peanut" value="1"
+                 class="form-checkbox h-5 w-5 text-[#bade80]"
+                 {% if no_peanut %}checked{% endif %}>
+          <span>{% trans "Peanut" %}</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="no_gluten" value="1"
+                 class="form-checkbox h-5 w-5 text-[#bade80]"
+                 {% if no_gluten %}checked{% endif %}>
+          <span>{% trans "Gluten" %}</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="no_seafood" value="1"
+                 class="form-checkbox h-5 w-5 text-[#bade80]"
+                 {% if no_seafood %}checked{% endif %}>
+          <span>{% trans "Seafood" %}</span>
+        </label>
+        <label class="flex items-center space-x-2">
+          <input type="checkbox" name="no_fish" value="1"
+                 class="form-checkbox h-5 w-5 text-[#bade80]"
+                 {% if no_fish %}checked{% endif %}>
+          <span>{% trans "Fish" %}</span>
+        </label>
+      </div>
+
+      <!-- Free-form allergy note -->
+      <div class="mt-4">
+        <label for="allergy_note" class="block font-medium text-gray-800 mb-1">
+          {% trans "Allergy note (other ingredients)" %}
+        </label>
+        <textarea name="allergy_note" id="allergy_note" rows="2"
+                  placeholder="{% trans 'e.g. shellfish, sesame…' %}"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#bade80]">
+          {{ allergy_note }}
+        </textarea>
+      </div>
+    </div>
+
+    <!-- Price range -->
+    <div>
+      <h2 class="font-semibold mb-2">{% trans "Price Range" %}</h2>
+      <div class="flex flex-col space-y-2">
+        <input id="priceRange" type="range" name="price" min="0" max="2" step="1"
+               value="{{ price_level|default:'0' }}"
+               class="w-full accent-[#bade80]">
+        <div class="flex justify-between text-sm text-gray-600">
+          <span id="priceValue">{% trans "Low (≤100)" %}</span>
+          <span>{% trans "High (>500)" %}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center mt-8">
+      <button type="submit"
+              class="bg-[#bade80] hover:bg-[#a8d266] text-white font-semibold py-2 px-8 rounded-full transition">
+        {% trans "Apply Filters" %}
+      </button>
+      <a href="{% url 'product_filter' %}" class="ml-4 text-gray-600 hover:underline">
+        {% trans "Reset All" %}
+      </a>
+    </div>
+  </form>
+</div>
+
+<style>
+  .toggle-checkbox:checked + .toggle-slot { background: #bade80; }
+  .toggle-checkbox:checked + .toggle-slot .toggle-button { transform: translateX(100%); }
+  .toggle-slot, .toggle-button { transition: all .3s; }
+  input[type="range"]::-webkit-slider-thumb { background: #bade80; }
+  input[type="range"]::-moz-range-thumb    { background: #bade80; }
+  input[type="range"]::-ms-thumb           { background: #bade80; }
+</style>
+
+<script>
+  const pr = document.getElementById('priceRange'),
+        pv = document.getElementById('priceValue'),
+        labels = ["{% trans 'Low (≤100)' %}",
+                  "{% trans 'Medium (101–500)' %}",
+                  "{% trans 'High (>500)' %}"];
+  if (pr) {
+    pv.textContent = labels[pr.value];
+    pr.addEventListener('input', ()=> pv.textContent = labels[pr.value]);
+  }
+</script>
+{% endblock %}
+
+
