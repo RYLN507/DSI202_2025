@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+{% load i18n %}
+
+{% block title %}{% trans "Menu Shorts" %}{% endblock %}
+
+{% block content %}
+  {# Full‐screen vertical scroll container #}
+  <div class="h-screen overflow-y-auto snap-y snap-mandatory scrollbar-thin scrollbar-thumb-gray-400">
+    {% for item in menus %}
+      {# Each “short” fills the viewport height #}
+      <div class="relative w-full h-screen snap-start">
+        
+        {# Background image covers full #}
+        {% if item.image %}
+          <img src="{{ item.image.url }}"
+               alt="{{ item.title }}"
+               class="absolute inset-0 w-full h-full object-cover"/>
+        {% else %}
+          <div class="absolute inset-0 bg-gray-200"></div>
+        {% endif %}
+
+        {# Dark gradient for text legibility #}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+
+        {# Text overlay: title, desc, price #}
+        <div class="absolute bottom-16 left-6 max-w-md text-white">
+          <h2 class="text-4xl font-bold mb-2">{{ item.title }}</h2>
+          <p class="text-lg mb-4">{{ item.description }}</p>
+          <p class="text-3xl font-semibold">
+            {{ item.discount_price|currency:"฿" }}
+          </p>
+        </div>
+
+        {# Vertical action buttons: view, like, cart #}
+        <div class="absolute top-1/2 right-6 transform -translate-y-1/2 flex flex-col space-y-4">
+          <!-- View Details -->
+          <a href="{% url 'menu_detail' item.id %}"
+             class="p-3 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-shadow shadow-lg"
+             aria-label="{% trans 'View details of' %} {{ item.title }}">
+            🔍
+          </a>
+          <!-- Like / Favorite -->
+          <form action="{% url 'toggle_favorite_menu' item.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit"
+                    class="p-3 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-shadow shadow-lg"
+                    aria-label="{% trans 'Like' %} {{ item.title }}">
+              ❤️
+            </button>
+          </form>
+          <!-- Add to Cart -->
+          <form action="{% url 'add_to_cart' item.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit"
+                    class="p-3 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-shadow shadow-lg"
+                    aria-label="{% trans 'Add to cart' %} {{ item.title }}">
+              🛒
+            </button>
+          </form>
+        </div>
+      </div>
+    {% empty %}
+      <p class="p-8 text-center text-gray-600">
+        {% trans "No menu items to show." %}
+      </p>
+    {% endfor %}
+  </div>
+{% endblock %}

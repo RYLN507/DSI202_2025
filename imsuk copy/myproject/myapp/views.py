@@ -1448,3 +1448,14 @@ class PostForm(forms.ModelForm):
                 'class':'text-gray-700 cursor-pointer'
             }),
         }
+
+from django.shortcuts import render
+from .models import Menu
+
+def menu_shorts(request):
+    # Grab every menu item
+    menus = Menu.objects.all()
+    return render(request, 'menu_shorts.html', {
+        'menus': menus,
+    })
+

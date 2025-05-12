@@ -44,7 +44,7 @@ urlpatterns = [
     path('deals/<int:deal_id>/', views.deal_menu_detail, name='deal_menu_detail'),
 
     # Shop & Menus
-    path('shop/<str:category_name>/', views.shop_list, name='shop_list'),
+    #path('shop/<str:category_name>/', views.shop_list, name='shop_list'),
     path('restaurant/<int:restaurant_id>/', views.restaurant_detail, name='restaurant_detail'),
     path('menu/<int:menu_id>/', views.menu_detail, name='menu_detail'),
     path('menu/<int:menu_id>/add/', views.add_to_cart, name='add_to_cart'),
@@ -95,6 +95,8 @@ urlpatterns = [
 
     path('shop/<int:category_id>/', views.shop_list, name='shop_list'),
 
+    path('menu-shorts/', views.menu_shorts, name='menu_shorts'),
+    
 
 ]
 

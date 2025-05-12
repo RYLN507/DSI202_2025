@@ -1,4 +1,3 @@
-{# templates/base.html #}
 {% load static i18n %}
 
 <!DOCTYPE html>
@@ -9,11 +8,8 @@
   <title>{% block title %}IMSUK{% endblock %}</title>
 
   {% block head_extra %}
-    <!-- 1) HTMX core -->
     <script src="{% static 'js/htmx-1.9.6.min.js' %}"></script>
-    <!-- 2) HTMX Django‐CSRF extension (adds X-CSRFToken header) -->
     <script src="{% static 'js/htmx-django-csrf.js' %}"></script>
-    <!-- 3) (Optional) debug -->
     <script>
       htmx.onLoad(c => console.log('HTMX load', c));
       document.body.addEventListener('htmx:beforeRequest', e => console.log('→', e.detail));
@@ -21,121 +17,139 @@
     </script>
   {% endblock %}
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family:'Prompt','Montserrat',sans-serif; }
-    .dropdown:hover .dropdown-menu { display:block; }
     .sidebar-gradient { background: linear-gradient(to bottom, #dfb2a7, #EFACA5, #f7efdb); }
     .top-banner-gradient { background:#3f8240; }
     .footer-gradient { background: #3f8240; }
     .logo-white { filter: brightness(0) invert(1); }
   </style>
 </head>
+
 <body class="bg-[#F7EFDB] text-[#3F8240]">
   <div class="flex flex-col min-h-screen">
 
     <!-- Sidebar -->
     <aside class="w-32 sidebar-gradient fixed top-0 left-0 h-screen flex flex-col items-center py-6 z-20">
-      
-      <!-- 🌐 ปุ่มเปลี่ยนภาษา -->
+
+      <!-- 🌐 Language switch -->
       <form action="{% url 'set_language' %}" method="post" class="mb-6">
         {% csrf_token %}
         <input type="hidden" name="next" value="{{ request.get_full_path }}">
         {% get_current_language as LANGUAGE_CODE %}
         {% if LANGUAGE_CODE == 'th' %}
-          <button type="submit" name="language" value="en" class="w-10 h-10 bg-white text-sm rounded-full shadow hover:bg-gray-200 transition">
+          <button type="submit" name="language" value="en"
+                  class="w-10 h-10 bg-white text-sm rounded-full shadow hover:bg-gray-200 transition">
             EN
           </button>
         {% else %}
-          <button type="submit" name="language" value="th" class="w-10 h-10 bg-white text-sm rounded-full shadow hover:bg-gray-200 transition">
+          <button type="submit" name="language" value="th"
+                  class="w-10 h-10 bg-white text-sm rounded-full shadow hover:bg-gray-200 transition">
             TH
           </button>
         {% endif %}
       </form>
 
-      <!-- กลุ่มไอคอน -->
-      <div class="flex flex-col items-center justify-center flex-1 space-y-10">
-        <a href="{% url 'profile' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <!-- Sidebar icons -->
+      <div class="flex flex-col items-center flex-1 space-y-10">
+
+        <!-- 1) Menu Shorts Icon (fork & knife) -->
+        <a href="{% url 'menu_shorts' %}" title="{% trans 'Quick Menu' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Fork & Knife -->
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 2v20M9 2c1.38 0 2.5 1.12 2.5 2.5V10H6.5V4.5C6.5 3.12 7.62 2 9 2zM15 2v20M15 2c1.38 0 2.5 1.12 2.5 2.5V10H12.5V4.5C12.5 3.12 13.62 2 15 2z"/>
+          </svg>
+        </a>
+
+        <!-- 2) Profile -->
+        <a href="{% url 'profile' %}" title="{% trans 'Profile' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
           </svg>
         </a>
-        <a href="{% url 'address_list' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <!-- 3) Addresses -->
+        <a href="{% url 'address_list' %}" title="{% trans 'Addresses' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
         </a>
-        <!-- ไอคอนใหม่: บอร์ดชุมชน & รีวิวเชิงลึก -->
-        <a href="{% url 'community_board' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <!-- 4) Community Board -->
+        <a href="{% url 'community_board' %}" title="{% trans 'Community' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M7 8h10M7 12h4m1 8a9 9 0 100-18 9 9 0 000 18z"/>
           </svg>
         </a>
-        <a href="{% url 'order_history' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <!-- 5) Order History -->
+        <a href="{% url 'order_history' %}" title="{% trans 'Orders' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </a>
-        <a href="{% url 'payment_methods' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <!-- 6) Payment Methods -->
+        <a href="{% url 'payment_methods' %}" title="{% trans 'Payments' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
           </svg>
         </a>
-        <a href="{% url 'help_center' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+        <!-- 7) Help Center -->
+        <a href="{% url 'help_center' %}" title="{% trans 'Help' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
         </a>
+
       </div>
 
       <!-- Logout -->
-      <a href="{% url 'logout' %}" class="mt-6">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <a href="{% url 'logout' %}" class="mt-6" title="{% trans 'Logout' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
         </svg>
       </a>
+
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main content -->
     <div class="flex flex-col min-h-screen pl-32">
-      <!-- Top Banner -->
+      <!-- Top Banner… -->
       <section class="relative top-banner-gradient h-32 flex items-center w-full">
-        <!-- Overlay รูปผลไม้ -->
-        <img src="{% static 'images/fruit.jpg' %}"
-             class="absolute inset-0 w-full h-full object-cover opacity-20"
-             alt="fruit bg"/>
-
-        <!-- เนื้อหาแบนเนอร์ -->
+        <img src="{% static 'images/fruit.jpg' %}" class="absolute inset-0 w-full h-full object-cover opacity-20" alt="fruit bg"/>
         <div class="relative z-10 container mx-auto flex items-center px-6">
-          <!-- ซ้าย -->
           <div class="flex-1 text-center text-[#f7efdb]">
             <p>{% trans "Care" %}</p>
             <p>{% trans "Sharing" %}</p>
             <p>{% trans "Understanding in every meal" %}</p>
           </div>
-
-          <!-- โลโก้ตรงกลาง -->
           <div class="flex-1 flex justify-center">
             <a href="{% url 'home' %}">
-              <img src="{% static 'images/imsuk.logo.png' %}"
-                   alt="IMSUK Logo"
-                   class="w-32 h-32 mb-4 animate-pulse"/>
+              <img src="{% static 'images/imsuk.logo.png' %}" alt="IMSUK Logo" class="w-32 h-32 mb-4 animate-pulse"/>
             </a>
           </div>
-
-          <!-- ขวา -->
           <div class="flex-1 text-center text-[#f7efdb]">
             <p>{% trans "Empathy" %}</p>
             <p>{% trans "Vitality" %}</p>
@@ -144,12 +158,10 @@
         </div>
       </section>
 
-      <!-- Content Block -->
       <main class="flex-1">
         {% block content %}{% endblock %}
       </main>
 
-      <!-- Footer -->
       <footer class="footer-gradient text-center text-[#f7efdb] p-4">
         {% trans "Empathy in every bite, vitality in every meal, and reciprocity in every heart." %}
       </footer>
@@ -157,4 +169,8 @@
   </div>
 </body>
 </html>
+
+
+
+
 
