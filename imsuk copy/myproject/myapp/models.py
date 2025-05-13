@@ -350,6 +350,8 @@ class PostCategory(models.Model):
     def __str__(self):
         return self.display_name
 
+from django.utils import timezone
+
 class Post(models.Model):
     author      = models.ForeignKey(
         User,
@@ -357,7 +359,7 @@ class Post(models.Model):
         related_name='community_posts'
     )
     category    = models.ForeignKey(
-        PostCategory,                  # ← use the new model here
+        PostCategory,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -366,15 +368,15 @@ class Post(models.Model):
     )
     title       = models.CharField('หัวข้อ', max_length=200)
     content     = models.TextField('เนื้อหา')
-    image       = models.ImageField(
-        'รูปภาพ', upload_to='community/', blank=True, null=True
-    )
+    image       = models.ImageField('รูปภาพ', upload_to='community/', blank=True, null=True)
     link        = models.URLField('ลิงก์', blank=True, null=True)
     tags        = models.CharField('แท็ก', max_length=200, blank=True)
     feeling     = models.CharField('ความรู้สึก', max_length=50, blank=True)
     created_at  = models.DateTimeField('วันที่สร้าง', default=timezone.now)
     updated_at  = models.DateTimeField('อัปเดตล่าสุด', auto_now=True)
     likes       = models.PositiveIntegerField('ยอดไลก์', default=0)
+
+    coupon_rewarded = models.BooleanField('ได้รับคูปองแล้ว', default=False)  # ← เพิ่มตรงนี้
 
     class Meta:
         ordering = ['-created_at']
@@ -383,6 +385,7 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
 
 from django.conf import settings
 from django.db import models
@@ -398,3 +401,38 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.author} on {self.post}'
+    
+# myapp/models.py
+
+class Coupon(models.Model):
+    code = models.CharField("รหัสคูปอง", max_length=20, unique=True)
+    discount_amount = models.DecimalField("ส่วนลด", max_digits=6, decimal_places=2, default=10.0)
+    active = models.BooleanField(default=True)
+    valid_from = models.DateTimeField()
+    valid_until = models.DateTimeField()
+    usage_limit = models.PositiveIntegerField(default=1)
+    used_count = models.PositiveIntegerField(default=0)
+
+    def is_valid(self):
+        now = timezone.now()
+        return (
+            self.active and
+            self.valid_from <= now <= self.valid_until and
+            self.used_count < self.usage_limit
+        )
+
+    def __str__(self):
+        return f"{self.code} - ลด {self.discount_amount} บาท"
+
+
+class UserCoupon(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    coupon = models.ForeignKey(Coupon, on_delete=models.CASCADE)
+    collected_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'coupon')
+
+    def __str__(self):
+        return f"{self.user.username} ได้รับ {self.coupon.code}"
+

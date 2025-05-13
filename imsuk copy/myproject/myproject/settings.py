@@ -179,3 +179,15 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.social_auth.load_extra_data',     # เก็บ token/extra_data
     'social_core.pipeline.user.user_details',               # **สำคัญ** ดึง first_name/last_name มาเซ็ตให้
 ]
+
+# settings.py
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',   # เราจะใช้ SUCCESS
+    messages.WARNING: 'warning',
+    messages.ERROR: 'error',
+}

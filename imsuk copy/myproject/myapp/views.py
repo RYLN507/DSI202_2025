@@ -519,14 +519,36 @@ def _generate_promptpay_payload(pp_id: str, amount: Decimal) -> str:
     # This is just a minimal illustration—real payload must follow EMVCo spec exactly!
     return f"00020101021127{pp_id}5303THB54{amt_str}5802TH6304XXXX"
 
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import CartItem, Coupon
+import qrcode
+from io import BytesIO
+import base64
+
 @login_required
 def cart_view(request):
     items = CartItem.objects.filter(user=request.user)
     subtotal = sum(item.menu.discount_price * item.quantity for item in items)
     delivery_fee = Decimal('29.00') if items else Decimal('0.00')
-    grand_total = subtotal + delivery_fee
+    discount = Decimal('0.00')
 
-    # Generate QR code image if there are items
+    # ตรวจว่ามีคูปองที่ใช้อยู่หรือไม่
+    coupon_id = request.session.get('coupon_id')
+    if coupon_id:
+        try:
+            coupon = Coupon.objects.get(id=coupon_id)
+            if coupon.is_valid():
+                discount = coupon.discount_amount  # ปกติคือ 10 บาท
+            else:
+                request.session.pop('coupon_id', None)  # ลบถ้าใช้ไม่ได้แล้ว
+        except Coupon.DoesNotExist:
+            request.session.pop('coupon_id', None)
+
+    grand_total = max(subtotal + delivery_fee - discount, 0)
+
+    # สร้าง QR code ถ้ามีสินค้า
     qr_b64 = None
     if items:
         payload = _generate_promptpay_payload(PROMPTPAY_ID, grand_total)
@@ -539,9 +561,11 @@ def cart_view(request):
         'cart_items': items,
         'subtotal': subtotal,
         'delivery_fee': delivery_fee,
+        'discount': discount,
         'grand_total': grand_total,
         'qr_b64': qr_b64,
     })
+
 
 
 from django.shortcuts import render, get_object_or_404
@@ -1359,6 +1383,30 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import PostForm
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from datetime import timedelta
+from django.utils import timezone
+
+from .models import Post, Coupon, UserCoupon
+from .forms import PostForm
+
+def give_review_coupon(user):
+    coupon, _ = Coupon.objects.get_or_create(
+        code="REVIEW10",
+        defaults={
+            'discount_percent': 0,
+            'active': True,
+            'valid_from': timezone.now(),
+            'valid_until': timezone.now() + timedelta(days=30),
+        }
+    )
+    if not UserCoupon.objects.filter(user=user, coupon=coupon).exists():
+        UserCoupon.objects.create(user=user, coupon=coupon)
+        return True
+    return False
+
 @login_required
 def create_post(request):
     if request.method == 'POST':
@@ -1367,7 +1415,14 @@ def create_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            # ← เรียกชื่อ URL ตรงๆ ตาม name="post_detail"
+
+            # ✅ เช็กว่าโพสต์อยู่ในหมวด All Categories
+            if post.category and post.category.name.lower() == 'all categories':
+                if give_review_coupon(request.user):
+                    post.coupon_rewarded = True
+                    post.save()
+                    messages.success(request, "ขอบคุณสำหรับโพสต์! คุณได้รับคูปอง!")
+
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
@@ -1376,10 +1431,6 @@ def create_post(request):
         'form': form,
         'edit': False,
     })
-
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Post
 
 @login_required
 def like_post(request, pk):
@@ -1493,3 +1544,60 @@ def story_list(request):
     return render(request, 'community/story_list.html', {
         'stories': stories,
     })
+
+
+from datetime import timedelta
+from django.utils import timezone
+from django.contrib import messages
+from .models import Post, Coupon, UserCoupon
+
+def give_review_coupon(user):
+    coupon, _ = Coupon.objects.get_or_create(
+        code="REVIEW10",
+        defaults={
+            'discount_percent': 0,
+            'active': True,
+            'valid_from': timezone.now(),
+            'valid_until': timezone.now() + timedelta(days=30),
+        }
+    )
+    if not UserCoupon.objects.filter(user=user, coupon=coupon).exists():
+        UserCoupon.objects.create(user=user, coupon=coupon)
+        return True
+    return False
+
+from django.contrib import messages
+from django.shortcuts import redirect
+from .models import Coupon, UserCoupon
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def apply_coupon(request):
+    coupon_id = request.POST.get('coupon_id')
+
+    # กด "ไม่ใช้คูปอง"
+    if not coupon_id:
+        request.session.pop('coupon_id', None)
+        messages.success(request, "ยกเลิกการใช้คูปองแล้ว")
+        return redirect('cart')
+
+    try:
+        coupon = Coupon.objects.get(id=coupon_id)
+    except Coupon.DoesNotExist:
+        messages.error(request, "ไม่พบคูปองนี้")
+        return redirect('cart')
+
+    # ตรวจว่าผู้ใช้มีคูปองนี้
+    if not UserCoupon.objects.filter(user=request.user, coupon=coupon).exists():
+        messages.error(request, "คุณไม่มีคูปองนี้")
+        return redirect('cart')
+
+    if not coupon.is_valid():
+        messages.error(request, "คูปองนี้หมดอายุหรือใช้ไม่ได้แล้ว")
+        return redirect('cart')
+
+    # ใช้คูปองสำเร็จ
+    request.session['coupon_id'] = coupon.id
+    messages.success(request, f"ใช้คูปอง {coupon.code} สำเร็จ")
+    return redirect('cart')
+
