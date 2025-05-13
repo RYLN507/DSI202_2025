@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-12 20:36+0700\n"
+"POT-Creation-Date: 2025-05-13 13:41+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,10 +55,8 @@ msgid "ตั้งเป็นค่ามาตรฐาน"
 msgstr ""
 
 #: myapp/forms.py:72 myapp/templates/upload_slip.html:35
-#, fuzzy
-#| msgid "Payment Method"
 msgid "Payment Slip"
-msgstr "วิธีการชำระเงิน"
+msgstr ""
 
 #: myapp/forms.py:78
 msgid "กรุณาอัปโหลดสลิป"
@@ -73,126 +71,120 @@ msgid "ขนาดไฟล์ต้องไม่เกิน 2MB"
 msgstr ""
 
 #: myapp/templates/address.html:4 myapp/templates/address.html:8
-#: myapp/views.py:1197
+#: myapp/views.py:1221
 msgid "Edit Address"
-msgstr "แก้ไขที่อยู่"
+msgstr ""
 
 #: myapp/templates/address.html:13
 msgid "Address Name"
-msgstr "ชื่อที่อยู่"
+msgstr ""
 
 #: myapp/templates/address.html:16
 msgid "Full Address"
-msgstr "ที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/address.html:21
 msgid "Subdistrict"
-msgstr "ตำบล"
+msgstr ""
 
 #: myapp/templates/address.html:25
 msgid "District"
-msgstr "อำเภอ"
+msgstr ""
 
 #: myapp/templates/address.html:32
 msgid "Province"
-msgstr "จังหวัด"
+msgstr ""
 
 #: myapp/templates/address.html:36
 msgid "Postal Code"
-msgstr "รหัสไปรษณีย์"
+msgstr ""
 
 #: myapp/templates/address.html:45
 msgid "Set as default address"
-msgstr "ตั้งเป็นที่อยู่เริ่มต้น"
+msgstr ""
 
 #: myapp/templates/address.html:51 myapp/templates/address_form.html:83
+#: myapp/templates/community/post_form.html:156
 msgid "Save"
-msgstr "บันทึก"
+msgstr ""
 
 #: myapp/templates/address.html:54
 msgid "Back to Address List"
-msgstr "กลับสู่หน้าที่อยู่"
+msgstr ""
 
 #: myapp/templates/address_form.html:17
-#, fuzzy
-#| msgid "Back to Address List"
 msgid "Back to My Addresses"
-msgstr "กลับสู่หน้าที่อยู่"
+msgstr ""
 
 #: myapp/templates/address_form.html:87
+#: myapp/templates/community/post_confirm_delete.html:24
+#: myapp/templates/community/post_form.html:151
 #: myapp/templates/payment_method_confirm_delete.html:23
 msgid "Cancel"
-msgstr "ยกเลิก"
+msgstr ""
 
 #: myapp/templates/address_list.html:5 myapp/templates/address_list.html:11
 #: myapp/templates/help_center.html:28
 msgid "My Addresses"
-msgstr "ที่อยู่ของฉัน"
+msgstr ""
 
 #: myapp/templates/address_list.html:56
 msgid "No address name"
-msgstr "ไม่มีชื่อที่อยู่"
+msgstr ""
 
 #: myapp/templates/address_list.html:59 myapp/templates/profile.html:62
 msgid "Default Address"
-msgstr "ที่อยู่เริ่มต้น"
+msgstr ""
 
-#: myapp/templates/address_list.html:70 myapp/templates/payment_methods.html:25
+#: myapp/templates/address_list.html:70
+#: myapp/templates/community/post_detail.html:79
+#: myapp/templates/payment_methods.html:25
 msgid "Edit"
-msgstr "แก้ไข"
+msgstr ""
 
 #: myapp/templates/address_list.html:79
 msgid "Set as default"
-msgstr "ตั้งเป็นที่อยู่เริ่มต้น"
+msgstr ""
 
 #: myapp/templates/address_list.html:89
+#: myapp/templates/community/post_detail.html:83
 #: myapp/templates/payment_method_confirm_delete.html:20
 #: myapp/templates/payment_methods.html:28
 #: venv/lib/python3.11/site-packages/django/forms/formsets.py:499
 msgid "Delete"
-msgstr "ลบวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/address_list.html:100
 msgid "You have no addresses saved."
-msgstr "คุณยังไม่มีที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/address_list.html:112
 msgid "Add New Address"
-msgstr "เพิ่มที่อยู่ใหม่"
+msgstr ""
 
 #: myapp/templates/base.html:59
-#, fuzzy
-#| msgid "Your Menu"
 msgid "Quick Menu"
-msgstr "เมนูของคุณ"
+msgstr ""
 
 #: myapp/templates/base.html:69
-#, fuzzy
-#| msgid "My Profile"
 msgid "Profile"
-msgstr "โปรไฟล์ของฉัน"
+msgstr ""
 
 #: myapp/templates/base.html:78
-#, fuzzy
-#| msgid "Address"
 msgid "Addresses"
-msgstr "ที่อยู่"
+msgstr ""
 
 #: myapp/templates/base.html:89
 msgid "Community"
 msgstr ""
 
 #: myapp/templates/base.html:98
-#, fuzzy
-#| msgid "Order"
 msgid "Orders"
-msgstr "คำสั่งซื้อ"
+msgstr ""
 
 #: myapp/templates/base.html:107
-#, fuzzy
-#| msgid "Payment Methods"
 msgid "Payments"
-msgstr "วิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/base.html:116
 msgid "Help"
@@ -204,39 +196,37 @@ msgstr ""
 
 #: myapp/templates/base.html:144
 msgid "Care"
-msgstr "ใส่ใจ"
+msgstr ""
 
 #: myapp/templates/base.html:145
 msgid "Sharing"
-msgstr "แบ่งปัน"
+msgstr ""
 
 #: myapp/templates/base.html:146
 msgid "Understanding in every meal"
-msgstr "เข้าใจในทุกมื้ออาหาร"
+msgstr ""
 
 #: myapp/templates/base.html:154
 msgid "Empathy"
-msgstr "Empathy"
+msgstr ""
 
 #: myapp/templates/base.html:155
 msgid "Vitality"
-msgstr "Vitality"
+msgstr ""
 
 #: myapp/templates/base.html:156
 msgid "Reciprocity"
-msgstr "Reciprocity"
+msgstr ""
 
 #: myapp/templates/base.html:166
 msgid ""
 "Empathy in every bite, vitality in every meal, and reciprocity in every "
 "heart."
 msgstr ""
-"Empathy in every bite, vitality in every meal, and reciprocity in every "
-"heart."
 
 #: myapp/templates/cart.html:5 myapp/templates/cart.html:10
 msgid "My Cart"
-msgstr "ตะกร้าของฉัน"
+msgstr ""
 
 #: myapp/templates/cart.html:23 myapp/templates/checkout.html:135
 #: myapp/templates/checkout_again.html:150
@@ -247,7 +237,7 @@ msgstr "ตะกร้าของฉัน"
 #: myapp/templates/partials/cart_item_and_summary.html:47
 #: myapp/templates/partials/cart_summary.html:76
 msgid "Subtotal"
-msgstr "ราคารวม"
+msgstr ""
 
 #: myapp/templates/cart.html:27 myapp/templates/checkout.html:139
 #: myapp/templates/checkout_again.html:154
@@ -256,7 +246,7 @@ msgstr "ราคารวม"
 #: myapp/templates/partials/cart_item_and_summary.html:51
 #: myapp/templates/partials/cart_summary.html:80
 msgid "Delivery Fee"
-msgstr "ค่าส่ง"
+msgstr ""
 
 #: myapp/templates/cart.html:32 myapp/templates/checkout.html:144
 #: myapp/templates/checkout_again.html:159
@@ -267,25 +257,25 @@ msgstr "ค่าส่ง"
 #: myapp/templates/partials/cart_item_and_summary.html:56
 #: myapp/templates/partials/cart_summary.html:85
 msgid "Grand Total"
-msgstr "ราคารวมทั้งหมด"
+msgstr ""
 
 #: myapp/templates/cart.html:41 myapp/templates/confirm_checkout.html:138
 #: myapp/templates/partials/cart_fragment.html:76
 msgid "Proceed to Checkout"
-msgstr "ชำระเงิน"
+msgstr ""
 
 #: myapp/templates/cart.html:47
 msgid "Your cart is empty."
-msgstr "คุณยังไม่มีอาหารในตะกร้าของคุณ"
+msgstr ""
 
 #: myapp/templates/cart.html:50
 msgid "Start Ordering"
-msgstr "เริ่มสั่งอาหาร"
+msgstr ""
 
 #: myapp/templates/checkout.html:4
 #: myapp/templates/confirm_checkout_again.html:4
 msgid "Checkout"
-msgstr "ชำระเงิน"
+msgstr ""
 
 #: myapp/templates/checkout.html:10 myapp/templates/checkout_again.html:4
 #: myapp/templates/checkout_again.html:9
@@ -293,42 +283,36 @@ msgstr "ชำระเงิน"
 #: myapp/templates/confirm_checkout.html:10
 #: myapp/templates/confirm_checkout_again.html:10
 msgid "Confirm Your Order"
-msgstr "ยืนยันการชำระเงิน"
+msgstr ""
 
 #: myapp/templates/checkout.html:21 myapp/templates/checkout_again.html:21
 #: myapp/templates/confirm_checkout.html:19
 #: myapp/templates/confirm_checkout_again.html:21
 msgid "Shipping Address"
-msgstr "ที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/checkout.html:29 myapp/templates/checkout_again.html:29
 #: myapp/templates/confirm_checkout.html:27
-#, fuzzy
-#| msgid "You don't have a shipping address yet."
 msgid "You don’t have a shipping address yet."
-msgstr "คุณยังไม่มีที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/checkout.html:33 myapp/templates/checkout_again.html:33
 #: myapp/templates/confirm_checkout.html:30
 #: myapp/templates/upload_slip.html:100
 #: venv/lib/python3.11/site-packages/django/forms/widgets.py:529
-#, fuzzy
-#| msgid "Save Changes"
 msgid "Change"
-msgstr "บันทึกการเปลี่ยนแปลง"
+msgstr ""
 
 #: myapp/templates/checkout.html:41 myapp/templates/checkout_again.html:41
 #: myapp/templates/confirm_checkout.html:38
 #: myapp/templates/confirm_checkout_again.html:48
 msgid "Your Menu"
-msgstr "เมนูของคุณ"
+msgstr ""
 
 #: myapp/templates/checkout.html:53 myapp/templates/checkout_again.html:53
 #: myapp/templates/confirm_checkout.html:50
-#, fuzzy
-#| msgid "No Image"
 msgid "No Img"
-msgstr "ไม่มีรูปภาพ"
+msgstr ""
 
 #: myapp/templates/checkout.html:59 myapp/templates/checkout_again.html:58
 #: myapp/templates/confirm_checkout.html:56
@@ -339,7 +323,7 @@ msgstr ""
 #: myapp/templates/confirm_checkout.html:71
 #: myapp/templates/confirm_checkout_again.html:69
 msgid "Additional Options"
-msgstr "ตัวเลือกเพิ่มเติม"
+msgstr ""
 
 #: myapp/templates/checkout.html:79 myapp/templates/checkout_again.html:77
 #: myapp/templates/confirm_checkout.html:76
@@ -348,38 +332,34 @@ msgstr ""
 
 #: myapp/templates/checkout.html:83 myapp/templates/checkout_again.html:81
 #: myapp/templates/confirm_checkout.html:80
-#, fuzzy
-#| msgid "I want sauce/condiments (if available)"
 msgid "Include sauce/condiments"
-msgstr "ฉันต้องการซอส"
+msgstr ""
 
 #: myapp/templates/checkout.html:92 myapp/templates/checkout_again.html:89
 #: myapp/templates/confirm_checkout.html:88
 #: myapp/templates/confirm_checkout_again.html:90
 msgid "Payment Method"
-msgstr "วิธีการชำระเงิน"
+msgstr ""
 
 #: myapp/templates/checkout.html:100 myapp/templates/checkout_again.html:102
 #: myapp/templates/choose_payment.html:36
 #: myapp/templates/confirm_checkout.html:94
 #: myapp/templates/confirm_checkout_again.html:93
 msgid "Pay with VISA"
-msgstr "ชำระเงินโดย VISA"
+msgstr ""
 
 #: myapp/templates/checkout.html:109
 msgid "PromptPay (QR)"
 msgstr ""
 
 #: myapp/templates/checkout.html:131
-#, fuzzy
-#| msgid "Order History"
 msgid "Order Summary"
-msgstr "ประวัติการสั่งซื้อ"
+msgstr ""
 
 #: myapp/templates/checkout.html:154 myapp/templates/checkout_again.html:167
 #: myapp/templates/confirm_checkout_again.html:120
 msgid "Place Order"
-msgstr "ยืนยันคำสั่งซื้อ"
+msgstr ""
 
 #: myapp/templates/checkout_again.html:112
 msgid "Pay with PromptPay (QR Code)"
@@ -394,10 +374,8 @@ msgid "Scan to Pay with PromptPay"
 msgstr ""
 
 #: myapp/templates/checkout_again.html:129
-#, fuzzy
-#| msgid "Postal Code"
 msgid "PromptPay QR Code"
-msgstr "รหัสไปรษณีย์"
+msgstr ""
 
 #: myapp/templates/checkout_again.html:132
 msgid "Then upload your slip below so we can confirm it."
@@ -408,16 +386,12 @@ msgid "Upload payment slip"
 msgstr ""
 
 #: myapp/templates/checkout_again.html:143
-#, fuzzy
-#| msgid "No description available"
 msgid "QR code not available."
-msgstr "ไม่มีคำอธิบาย"
+msgstr ""
 
 #: myapp/templates/choose_payment.html:4
-#, fuzzy
-#| msgid "Payment Method"
 msgid "Choose Payment Method"
-msgstr "วิธีการชำระเงิน"
+msgstr ""
 
 #: myapp/templates/choose_payment.html:11
 msgid "How would you like to pay?"
@@ -444,118 +418,301 @@ msgstr ""
 msgid "Continue to Review"
 msgstr ""
 
+#: myapp/templates/community/board_list.html:5
+msgid "Community Feed"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:25
+#: myapp/templates/community/post_form.html:23
+msgid "What’s on your mind?"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:35
+msgid "Community Stories"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:36 myapp/templates/home.html:122
+#: myapp/templates/home.html:148
+msgid "View All"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:71
+msgid "Search posts..."
+msgstr ""
+
+#: myapp/templates/community/board_list.html:77
+#: myapp/templates/community/post_form.html:89
+msgid "All Categories"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:78
+#: myapp/templates/community/post_form.html:90
+msgid "Deals"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:79
+#: myapp/templates/community/post_form.html:91
+msgid "Leftover Ideas"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:84
+msgid "Filter"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:99
+msgid "Community Member"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:140
+#: myapp/templates/community/post_detail.html:69
+msgid "Like"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:149
+msgid "Comments"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:155
+msgid "View Post"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:159
+msgid "No posts to show."
+msgstr ""
+
+#: myapp/templates/community/board_list.html:168
+#: myapp/templates/community/story_list.html:54
+msgid "Prev"
+msgstr ""
+
+#: myapp/templates/community/board_list.html:177
+#: myapp/templates/community/story_list.html:63
+msgid "Next"
+msgstr ""
+
+#: myapp/templates/community/post_confirm_delete.html:5
+msgid "Confirm Delete Post"
+msgstr ""
+
+#: myapp/templates/community/post_confirm_delete.html:11
+msgid "Confirm Delete"
+msgstr ""
+
+#: myapp/templates/community/post_confirm_delete.html:14
+#, python-format
+msgid "Are you sure you want to delete the post “%(post.title)s”?"
+msgstr ""
+
+#: myapp/templates/community/post_confirm_delete.html:20
+msgid "Yes, Delete"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:39
+msgid "by"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:42
+msgid "Updated"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:105
+msgid "No comments yet. Be the first to comment!"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:117
+msgid "Write your comment..."
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:120
+msgid "Post Comment"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:125
+msgid "Please"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:125
+msgid "log in"
+msgstr ""
+
+#: myapp/templates/community/post_detail.html:125
+msgid "to comment."
+msgstr ""
+
+#: myapp/templates/community/post_form.html:6
+msgid "Edit Post"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:6
+msgid "Create New Post"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:23
+msgid "Edit your post"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:36
+msgid "Title"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:45
+msgid "Content"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:54
+msgid "Photo (optional)"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:61
+msgid "Click or drag to upload image"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:112
+msgid "Add Link"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:128
+msgid "Tag People"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:142
+msgid "Feeling"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:156
+msgid "Post"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:189
+msgid "Paste a link:"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:192
+msgid "Link added"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:198
+msgid "Enter usernames (comma-separated):"
+msgstr ""
+
+#: myapp/templates/community/post_form.html:201
+msgid "tagged"
+msgstr ""
+
+#: myapp/templates/community/story_list.html:4
+#: myapp/templates/community/story_list.html:12
+msgid "All Community Stories"
+msgstr ""
+
+#: myapp/templates/community/story_list.html:28
+#: myapp/templates/deal_all.html:34 myapp/templates/deal_menu_detail.html:39
+#: myapp/templates/shop_detail.html:37
+msgid "No image available"
+msgstr ""
+
+#: myapp/templates/community/story_list.html:44
+msgid "No community stories have been posted yet."
+msgstr ""
+
 #: myapp/templates/confirm_checkout.html:108
 msgid "Scan this QR code with your banking app to pay."
 msgstr ""
 
 #: myapp/templates/confirm_checkout_again.html:35
 msgid "You don't have a shipping address yet."
-msgstr "คุณยังไม่มีที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/confirm_checkout_again.html:40
 #: myapp/templates/profile.html:69
 msgid "Change Address"
-msgstr "เปลี่ยนที่อยู่"
+msgstr ""
 
 #: myapp/templates/confirm_checkout_again.html:76
 msgid "I want plastic utensils"
-msgstr "ฉันต้องการช้อนส้อมพลาสติก"
+msgstr ""
 
 #: myapp/templates/confirm_checkout_again.html:82
-#, fuzzy
-#| msgid "I want sauce/condiments (if available)"
 msgid "I want sauce/condiments"
-msgstr "ฉันต้องการซอส"
+msgstr ""
 
 #: myapp/templates/confirm_checkout_again.html:104
 #: myapp/templates/order_history.html:75
-#, fuzzy
-#| msgid "Shipping Address"
 msgid "Shipping Fee"
-msgstr "ที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/deal_all.html:6 myapp/templates/deal_all.html:12
 #: myapp/templates/deal_menu_detail.html:7 myapp/templates/home.html:121
 msgid "Dinner Deals"
-msgstr "ดีลอาหารมื้อเย็น"
+msgstr ""
 
 #: myapp/templates/deal_all.html:15 myapp/templates/filtered_products.html:72
 #: myapp/templates/flash_all.html:13 myapp/templates/shop_list.html:20
 msgid "Back to Home"
-msgstr "ดูรายละเอียดเมนู"
+msgstr ""
 
 #: myapp/templates/deal_all.html:30
 msgid "Special Deal"
-msgstr "ยังไม่มีดีลอาหารมื้อเย็นในขณะนี้"
-
-#: myapp/templates/deal_all.html:34 myapp/templates/deal_menu_detail.html:39
-#: myapp/templates/shop_detail.html:37
-msgid "No image available"
-msgstr "ไม่มีรูปภาพ"
+msgstr ""
 
 #: myapp/templates/deal_all.html:50 myapp/templates/favorites.html:117
 #: myapp/templates/filtered_products.html:54 myapp/templates/flash_all.html:44
 #: myapp/templates/restaurant_detail.html:129
 #: myapp/templates/shop_list.html:102
 msgid "View Details"
-msgstr "ดูรายละเอียด"
+msgstr ""
 
 #: myapp/templates/deal_all.html:56
 msgid "No dinner deals available at the moment."
-msgstr "ยังไม่มีดีลอาหารมื้อเย็นในขณะนี้"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:24
-#, fuzzy
-#| msgid "Back to Flash Deals"
 msgid "Back to All Deals"
-msgstr "กลับไปยังเมนูนาทีทอง"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:50 myapp/templates/shop_detail.html:47
 msgid "Sold:"
-msgstr "ขายแล้ว:"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:50 myapp/templates/shop_detail.html:47
 msgid "items"
-msgstr "รายการ"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:52 myapp/templates/shop_detail.html:50
 msgid "Available time:"
-msgstr "เวลาที่เปิดให้บริการ:"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:66 myapp/templates/shop_detail.html:62
 msgid "What you'll get"
-msgstr "สิ่งที่คุณจะได้รับ"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:73
 #: myapp/templates/flash_detail.html:60 myapp/templates/menu_detail.html:6
 #: myapp/templates/shop_detail.html:69
 msgid "Menu Details"
-msgstr "รายละเอียดเมนู"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:90
 #: myapp/templates/flash_detail.html:77 myapp/templates/menu_detail.html:53
 #: myapp/templates/shop_detail.html:86
 msgid "Add to Cart"
-msgstr "เพิ่มลงในตะกร้า"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:97
 #: myapp/templates/flash_detail.html:87 myapp/templates/shop_detail.html:92
 msgid "Add to Favorites"
-msgstr "เพิ่มในรายการโปรด"
+msgstr ""
 
 #: myapp/templates/deal_menu_detail.html:110
-#, fuzzy
-#| msgid "This menu is not available for order."
 msgid "This deal is not available for order at this time."
-msgstr "เมนูนี้ไม่สามารถสั่งได้ในขณะนี้"
+msgstr ""
 
 #: myapp/templates/favorites.html:6
 msgid "Favorite Restaurants & Menus"
-msgstr "ร้านอาหารและเมนูโปรด"
+msgstr ""
 
 #: myapp/templates/favorites.html:13
 msgid "My Favorite Restaurants"
-msgstr "ร้านอาหารโปรดของฉัน"
+msgstr ""
 
 #: myapp/templates/favorites.html:27 myapp/templates/filtered_products.html:27
 #: myapp/templates/home.html:79 myapp/templates/home.html:100
@@ -566,11 +723,11 @@ msgstr "ร้านอาหารโปรดของฉัน"
 #: myapp/templates/partials/cart_summary.html:12
 #: myapp/templates/restaurant_detail.html:104
 msgid "No Image"
-msgstr "ไม่มีรูปภาพ"
+msgstr ""
 
 #: myapp/templates/favorites.html:37
 msgid "View Restaurant"
-msgstr "ดูร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/favorites.html:44
 msgid "Remove from favorites"
@@ -578,28 +735,26 @@ msgstr ""
 
 #: myapp/templates/favorites.html:53
 msgid "You don't have any favorite restaurants yet."
-msgstr "คุณยังไม่มีร้านอาหารโปรด"
+msgstr ""
 
 #: myapp/templates/favorites.html:55
-#, fuzzy
-#| msgid "Restaurants"
 msgid "Browse Restaurants"
-msgstr "ร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/favorites.html:63
 msgid "My Favorite Menus"
-msgstr "เมนูโปรดของฉัน"
+msgstr ""
 
 #: myapp/templates/favorites.html:78 myapp/templates/flash_detail.html:27
 #: myapp/templates/menu_detail.html:17
 #: myapp/templates/restaurant_detail.html:37 myapp/templates/shop_list.html:43
 #: myapp/templates/shop_list.html:79
 msgid "No Image Available"
-msgstr "ไม่มีรูปภาพ"
+msgstr ""
 
 #: myapp/templates/favorites.html:127
 msgid "You don't have any favorite menus yet."
-msgstr "คุณยังไม่มีเมนูโปรด"
+msgstr ""
 
 #: myapp/templates/favorites.html:131
 msgid "Browse Menus"
@@ -607,51 +762,51 @@ msgstr ""
 
 #: myapp/templates/filter.html:4
 msgid "Product Filter"
-msgstr "ตัวกรองเมนู"
+msgstr ""
 
 #: myapp/templates/filter.html:9
 msgid "Filters"
-msgstr "ตัวกรอง"
+msgstr ""
 
 #: myapp/templates/filter.html:10
 msgid "Close"
-msgstr "ปิด"
+msgstr ""
 
 #: myapp/templates/filter.html:18
 msgid "Only show menus available now"
-msgstr "แสดงเฉพาะเมนูที่สั่งได้ตอนนี้"
+msgstr ""
 
 #: myapp/templates/filter.html:30 myapp/templates/home.html:173
 msgid "Food Categories"
-msgstr "หมวดหมู่อาหาร"
+msgstr ""
 
 #: myapp/templates/filter.html:47
 msgid "Allergy Filters"
-msgstr "ตัวกรองอาการแพ้อาหาร"
+msgstr ""
 
 #: myapp/templates/filter.html:53
 msgid "Milk"
-msgstr "นม"
+msgstr ""
 
 #: myapp/templates/filter.html:59
 msgid "Egg"
-msgstr "ไข่"
+msgstr ""
 
 #: myapp/templates/filter.html:65
 msgid "Peanut"
-msgstr "ถั่วลิสง"
+msgstr ""
 
 #: myapp/templates/filter.html:71
 msgid "Gluten"
-msgstr "กลูเตน"
+msgstr ""
 
 #: myapp/templates/filter.html:77
 msgid "Seafood"
-msgstr "อาหารทะเล"
+msgstr ""
 
 #: myapp/templates/filter.html:83
 msgid "Fish"
-msgstr "ปลา"
+msgstr ""
 
 #: myapp/templates/filter.html:90
 msgid "Allergy note (other ingredients)"
@@ -663,243 +818,214 @@ msgstr ""
 
 #: myapp/templates/filter.html:102
 msgid "Price Range"
-msgstr "ช่วงราคา"
+msgstr ""
 
 #: myapp/templates/filter.html:108 myapp/templates/filter.html:139
 msgid "Low (≤100)"
-msgstr "ต่ำ (≤100 บาท)"
+msgstr ""
 
 #: myapp/templates/filter.html:109 myapp/templates/filter.html:141
 msgid "High (>500)"
-msgstr "สูง (>500 บาท)"
+msgstr ""
 
 #: myapp/templates/filter.html:118
 msgid "Apply Filters"
-msgstr "ใช้ตัวกรอง"
+msgstr ""
 
 #: myapp/templates/filter.html:121
 msgid "Reset All"
-msgstr "รีเซ็ตทั้งหมด"
+msgstr ""
 
 #: myapp/templates/filter.html:140
 msgid "Medium (101–500)"
-msgstr "ปานกลาง (101–500 บาท)"
+msgstr ""
 
 #: myapp/templates/filtered_products.html:4
 msgid "Filtered Results"
-msgstr "ผลลัพธ์ที่กรองแล้ว"
+msgstr ""
 
 #: myapp/templates/filtered_products.html:10
-#, fuzzy, python-format
-#| msgid "Found %(count)s items"
+#, python-format
 msgid ""
 "\n"
 "      Found %(count)s items\n"
 "    "
-msgstr "พบ %(count)s รายการ"
+msgstr ""
 
 #: myapp/templates/filtered_products.html:16
 msgid "Results from Applied Filters"
-msgstr "ผลลัพธ์จากตัวกรองที่เลือก"
+msgstr ""
 
 #: myapp/templates/filtered_products.html:35 myapp/templates/shop_list.html:87
 msgid "No description available"
-msgstr "ไม่มีคำอธิบาย"
+msgstr ""
 
 #: myapp/templates/filtered_products.html:62
 msgid "No menus matched your filters 😢"
-msgstr "ไม่มีเมนูที่ตรงกับตัวกรองของคุณ 😢"
+msgstr ""
 
 #: myapp/templates/filtered_products.html:69
 msgid "Adjust Filters"
-msgstr "ปรับตัวกรอง"
+msgstr ""
 
 #: myapp/templates/flash_all.html:6 myapp/templates/flash_all.html:11
 msgid "All Flash Deal Menus"
-msgstr "เมนูนาทีทองทั้งหมด"
+msgstr ""
 
 #: myapp/templates/flash_all.html:28
 msgid "Discount"
-msgstr "ส่วนลด"
+msgstr ""
 
 #: myapp/templates/flash_all.html:50
 msgid "No flash deals available at the moment"
-msgstr "ยังไม่มีเมนูนาทีทองในขณะนี้"
+msgstr ""
 
 #: myapp/templates/flash_detail.html:6 myapp/templates/home.html:147
 msgid "Flash Deal Menu"
-msgstr "เมนูนาทีทอง"
+msgstr ""
 
 #: myapp/templates/flash_detail.html:15
 msgid "Back to Flash Deals"
-msgstr "กลับไปยังเมนูนาทีทอง"
+msgstr ""
 
 #: myapp/templates/flash_detail.html:45
-#, fuzzy
-#| msgid "Available time:"
 msgid "Available:"
-msgstr "เวลาที่เปิดให้บริการ:"
+msgstr ""
 
 #: myapp/templates/help_center.html:6 myapp/templates/help_center.html:10
 msgid "Help Center"
-msgstr "ศูนย์ช่วยเหลือ"
+msgstr ""
 
 #: myapp/templates/help_center.html:12
 msgid ""
 "If you have questions or issues using IMSUK, please refer to the information "
 "below or contact us at:"
-msgstr "หากคุณมีคำถามหรือพบปัญหาในการใช้งาน IMSUK กรุณาอ่านข้อมูลด้านล่างหรือติดต่อเราที่:"
+msgstr ""
 
 #: myapp/templates/help_center.html:16
 msgid "Email"
-msgstr "อีเมล"
+msgstr ""
 
 #: myapp/templates/help_center.html:17
 msgid "Phone"
-msgstr "โทรศัพท์"
+msgstr ""
 
 #: myapp/templates/help_center.html:21
 msgid "Frequently Asked Questions (FAQ)"
-msgstr "คำถามที่พบบ่อย (FAQ)"
+msgstr ""
 
 #: myapp/templates/help_center.html:25
 msgid "How can I change my delivery address?"
-msgstr "ฉันสามารถเปลี่ยนที่อยู่จัดส่งได้อย่างไร?"
+msgstr ""
 
 #: myapp/templates/help_center.html:28 myapp/templates/help_center.html:38
 msgid "Go to"
-msgstr "ไปที่"
+msgstr ""
 
 #: myapp/templates/help_center.html:29
 msgid "and choose 'Edit' or 'Add New' to update your delivery address."
-msgstr "และเลือก 'แก้ไข' หรือ 'เพิ่มใหม่' เพื่ออัปเดตที่อยู่จัดส่งของคุณ"
+msgstr ""
 
 #: myapp/templates/help_center.html:35
 msgid "Where can I view my order history?"
-msgstr "ฉันสามารถดูประวัติการสั่งซื้อของฉันได้ที่ไหน?"
+msgstr ""
 
 #: myapp/templates/help_center.html:38 myapp/templates/order_history.html:4
 msgid "Order History"
-msgstr "ประวัติการสั่งซื้อ"
+msgstr ""
 
 #: myapp/templates/help_center.html:39
 msgid "to view all your past orders."
-msgstr "เพื่อดูคำสั่งซื้อทั้งหมดของคุณในอดีต"
+msgstr ""
 
 #: myapp/templates/help_center.html:45
 msgid "How can I contact the restaurant?"
-msgstr "ฉันสามารถติดต่อร้านอาหารได้อย่างไร?"
+msgstr ""
 
 #: myapp/templates/help_center.html:48
 msgid "At the"
-msgstr "ที่หน้า"
+msgstr ""
 
 #: myapp/templates/help_center.html:48
 msgid "Restaurant Detail Page"
-msgstr "รายละเอียดร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/help_center.html:49
 msgid "you will find contact info at the bottom."
-msgstr "คุณจะพบข้อมูลการติดต่อที่ด้านล่างของหน้า"
+msgstr ""
 
 #: myapp/templates/home.html:6
 msgid "Home"
-msgstr "หน้าแรก"
+msgstr ""
 
 #: myapp/templates/home.html:6
 msgid "IMSUK"
-msgstr "อิ่มสุข"
+msgstr ""
 
 #: myapp/templates/home.html:24
-#, fuzzy
-#| msgid "Search for menus or restaurants"
 msgid "Search for your menu or restaurant"
-msgstr "ค้นหาเมนูหรือร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/home.html:61
-#, fuzzy
-#| msgid "Delivery Address"
 msgid "Delivery address:"
-msgstr "ที่อยู่จัดส่ง"
+msgstr ""
 
 #: myapp/templates/home.html:63
-#, fuzzy
-#| msgid "Change Address"
 msgid "Change address"
-msgstr "เปลี่ยนที่อยู่"
+msgstr ""
 
 #: myapp/templates/home.html:69
-#, fuzzy
-#| msgid "Search Results for \"%(query)s\""
 msgid "Search results for"
-msgstr "ผลการค้นหาสำหรับ \"%(query)s\""
+msgstr ""
 
 #: myapp/templates/home.html:71
 msgid "Restaurants"
-msgstr "ร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/home.html:84 myapp/templates/home.html:105
 #: myapp/templates/restaurant_detail.html:112
-#, fuzzy
-#| msgid "No description available"
 msgid "No description"
-msgstr "ไม่มีคำอธิบาย"
+msgstr ""
 
 #: myapp/templates/home.html:88
-#, fuzzy
-#| msgid "Restaurants"
 msgid "No restaurants match"
-msgstr "ร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/home.html:92 myapp/templates/shop_list.html:67
-#, fuzzy
-#| msgid "Menu"
 msgid "Menus"
-msgstr "เมนู"
+msgstr ""
 
 #: myapp/templates/home.html:113
 msgid "No menu items match"
 msgstr ""
 
-#: myapp/templates/home.html:122 myapp/templates/home.html:148
-msgid "View All"
-msgstr "ดูทั้งหมด"
-
 #: myapp/templates/home.html:140
-#, fuzzy
-#| msgid "No flash deals available at the moment"
 msgid "No deals at the moment"
-msgstr "ยังไม่มีเมนูนาทีทองในขณะนี้"
+msgstr ""
 
 #: myapp/templates/home.html:166
-#, fuzzy
-#| msgid "No flash deals available"
 msgid "No flash menus available"
-msgstr "ยังไม่มีเมนูนาทีทอง"
+msgstr ""
 
 #: myapp/templates/home.html:183
-#, fuzzy
-#| msgid "No categories available yet."
 msgid "No categories yet"
-msgstr "ยังไม่มีหมวดหมู่อาหาร"
+msgstr ""
 
 #: myapp/templates/login.html:6 myapp/templates/login.html:86
 msgid "Login"
-msgstr "เข้าสู่ระบบ"
+msgstr ""
 
 #: myapp/templates/login.html:14
 msgid "Welcome Back"
 msgstr ""
 
 #: myapp/templates/login.html:34 myapp/templates/register.html:42
-#, fuzzy
-#| msgid "Edit Address"
 msgid "Email Address"
-msgstr "แก้ไขที่อยู่"
+msgstr ""
 
 #: myapp/templates/login.html:53 myapp/templates/register.html:50
 msgid "Password"
-msgstr "รหัสผ่าน"
+msgstr ""
 
 #: myapp/templates/login.html:75
 msgid "Remember me"
@@ -907,98 +1033,89 @@ msgstr ""
 
 #: myapp/templates/login.html:79
 msgid "Forgot password?"
-msgstr "ลืมรหัสผ่าน?"
+msgstr ""
 
 #: myapp/templates/login.html:100
 msgid "Sign in with Google"
 msgstr ""
 
 #: myapp/templates/login.html:106
-#, fuzzy
-#| msgid "Already have an account?"
 msgid "Don’t have an account?"
-msgstr "มีบัญชีอยู่แล้ว?"
+msgstr ""
 
 #: myapp/templates/login.html:108
-#, fuzzy
-#| msgid "Sign In"
 msgid "Sign up"
-msgstr "ลงชื่อเข้าใช้"
+msgstr ""
 
 #: myapp/templates/menu_detail.html:29
 msgid "No description available for this menu."
-msgstr "ไม่มีคำอธิบายสำหรับเมนูนี้"
+msgstr ""
 
 #: myapp/templates/menu_detail.html:44
 msgid "Available Time"
-msgstr "เวลาจำหน่าย"
+msgstr ""
 
 #: myapp/templates/menu_detail.html:57
 msgid "Please log in to place an order."
-msgstr "กรุณาเข้าสู่ระบบเพื่อสั่งอาหาร"
+msgstr ""
 
 #: myapp/templates/menu_shorts.html:4
-#, fuzzy
-#| msgid "Menu Items"
 msgid "Menu Shorts"
-msgstr "รายการเมนู"
+msgstr ""
 
 #: myapp/templates/order_history.html:9
 msgid "My Order History"
-msgstr "ประวัติการสั่งซื้อของฉัน"
+msgstr ""
 
 #: myapp/templates/order_history.html:21
 #: venv/lib/python3.11/site-packages/django/forms/formsets.py:484
 #: venv/lib/python3.11/site-packages/django/forms/formsets.py:491
 msgid "Order"
-msgstr "คำสั่งซื้อ"
+msgstr ""
 
 #: myapp/templates/order_history.html:49
 msgid "Quantity"
-msgstr "จำนวน"
+msgstr ""
 
 #: myapp/templates/order_history.html:91
 msgid "Paid"
-msgstr "ชำระแล้ว"
+msgstr ""
 
 #: myapp/templates/order_history.html:95
 msgid "Unpaid"
-msgstr "ยังไม่ชำระ"
+msgstr ""
 
 #: myapp/templates/order_history.html:102
 msgid "Order Again"
-msgstr "สั่งอีกครั้ง"
+msgstr ""
 
 #: myapp/templates/order_history.html:112
 msgid "You have no order history yet."
-msgstr "คุณยังไม่มีประวัติการสั่งซื้อ"
+msgstr ""
 
 #: myapp/templates/order_history.html:117
 msgid "Start Ordering Now"
-msgstr "เริ่มสั่งอาหารตอนนี้"
+msgstr ""
 
 #: myapp/templates/order_success.html:4
 msgid "Order Successful"
-msgstr "สั่งซื้อสำเร็จ"
+msgstr ""
 
 #: myapp/templates/order_success.html:10
-#, fuzzy
-#| msgid "Order Successful"
 msgid "Success"
-msgstr "สั่งซื้อสำเร็จ"
+msgstr ""
 
 #: myapp/templates/order_success.html:13
 msgid "Thank you for your order!"
-msgstr "ขอบคุณสำหรับการสั่งซื้อ!"
+msgstr ""
 
 #: myapp/templates/order_success.html:17
-#, fuzzy, python-format
-#| msgid "Your order has been successfully recorded."
+#, python-format
 msgid ""
 "\n"
 "        Your order #%(order_id)s has been successfully placed.\n"
 "      "
-msgstr "คำสั่งซื้อของคุณถูกบันทึกเรียบร้อยแล้ว"
+msgstr ""
 
 #: myapp/templates/order_success.html:23
 msgid "Next, please upload your payment slip to complete the payment."
@@ -1010,180 +1127,180 @@ msgstr ""
 
 #: myapp/templates/order_success.html:35
 msgid "Return to Homepage"
-msgstr "กลับไปหน้าแรก"
+msgstr ""
 
 #: myapp/templates/password_change_done.html:5
 msgid "Password Changed Successfully"
-msgstr "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว"
+msgstr ""
 
 #: myapp/templates/password_change_done.html:17
 msgid "Your password has been changed!"
-msgstr "รหัสผ่านของคุณถูกเปลี่ยนแล้ว!"
+msgstr ""
 
 #: myapp/templates/password_change_done.html:19
 msgid "Your new password has been saved successfully."
-msgstr "รหัสผ่านใหม่ของคุณถูกบันทึกเรียบร้อยแล้ว"
+msgstr ""
 
 #: myapp/templates/password_change_done.html:20
 msgid "Please use the new password the next time you log in."
-msgstr "กรุณาใช้รหัสผ่านใหม่นี้ในการเข้าสู่ระบบครั้งถัดไป"
+msgstr ""
 
 #: myapp/templates/password_change_done.html:24
 #: myapp/templates/password_change_form.html:53
 msgid "Back to Profile"
-msgstr "กลับไปที่โปรไฟล์"
+msgstr ""
 
 #: myapp/templates/password_change_form.html:5
 #: myapp/templates/password_change_form.html:10 myapp/templates/profile.html:94
 msgid "Change Password"
-msgstr "เปลี่ยนรหัสผ่าน"
+msgstr ""
 
 #: myapp/templates/password_change_form.html:19
 msgid "Please check your input."
-msgstr "กรุณาตรวจสอบข้อมูลของคุณ"
+msgstr ""
 
 #: myapp/templates/password_change_form.html:24
 msgid "Old Password"
-msgstr "รหัสผ่านเดิม"
+msgstr ""
 
 #: myapp/templates/password_change_form.html:31
 msgid "New Password"
-msgstr "รหัสผ่านใหม่"
+msgstr ""
 
 #: myapp/templates/password_change_form.html:38
 msgid "Confirm New Password"
-msgstr "ยืนยันรหัสผ่านใหม่"
+msgstr ""
 
 #: myapp/templates/password_change_form.html:46
 msgid "Confirm Password Change"
-msgstr "ยืนยันการเปลี่ยนรหัสผ่าน"
+msgstr ""
 
 #: myapp/templates/payment_method_add.html:4
 #: myapp/templates/payment_method_add.html:9
 msgid "Add New Payment Method"
-msgstr "เพิ่มวิธีชำระเงินใหม่"
+msgstr ""
 
 #: myapp/templates/payment_method_add.html:14
 msgid "Payment method added successfully!"
-msgstr "เพิ่มวิธีชำระเงินเรียบร้อยแล้ว!"
+msgstr ""
 
 #: myapp/templates/payment_method_add.html:29
 #: myapp/templates/payment_method_edit.html:29
 msgid "Card/Account Name"
-msgstr "ชื่อบัตร/บัญชี"
+msgstr ""
 
 #: myapp/templates/payment_method_add.html:35
 msgid "Details (e.g., account number)"
-msgstr "รายละเอียด (เช่น หมายเลขบัญชี)"
+msgstr ""
 
 #: myapp/templates/payment_method_add.html:43
 #: myapp/templates/payment_methods.html:11
 msgid "Add Payment Method"
-msgstr "เพิ่มวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/payment_method_add.html:47
 #: myapp/templates/payment_method_edit.html:47
 msgid "Back to Payment Methods"
-msgstr "กลับไปยังวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/payment_method_confirm_delete.html:4
 #: myapp/templates/payment_method_delete_confirm.html:4
 msgid "Confirm Delete Payment Method"
-msgstr "ยืนยันการลบวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/payment_method_confirm_delete.html:9
 msgid "Delete Payment Method"
-msgstr "ลบวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/payment_method_confirm_delete.html:12
 msgid "Are you sure you want to delete this payment method?"
-msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบวิธีชำระเงินนี้?"
+msgstr ""
 
 #: myapp/templates/payment_method_delete_confirm.html:11
 msgid "Confirm Deletion"
-msgstr "ยืนยันการลบ"
+msgstr ""
 
 #: myapp/templates/payment_method_delete_confirm.html:15
 msgid "Are you sure you want to delete the payment method"
-msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบวิธีชำระเงินนี้"
+msgstr ""
 
 #: myapp/templates/payment_method_delete_confirm.html:24
 msgid "Delete this payment method"
-msgstr "ลบวิธีชำระเงินนี้"
+msgstr ""
 
 #: myapp/templates/payment_method_delete_confirm.html:29
 msgid "Cancel and go back to the list"
-msgstr "ยกเลิกและกลับไปยังรายการ"
+msgstr ""
 
 #: myapp/templates/payment_method_edit.html:4
 #: myapp/templates/payment_method_edit.html:9
 msgid "Edit Payment Method"
-msgstr "แก้ไขวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/payment_method_edit.html:14
 msgid "Payment method updated successfully!"
-msgstr "อัปเดตวิธีชำระเงินเรียบร้อยแล้ว!"
+msgstr ""
 
 #: myapp/templates/payment_method_edit.html:35
 msgid "Details"
-msgstr "รายละเอียด"
+msgstr ""
 
 #: myapp/templates/payment_method_edit.html:43
 msgid "Save Changes"
-msgstr "บันทึกการเปลี่ยนแปลง"
+msgstr ""
 
 #: myapp/templates/payment_methods.html:4
 #: myapp/templates/payment_methods.html:9
 msgid "My Payment Methods"
-msgstr "วิธีชำระเงินของฉัน"
+msgstr ""
 
 #: myapp/templates/payment_methods.html:35
 msgid "You don't have any payment methods yet."
-msgstr "คุณยังไม่มีวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/profile.html:5 myapp/templates/profile.html:11
 msgid "My Profile"
-msgstr "โปรไฟล์ของฉัน"
+msgstr ""
 
 #: myapp/templates/profile.html:22
 msgid "Profile Picture"
-msgstr "รูปโปรไฟล์"
+msgstr ""
 
 #: myapp/templates/profile.html:40
 msgid "Choose Profile Picture"
-msgstr "เลือกรูปโปรไฟล์"
+msgstr ""
 
 #: myapp/templates/profile.html:46
 msgid "Upload"
-msgstr "อัปโหลด"
+msgstr ""
 
 #: myapp/templates/profile.html:53
 msgid "Remove"
-msgstr "ลบออก"
+msgstr ""
 
 #: myapp/templates/profile.html:66
 msgid "No default address set."
-msgstr "ยังไม่ได้ตั้งค่าที่อยู่เริ่มต้น"
+msgstr ""
 
 #: myapp/templates/profile.html:75
 msgid "Payment Methods"
-msgstr "วิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/profile.html:83
 msgid "No payment methods added yet."
-msgstr "ยังไม่มีวิธีชำระเงินที่เพิ่มไว้"
+msgstr ""
 
 #: myapp/templates/profile.html:86
 msgid "Manage Payment Methods"
-msgstr "จัดการวิธีชำระเงิน"
+msgstr ""
 
 #: myapp/templates/profile.html:92
 msgid "Account Security"
-msgstr "ความปลอดภัยบัญชี"
+msgstr ""
 
 #: myapp/templates/register.html:5 myapp/templates/register.html:94
 msgid "Register"
-msgstr "ลงทะเบียน"
+msgstr ""
 
 #: myapp/templates/register.html:14
 msgid "Create your IMSUK account"
@@ -1191,45 +1308,39 @@ msgstr ""
 
 #: myapp/templates/register.html:22
 msgid "First Name"
-msgstr "ชื่อจริง"
+msgstr ""
 
 #: myapp/templates/register.html:25
-#, fuzzy
-#| msgid "First Name"
 msgid "Your first name"
-msgstr "ชื่อจริง"
+msgstr ""
 
 #: myapp/templates/register.html:28
 msgid "Last Name"
-msgstr "นามสกุล"
+msgstr ""
 
 #: myapp/templates/register.html:31
-#, fuzzy
-#| msgid "No address name"
 msgid "Your last name"
-msgstr "ไม่มีชื่อที่อยู่"
+msgstr ""
 
 #: myapp/templates/register.html:36
 msgid "Phone Number"
-msgstr "เบอร์โทรศัพท์"
+msgstr ""
 
 #: myapp/templates/register.html:56
 msgid "Confirm Password"
-msgstr "ยืนยันรหัสผ่าน"
+msgstr ""
 
 #: myapp/templates/register.html:64
 msgid "Address"
-msgstr "ที่อยู่"
+msgstr ""
 
 #: myapp/templates/register.html:67
-#, fuzzy
-#| msgid "No address name"
 msgid "Your address"
-msgstr "ไม่มีชื่อที่อยู่"
+msgstr ""
 
 #: myapp/templates/register.html:73
 msgid "Food Allergies (e.g., nuts, milk, gluten)"
-msgstr "แพ้อาหาร (เช่น ถั่ว นม กลูเตน)"
+msgstr ""
 
 #: myapp/templates/register.html:77
 msgid "List any allergies"
@@ -1237,60 +1348,49 @@ msgstr ""
 
 #: myapp/templates/register.html:85
 msgid "I accept the"
-msgstr "ฉันยอมรับ"
+msgstr ""
 
 #: myapp/templates/register.html:86
 msgid "Privacy Policy"
-msgstr "นโยบายความเป็นส่วนตัว"
+msgstr ""
 
 #: myapp/templates/restaurant_detail.html:17
 #: myapp/templates/restaurant_detail.html:22
-#, fuzzy
-#| msgid "Back to Category:"
 msgid "Back to Categories"
-msgstr "กลับไปยังหมวดหมู่:"
+msgstr ""
 
 #: myapp/templates/restaurant_detail.html:94
 msgid "Menu"
-msgstr "เมนู"
+msgstr ""
 
 #: myapp/templates/restaurant_detail.html:136
-#, fuzzy
-#| msgid "No flash deals available"
 msgid "No menu items available."
-msgstr "ยังไม่มีเมนูนาทีทอง"
+msgstr ""
 
 #: myapp/templates/shop_detail.html:19
 msgid "Back to category:"
-msgstr "กลับไปยังหมวดหมู่:"
+msgstr ""
 
 #: myapp/templates/shop_list.html:8 myapp/templates/shop_list.html:25
-#, fuzzy, python-format
-#| msgid "Food Category: %(category.display_name)s"
+#, python-format
 msgid "Category: %(category.display_name)s"
-msgstr "หมวดอาหาร: %(category.display_name)s"
+msgstr ""
 
 #: myapp/templates/shop_list.html:10 myapp/templates/shop_list.html:27
-#, fuzzy
-#| msgid "Restaurants"
 msgid "All Restaurants"
-msgstr "ร้านอาหาร"
+msgstr ""
 
 #: myapp/templates/shop_list.html:59
-#, fuzzy
-#| msgid "There are no menu items in this category yet."
 msgid "There are no restaurants in this category yet."
-msgstr "ยังไม่มีเมนูในหมวดหมู่นี้"
+msgstr ""
 
 #: myapp/templates/shop_list.html:61
 msgid "There are no restaurants to display."
 msgstr ""
 
 #: myapp/templates/shop_list.html:110
-#, fuzzy
-#| msgid "No flash deals available"
 msgid "No menus available"
-msgstr "ยังไม่มีเมนูนาทีทอง"
+msgstr ""
 
 #: myapp/templates/upload_slip.html:14
 msgid "Scan to Pay (PromptPay)"
@@ -1345,11 +1445,9 @@ msgstr ""
 msgid "Skip and view Order Details"
 msgstr ""
 
-#: myapp/views.py:1216
-#, fuzzy
-#| msgid "Add New Address"
+#: myapp/views.py:1240
 msgid "Add Address"
-msgstr "เพิ่มที่อยู่ใหม่"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"
@@ -1403,10 +1501,8 @@ msgid "Enter a valid integer."
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/core/validators.py:211
-#, fuzzy
-#| msgid "Set as default address"
 msgid "Enter a valid email address."
-msgstr "ตั้งเป็นที่อยู่เริ่มต้น"
+msgstr ""
 
 #. Translators: "letters" means latin letters: a-z and A-Z.
 #: venv/lib/python3.11/site-packages/django/core/validators.py:289
@@ -1481,6 +1577,7 @@ msgid_plural ""
 "Ensure this value has at least %(limit_value)d characters (it has "
 "%(show_value)d)."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/core/validators.py:491
 #, python-format
@@ -1491,6 +1588,7 @@ msgid_plural ""
 "Ensure this value has at most %(limit_value)d characters (it has "
 "%(show_value)d)."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/core/validators.py:514
 #: venv/lib/python3.11/site-packages/django/forms/fields.py:366
@@ -1503,12 +1601,14 @@ msgstr ""
 msgid "Ensure that there are no more than %(max)s digit in total."
 msgid_plural "Ensure that there are no more than %(max)s digits in total."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/core/validators.py:521
 #, python-format
 msgid "Ensure that there are no more than %(max)s decimal place."
 msgid_plural "Ensure that there are no more than %(max)s decimal places."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/core/validators.py:526
 #, python-format
@@ -1517,6 +1617,7 @@ msgid ""
 msgid_plural ""
 "Ensure that there are no more than %(max)s digits before the decimal point."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/core/validators.py:597
 #, python-format
@@ -1660,10 +1761,8 @@ msgid "Duration"
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1920
-#, fuzzy
-#| msgid "Edit Address"
 msgid "Email address"
-msgstr "แก้ไขที่อยู่"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:1945
 msgid "File path"
@@ -1696,16 +1795,12 @@ msgid "Small integer"
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2188
-#, fuzzy
-#| msgid "Address"
 msgid "IPv4 address"
-msgstr "ที่อยู่"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2219
-#, fuzzy
-#| msgid "Address"
 msgid "IP address"
-msgstr "ที่อยู่"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2310
 #: venv/lib/python3.11/site-packages/django/db/models/fields/__init__.py:2311
@@ -1778,10 +1873,8 @@ msgid "File"
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/files.py:420
-#, fuzzy
-#| msgid "No Image"
 msgid "Image"
-msgstr "ไม่มีรูปภาพ"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/db/models/fields/json.py:24
 msgid "A JSON object"
@@ -1873,6 +1966,7 @@ msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
 msgid_plural ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/forms/fields.py:649
 msgid "Please either submit a file or check the clear checkbox, not both."
@@ -1931,12 +2025,14 @@ msgstr ""
 msgid "Please submit at most %(num)d form."
 msgid_plural "Please submit at most %(num)d forms."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/forms/formsets.py:70
 #, python-format
 msgid "Please submit at least %(num)d form."
 msgid_plural "Please submit at least %(num)d forms."
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/forms/models.py:901
 #, python-format
@@ -2010,6 +2106,7 @@ msgstr ""
 msgid "%(size)d byte"
 msgid_plural "%(size)d bytes"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/template/defaultfilters.py:922
 #, python-format
@@ -2157,10 +2254,8 @@ msgid "October"
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/utils/dates.py:35
-#, fuzzy
-#| msgid "Phone Number"
 msgid "November"
-msgstr "เบอร์โทรศัพท์"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/utils/dates.py:36
 msgid "December"
@@ -2183,10 +2278,8 @@ msgid "apr"
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/utils/dates.py:43
-#, fuzzy
-#| msgid "Empathy"
 msgid "may"
-msgstr "Empathy"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/utils/dates.py:44
 msgid "jun"
@@ -2327,11 +2420,9 @@ msgid "October"
 msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/utils/dates.py:77
-#, fuzzy
-#| msgid "Phone Number"
 msgctxt "alt. month"
 msgid "November"
-msgstr "เบอร์โทรศัพท์"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/utils/dates.py:78
 msgctxt "alt. month"
@@ -2363,36 +2454,42 @@ msgstr ""
 msgid "%(num)d year"
 msgid_plural "%(num)d years"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/utils/timesince.py:9
 #, python-format
 msgid "%(num)d month"
 msgid_plural "%(num)d months"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/utils/timesince.py:10
 #, python-format
 msgid "%(num)d week"
 msgid_plural "%(num)d weeks"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/utils/timesince.py:11
 #, python-format
 msgid "%(num)d day"
 msgid_plural "%(num)d days"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/utils/timesince.py:12
 #, python-format
 msgid "%(num)d hour"
 msgid_plural "%(num)d hours"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/utils/timesince.py:13
 #, python-format
 msgid "%(num)d minute"
 msgid_plural "%(num)d minutes"
 msgstr[0] ""
+msgstr[1] ""
 
 #: venv/lib/python3.11/site-packages/django/views/csrf.py:29
 msgid "Forbidden"
@@ -2467,10 +2564,9 @@ msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/views/generic/dates.py:353
 #: venv/lib/python3.11/site-packages/django/views/generic/dates.py:384
-#, fuzzy, python-format
-#| msgid "No dinner deals available"
+#, python-format
 msgid "No %(verbose_name_plural)s available"
-msgstr "ยังไม่มีดีลอาหารเย็น"
+msgstr ""
 
 #: venv/lib/python3.11/site-packages/django/views/generic/dates.py:680
 #, python-format
@@ -2563,88 +2659,3 @@ msgstr ""
 #: venv/lib/python3.11/site-packages/django/views/templates/default_urlconf.html:236
 msgid "Connect, get help, or contribute"
 msgstr ""
-
-#~ msgid "pcs"
-#~ msgstr "ชิ้น"
-
-#~ msgid "Total Amount"
-#~ msgstr "ยอดรวมทั้งหมด"
-
-#~ msgid "Confirm Payment"
-#~ msgstr "ยืนยันการชำระเงิน"
-
-#~ msgid "Order not found."
-#~ msgstr "ไม่พบคำสั่งซื้อนี้"
-
-#~ msgid "Back to Order History"
-#~ msgstr "กลับไปยังประวัติคำสั่งซื้"
-
-#~ msgid "Reconfirm Order"
-#~ msgstr "ยืนยันการสั่งซ้ำ"
-
-#, fuzzy, python-format
-#~| msgid "Do you want to reorder order #%(order_id)s?"
-#~ msgid ""
-#~ "\n"
-#~ "        Do you want to reorder order #%(order_id)s?\n"
-#~ "      "
-#~ msgstr "คุณต้องการสั่งซ้ำคำสั่งซื้อหมายเลข #%(order_id)s ใช่หรือไม่?"
-
-#~ msgid "Confirm Reorder"
-#~ msgstr "ยืนยันการสั่งซ้ำ"
-
-#~ msgid "View Menu Details"
-#~ msgstr "ดูรายละเอียดเมนู"
-
-#~ msgid "View Menu"
-#~ msgstr "ดูเมนู"
-
-#~ msgid "Choose Price Range"
-#~ msgstr "เลือกช่วงราคา"
-
-#~ msgid "Available from"
-#~ msgstr "สั่งได้ตั้งแต่เวลา"
-
-#~ msgid "Menu Description"
-#~ msgstr "คำอธิบายเมนู"
-
-#~ msgid "No related menu found"
-#~ msgstr "ไม่พบเมนูที่เกี่ยวข้อง"
-
-#~ msgid "Total"
-#~ msgstr "รวม"
-
-#~ msgid "Welcome to IMSUK"
-#~ msgstr "ยินดีต้อนรับสู่ อิ่มสุข"
-
-#~ msgid "This restaurant has no menu items."
-#~ msgstr "ร้านอาหารนี้ยังไม่มีเมนู"
-
-#~ msgid "Price"
-#~ msgstr "ราคา"
-
-#~ msgid "All Dinner Deals"
-#~ msgstr "ดีลอาหารมื้อเย็น"
-
-#~ msgid "Back to All Dinner Deals"
-#~ msgstr "กลับไปยังดีลอาหารมื้อเย็นทั้งหมด"
-
-#~ msgid "Filter"
-#~ msgstr "ตัวกรอง"
-
-#~ msgid "Favorites"
-#~ msgstr "รายการโปรด"
-
-#~ msgid "Cart"
-#~ msgstr "ตะกร้า"
-
-#, python-format
-#~ msgid "No restaurants found for \"%(query)s\""
-#~ msgstr "ไม่พบร้านอาหารสำหรับ \"%(query)s\""
-
-#, python-format
-#~ msgid "No menu items found for \"%(query)s\""
-#~ msgstr "ไม่พบเมนูสำหรับ \"%(query)s\""
-
-#~ msgid "Flash Deals"
-#~ msgstr "เมนูนาทีทอง"
