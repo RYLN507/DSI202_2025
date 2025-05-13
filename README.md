@@ -135,4 +135,11 @@ python manage.py compilemessages
 
 ### 4.8 รันเซิร์ฟเวอร์ในโหมดพัฒนา
 python manage.py runserver
-เปิดเบราว์เซอร์ที่ http://127.0.0.1:8000/
+เปิดเบราว์เซอร์ที่ http://127.0.0.1:8000/ 
+
+หรือเข้าไปที่ cd imsukproject ให้สิทธิ์รันกับentrypoint.sh 
+chmod +x entrypoint.sh 
+สุดท้าย รัน 
+docker-compose up --build
+เปิดเบราว์เซอร์ที่ http://localhost:8000/
+
